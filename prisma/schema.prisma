@@ -11,6 +11,11 @@ datasource db {
   relationMode = "prisma"
 }
 
-model User {
-  id Int @id @default(autoincrement())
+model Status {
+  id BigInt @id @default(autoincrement())
+
+  latitudeFrom  Float?
+  latitudeTo    Float?
+  longitudeFrom Float?
+  longitudeTo   Float?
 }

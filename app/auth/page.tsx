@@ -55,6 +55,8 @@ export default function Auth() {
 	}
 
 	const onValid = async (inputs: AuthInputs) => {
+		if (isLoading) return;
+
 		const { pathname: server } = parseURL(inputs.server);
 
 		if (serverError) {
@@ -69,8 +71,6 @@ export default function Auth() {
 			await auth({ server, code: inputs.code });
 		} else {
 			setIsLoading(true);
-
-			console.log(`https://${server}/oauth/authorize`);
 
 			router.push(
 				withQuery(`https://${server}/oauth/authorize`, {
@@ -88,7 +88,6 @@ export default function Auth() {
 	const { token } = useToken();
 
 	if (token) {
-		console.log(token);
 		router.push("/");
 	}
 

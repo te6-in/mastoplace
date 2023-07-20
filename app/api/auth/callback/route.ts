@@ -12,8 +12,6 @@ export async function GET(request: NextRequest) {
 	const server = searchParams.get("server");
 	const code = searchParams.get("code");
 
-	console.log(code);
-
 	const params = {
 		client_id: process.env.NEXT_PUBLIC_CLIENT_KEY,
 		client_secret: process.env.CLIENT_SECRET,
@@ -46,6 +44,7 @@ export async function GET(request: NextRequest) {
 
 		const session = JSON.stringify({
 			token: token.access_token,
+			server,
 		});
 
 		const encryptedSession = await sealData(session, {

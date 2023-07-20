@@ -1,5 +1,5 @@
 import { DefaultResponse } from "@/libs/server/response";
-import { unsealData } from "iron-session";
+import { decrypt } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface MeResponse extends DefaultResponse {
@@ -8,42 +8,17 @@ export interface MeResponse extends DefaultResponse {
 }
 
 export async function GET(request: NextRequest) {
-	const cookieName = process.env.SESSION_COOKIE_NAME as string;
-	const found = request.cookies.get(cookieName);
+	const { token } = await decrypt(request.cookies);
 
-	if (!found) {
-		return NextResponse.json<MeResponse>(
-			{
-				ok: false,
-				token: null,
-			},
-			{
-				status: 401,
-			}
-		);
-	}
-
-	try {
-		const data = (await unsealData(found.value, {
-			password: process.env.SESSION_COOKIE_PASSWORD as string,
-		})) as string;
-
-		const { token } = JSON.parse(data);
-
+	if (!token) {
 		return NextResponse.json<MeResponse>({
-			ok: true,
-			token,
+			ok: false,
+			token: null,
 		});
-	} catch (error) {
-		return NextResponse.json<MeResponse>(
-			{
-				ok: false,
-				token: null,
-				error,
-			},
-			{
-				status: 401,
-			}
-		);
 	}
+
+	return NextResponse.json<MeResponse>({
+		ok: true,
+		token,
+	});
 }

@@ -5,7 +5,7 @@ interface Coordinates {
 	longitude: number | null;
 }
 
-export function useCoordinates() {
+export function useLocation() {
 	const [coordinates, setCoordinates] = useState<Coordinates>({
 		latitude: null,
 		longitude: null,

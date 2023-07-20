@@ -11,6 +11,7 @@ interface LayoutProps extends HeaderProps {
 	hasFloatingButton?: boolean;
 	hasBottomToolbar?: boolean;
 	isPublic?: boolean;
+	noScroll?: boolean;
 	children: React.ReactNode;
 }
 
@@ -23,6 +24,7 @@ export function Layout({
 	hasFloatingButton,
 	hasBottomToolbar,
 	isPublic,
+	noScroll,
 	children,
 }: LayoutProps) {
 	const tokenData = isPublic ? null : useToken();
@@ -46,8 +48,12 @@ export function Layout({
 							? "sm:pt-16"
 							: "",
 						hasBottomToolbar ? "pb-20 sm:pb-28" : "",
-						hasFloatingButton && showTabBar ? "pb-36 sm:pb-20" : "",
-						showTabBar ? "pb-14 sm:pb-0" : ""
+						hasFloatingButton && showTabBar
+							? noScroll
+								? ""
+								: "pb-36 sm:pb-20"
+							: "",
+						showTabBar ? (noScroll ? "" : "pb-14 sm:pb-0") : ""
 					)}
 				>
 					{children}
