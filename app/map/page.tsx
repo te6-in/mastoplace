@@ -14,7 +14,7 @@ export default function Map() {
 		<Layout noScroll showTabBar hasFloatingButton isPublic>
 			{latitude && longitude && (
 				<GoogleMaps
-					location={{ latitude, longitude }}
+					position={{ latitude, longitude }}
 					className={j("h-screen w-full sm:rounded-2xl")}
 				/>
 			)}

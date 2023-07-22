@@ -1,26 +1,39 @@
-import { DefaultResponse } from "@/libs/server/response";
+import { AuthResponse } from "@/app/api/auth/route";
+import { decrypt } from "@/libs/server/session";
 import { sealData } from "iron-session";
 import { NextRequest, NextResponse } from "next/server";
 import { withQuery } from "ufo";
-
-interface AuthResponse extends DefaultResponse {
-	error?: unknown;
-}
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
 	const server = searchParams.get("server");
 	const code = searchParams.get("code");
 
+	const data = await decrypt({
+		type: "client",
+		cookies: request.cookies,
+	});
+
+	if (!data) {
+		return NextResponse.json(
+			{
+				ok: false,
+			},
+			{
+				status: 401,
+			}
+		);
+	}
+
+	const { client_id, client_secret } = data;
+
 	const params = {
-		client_id: process.env.NEXT_PUBLIC_CLIENT_KEY,
-		client_secret: process.env.CLIENT_SECRET,
-		redirect_uri: `${process.env.NEXT_PUBLIC_REDIRECT_URI}${
-			process.env.NODE_ENV === "development" ? "" : `?server=${server}`
-		}`,
+		client_id,
+		client_secret,
+		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?server=${server}`,
 		grant_type: "authorization_code",
 		code,
-		scope: process.env.NEXT_PUBLIC_SCOPE,
+		scope: (process.env.NEXT_PUBLIC_SCOPE as string).replaceAll(" ", "+"),
 	};
 
 	try {
@@ -33,13 +46,7 @@ export async function GET(request: NextRequest) {
 				},
 			}
 		)
-			.then((response) => {
-				if (response.ok === false) {
-					throw new Error(response.statusText);
-				}
-
-				return response.json();
-			})
+			.then((response) => response.json())
 			.then((data) => data);
 
 		const session = JSON.stringify({
@@ -51,9 +58,11 @@ export async function GET(request: NextRequest) {
 			password: process.env.SESSION_COOKIE_PASSWORD as string,
 		});
 
-		const destination = new URL("/", new URL(request.url).origin);
+		const response = NextResponse.redirect(
+			process.env.NEXT_PUBLIC_BASE_URL as string
+		);
 
-		const response = NextResponse.redirect(destination);
+		response.cookies.delete(process.env.CLIENT_COOKIE_NAME as string);
 
 		response.cookies.set(
 			process.env.SESSION_COOKIE_NAME as string,

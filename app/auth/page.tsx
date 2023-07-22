@@ -6,14 +6,17 @@ import { Layout } from "@/components/Layout";
 import { useToken } from "@/libs/client/useToken";
 import { LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { parseURL, withQuery } from "ufo";
 
+interface CreateAppInputs {
+	server: string;
+}
+
 interface AuthInputs {
 	server: string;
-	code: string;
 }
 
 export default function Auth() {
@@ -35,23 +38,24 @@ export default function Auth() {
 
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
+
 	const { error: serverError } = useSWR(
 		`https://${watchServer}/api/v1/instance`
 	);
 
-	async function auth({ server, code }: AuthInputs) {
+	async function auth({ server }: CreateAppInputs) {
 		setIsLoading(true);
 
-		await fetch(withQuery("/api/auth/callback", { server, code }), {
+		const data = await fetch(withQuery("/api/auth", { server }), {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
 			},
-		}).then((response) => {
-			if (response.redirected) {
-				router.push(response.url);
-			}
-		});
+		})
+			.then((response) => response.json())
+			.then((data) => data);
+
+		return data;
 	}
 
 	const onValid = async (inputs: AuthInputs) => {
@@ -67,29 +71,22 @@ export default function Auth() {
 			return;
 		}
 
-		if (process.env.NODE_ENV === "development" && inputs.code) {
-			await auth({ server, code: inputs.code });
-		} else {
-			setIsLoading(true);
+		setIsLoading(true);
 
-			router.push(
-				withQuery(`https://${server}/oauth/authorize`, {
-					client_id: process.env.NEXT_PUBLIC_CLIENT_KEY,
-					scope: process.env.NEXT_PUBLIC_SCOPE,
-					response_type: "code",
-					redirect_uri: `${process.env.NEXT_PUBLIC_REDIRECT_URI}${
-						process.env.NODE_ENV === "development" ? "" : `?server=${server}`
-					}`,
-				})
-			);
+		const data = await auth({ server });
+
+		if (data.ok) {
+			router.push(data.url);
 		}
 	};
 
 	const { token } = useToken();
 
-	if (token) {
-		router.push("/");
-	}
+	useEffect(() => {
+		if (token) {
+			router.push("/");
+		}
+	}, [token]);
 
 	return (
 		<Layout hideTabBarCompletely isPublic>
@@ -119,16 +116,6 @@ export default function Auth() {
 						prefix="https://"
 						error={errors.server?.message}
 					/>
-					{process.env.NODE_ENV === "development" && (
-						<TextInput
-							register={register("code")}
-							type="text"
-							id="token"
-							label="토큰"
-							placeholder="#$$#%&&#"
-							error={errors.code?.message}
-						/>
-					)}
 					<Button
 						isPrimary
 						Icon={LogIn}

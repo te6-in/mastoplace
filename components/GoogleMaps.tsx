@@ -1,9 +1,8 @@
 import { j } from "@/libs/client/utils";
 import GoogleMapReact from "google-map-react";
-import "react-loading-skeleton/dist/skeleton.css";
 
 interface GoogleMapsProps {
-	location: {
+	position: {
 		latitude: number;
 		longitude: number;
 	};
@@ -11,27 +10,24 @@ interface GoogleMapsProps {
 	className?: string;
 }
 
-export function GoogleMaps({ location, fixed, className }: GoogleMapsProps) {
+export function GoogleMaps({ position, fixed, className }: GoogleMapsProps) {
 	return (
 		<div className={j(className ?? "", "overflow-hidden")}>
 			<GoogleMapReact
-				defaultCenter={{ lat: location.latitude, lng: location.longitude }}
-				defaultZoom={15}
+				defaultCenter={{ lat: position.latitude, lng: position.longitude }}
+				defaultZoom={12}
 				options={{
-					...(fixed
-						? {
-								draggable: false,
-								scrollwheel: false,
-								disableDoubleClickZoom: true,
-								clickableIcons: false,
-						  }
-						: {
-								zoomControl: true,
-								zoomControlOptions: {
-									position: 3,
-								},
-						  }),
+					...(fixed && {
+						draggable: false,
+						scrollwheel: false,
+						disableDoubleClickZoom: true,
+						clickableIcons: false,
+					}),
 					fullscreenControl: false,
+					zoomControl: true,
+					zoomControlOptions: {
+						position: 3,
+					},
 				}}
 			></GoogleMapReact>
 		</div>

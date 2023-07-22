@@ -3,22 +3,25 @@ import { decrypt } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface MeResponse extends DefaultResponse {
-	token: string | null;
+	token?: string;
 	error?: unknown;
 }
 
 export async function GET(request: NextRequest) {
-	const { token } = await decrypt(request.cookies);
+	const data = await decrypt({
+		type: "session",
+		cookies: request.cookies,
+	});
 
-	if (!token) {
-		return NextResponse.json<MeResponse>({
-			ok: false,
-			token: null,
-		});
+	if (!data) {
+		return NextResponse.json<MeResponse>({ ok: false }, { status: 401 });
 	}
 
-	return NextResponse.json<MeResponse>({
-		ok: true,
-		token,
-	});
+	const { token } = data;
+
+	if (!token) {
+		return NextResponse.json<MeResponse>({ ok: false }, { status: 401 });
+	}
+
+	return NextResponse.json<MeResponse>({ ok: true, token });
 }

@@ -3,13 +3,15 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
 
-export function useToken() {
-	const { data, isLoading } = useSWR<MeResponse>("/api/auth/me");
+export function useToken(redirect: false | string = false) {
+	const { data, isLoading, mutate } = useSWR<MeResponse>("/api/auth/me");
 	const router = useRouter();
 
+	mutate();
+
 	useEffect(() => {
-		if (data && !data.ok) {
-			router.replace("/auth");
+		if (redirect && data && !data.ok) {
+			router.replace(redirect);
 		}
 	}, [data, router]);
 

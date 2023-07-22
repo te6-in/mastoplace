@@ -9,7 +9,7 @@ export interface HeaderProps {
 
 export function Header({ showBackground, showBackButton, title }: HeaderProps) {
 	return showBackground ? (
-		<header className="fixed flex h-12 w-full max-w-3xl items-center justify-center bg-white bg-opacity-50 text-slate-900 backdrop-blur sm:left-1/2 sm:h-16 sm:-translate-x-1/2 sm:pl-40">
+		<header className="fixed z-10 flex h-12 w-full max-w-3xl items-center justify-center bg-white bg-opacity-50 text-slate-900 backdrop-blur sm:left-1/2 sm:h-16 sm:-translate-x-1/2 sm:pl-40">
 			{showBackButton && <BackButton isFloating={false} />}
 			{title && (
 				<h1

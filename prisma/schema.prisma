@@ -12,7 +12,8 @@ datasource db {
 }
 
 model Status {
-  id BigInt @id @default(autoincrement())
+  id         String  @id @default(cuid())
+  mastodonId String?
 
   latitudeFrom  Float?
   latitudeTo    Float?

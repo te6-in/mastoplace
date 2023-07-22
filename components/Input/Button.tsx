@@ -7,6 +7,7 @@ interface ButtonProps {
 	Icon?: LucideIcon;
 	iconFill?: boolean;
 	text?: string;
+	onClick?: () => void;
 }
 
 export function Button({
@@ -15,6 +16,7 @@ export function Button({
 	Icon,
 	iconFill,
 	text,
+	onClick,
 }: ButtonProps) {
 	return (
 		<button
@@ -29,6 +31,7 @@ export function Button({
 					? "hover:bg-violet-600 active:bg-violet-700"
 					: "hover:bg-slate-100 active:bg-slate-200"
 			)}
+			onClick={onClick}
 		>
 			{isLoading ? (
 				<Loader2 className="animate-spin" />

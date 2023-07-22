@@ -1,9 +1,18 @@
 import { unsealData } from "iron-session";
-import { createClient } from "masto";
+import { createClient, mastodon } from "masto";
 import { RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
-export async function decrypt(cookies: RequestCookies) {
-	const cookieName = process.env.SESSION_COOKIE_NAME as string;
+interface DecryptParams {
+	type: "client" | "session";
+	cookies: RequestCookies;
+}
+
+export async function decrypt({ type, cookies }: DecryptParams) {
+	const cookieName =
+		type === "session"
+			? (process.env.SESSION_COOKIE_NAME as string)
+			: (process.env.CLIENT_COOKIE_NAME as string);
+
 	const found = cookies.get(cookieName);
 
 	if (!found) {
@@ -12,7 +21,10 @@ export async function decrypt(cookies: RequestCookies) {
 
 	try {
 		const data = (await unsealData(found.value, {
-			password: process.env.SESSION_COOKIE_PASSWORD as string,
+			password:
+				type === "session"
+					? (process.env.SESSION_COOKIE_PASSWORD as string)
+					: (process.env.CLIENT_COOKIE_PASSWORD as string),
 		})) as string;
 
 		const json = JSON.parse(data);
@@ -23,17 +35,26 @@ export async function decrypt(cookies: RequestCookies) {
 	}
 }
 
-export async function mastodon(cookies: RequestCookies) {
-	const { token, server } = await decrypt(cookies);
+export async function mastodonClient(cookies: RequestCookies) {
+	const data = await decrypt({ type: "session", cookies });
+
+	if (!data) {
+		return null;
+	}
+
+	const { token, server } = data;
 
 	if (!token || !server) {
 		return null;
 	}
 
-	const mastodon = createClient({
+	const masto = createClient({
 		accessToken: token,
 		url: `https://${server}`,
 	});
 
-	return mastodon;
+	return { masto, server } as {
+		masto: mastodon.Client;
+		server: string;
+	};
 }

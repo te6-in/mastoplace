@@ -11,10 +11,7 @@ interface TabBarItemProps {
 
 export function TabBarItem({ Icon, text, href }: TabBarItemProps) {
 	const pathname = usePathname();
-	const didMatch =
-		href === "/"
-			? pathname === "/" || pathname?.startsWith("/item")
-			: pathname?.startsWith(href);
+	const didMatch = href === "/" ? pathname === "/" : pathname?.startsWith(href);
 
 	return (
 		<Link
