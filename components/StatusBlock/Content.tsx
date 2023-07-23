@@ -8,13 +8,13 @@ import { parseURL } from "ufo";
 
 interface ContentProps {
 	mastodonStatus: mastodon.v1.Status | undefined;
-	server: string;
+	clientServer: string | undefined;
 }
 
-export function Content({ mastodonStatus, server }: ContentProps) {
+export function Content({ mastodonStatus, clientServer }: ContentProps) {
 	return (
 		<article className="text-slate-700 flex gap-1 flex-col break-keep">
-			{mastodonStatus ? (
+			{mastodonStatus && clientServer ? (
 				parse(mastodonStatus.content, {
 					replace: (domNode) => {
 						if ("name" in domNode && "attribs" in domNode) {
@@ -23,7 +23,7 @@ export function Content({ mastodonStatus, server }: ContentProps) {
 									<Link
 										href={
 											domNode.attribs.class === "u-url mention"
-												? `https://${server}/@${
+												? `https://${clientServer}/@${
 														parseURL(domNode.attribs.href).pathname.split(
 															"/@"
 														)[1]
@@ -46,7 +46,7 @@ export function Content({ mastodonStatus, server }: ContentProps) {
 					},
 				})
 			) : (
-				<Skeleton count={3} />
+				<Skeleton count={3} width="100%" />
 			)}
 		</article>
 	);

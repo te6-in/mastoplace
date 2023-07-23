@@ -35,8 +35,8 @@ export default function Home() {
 	}, [data]);
 
 	const length = data?.reduce((acc, page) => {
-		if (!page.statuses) return 0;
-		return acc + page.statuses.length;
+		if (!page.localViewableStatuses) return 0;
+		return acc + page.localViewableStatuses.length;
 	}, 0);
 
 	useEffect(() => {
@@ -115,10 +115,10 @@ export default function Home() {
 					<ol className="divide-y">
 						{data &&
 							data.map((page) => {
-								if (!page.statuses) return null;
+								if (!page.localViewableStatuses) return null;
 
-								return page.statuses.map((status) => (
-									<li key={status.id} className="p-4">
+								return page.localViewableStatuses.map((status) => (
+									<li key={status.id} className="p-4 empty:hidden">
 										<StatusBlock id={status.id} link />
 									</li>
 								));

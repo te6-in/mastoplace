@@ -20,15 +20,26 @@ interface StatusBlockProps {
 	id: string | null;
 	link?: boolean;
 	from?: Position;
+	showError?: boolean;
 }
 
-export function StatusBlock({ id, link, from }: StatusBlockProps) {
+export function StatusBlock({ id, link, from, showError }: StatusBlockProps) {
 	const { data } = useSWR<StatusResponse>(id ? `/api/status/${id}` : null);
+
+	if (data?.ok === false) {
+		if (!showError) return null;
+
+		return (
+			<div className="text-slate-700 text-center">
+				없는 글이거나 현재 로그인한 계정으로 볼 수 없는 글이에요.
+			</div>
+		);
+	}
 
 	const mastodonStatus = data?.mastodonStatus;
 	const exact = data?.exact;
 	const location = data?.location;
-	const server = data?.server;
+	const clientServer = data?.clientServer;
 
 	const position =
 		location &&
@@ -61,7 +72,7 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 		<div className="flex gap-2">
 			{mastodonStatus ? (
 				<Link
-					href={`https://${server}/@${mastodonStatus.account.acct}`}
+					href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
 					className="not-italic w-12 h-12 rounded-full overflow-hidden"
 				>
 					<address>
@@ -77,8 +88,10 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 				</div>
 			)}
 			<div className="flex flex-col flex-1 gap-1">
-				{mastodonStatus && server ? (
-					<Link href={`https://${server}/@${mastodonStatus.account.acct}`}>
+				{mastodonStatus && clientServer ? (
+					<Link
+						href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
+					>
 						<address className="flex items-baseline not-italic flex-wrap">
 							<span className="text-slate-900 font-medium text-lg mr-1">
 								{mastodonStatus.account.displayName ?? <Skeleton width="20%" />}
@@ -91,13 +104,18 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 				) : (
 					<Skeleton width="25%" className="text-lg" />
 				)}
-				{server && link && (
+				{link ? (
 					<Link href={`/status/${id}`}>
-						<Content mastodonStatus={mastodonStatus} server={server} />
+						<Content
+							mastodonStatus={mastodonStatus}
+							clientServer={clientServer}
+						/>
 					</Link>
-				)}
-				{server && !link && (
-					<Content mastodonStatus={mastodonStatus} server={server} />
+				) : (
+					<Content
+						mastodonStatus={mastodonStatus}
+						clientServer={clientServer}
+					/>
 				)}
 				{mastodonStatus && position && (
 					<GoogleMaps

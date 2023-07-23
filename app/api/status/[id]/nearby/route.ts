@@ -2,7 +2,6 @@ import { StatusGetParams } from "@/app/api/status/[id]/route";
 import { client } from "@/libs/server/client";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
-import { Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface NearbyStatusesResponse extends DefaultResponse {
@@ -12,7 +11,7 @@ export interface NearbyStatusesResponse extends DefaultResponse {
 		longitudeFrom: number;
 		longitudeTo: number;
 	};
-	nearbyStatuses?: Pick<Status, "id">[];
+	nearbyIds?: string[];
 	error?: unknown;
 }
 
@@ -36,9 +35,9 @@ export async function GET(
 		);
 	}
 
-	const { masto, server } = data;
+	const { masto, clientServer } = data;
 
-	if (!masto || !server) {
+	if (!masto || !clientServer) {
 		return NextResponse.json<NearbyStatusesResponse>(
 			{ ok: false },
 			{ status: 401 }
@@ -55,15 +54,23 @@ export async function GET(
 			);
 		}
 
-		const search = await masto.v2.search({
-			q: `https://${originalStatus.server}/@he/${originalStatus.mastodonId}`,
-			resolve: true,
-			type: "statuses",
-		});
+		let originalMastodonStatus;
 
-		const mastodonStatus = search.statuses[0];
+		if (clientServer === originalStatus.server) {
+			originalMastodonStatus = await masto.v1.statuses.fetch(
+				originalStatus.mastodonId
+			);
+		} else {
+			const search = await masto.v2.search({
+				q: `https://${originalStatus.server}/@${originalStatus.handle}/${originalStatus.mastodonId}`,
+				resolve: true,
+				type: "statuses",
+			});
 
-		if (!mastodonStatus) {
+			originalMastodonStatus = search.statuses[0];
+		}
+
+		if (!originalMastodonStatus) {
 			return NextResponse.json<NearbyStatusesResponse>(
 				{ ok: false },
 				{ status: 404 }
@@ -92,20 +99,10 @@ export async function GET(
 			);
 		}
 
-		const homeStatuses = await masto.v1.timelines.listHome({ limit: 40 });
-		const publicStatuses = await masto.v1.timelines.listPublic({ limit: 40 });
-
-		const homeStatusesIds = homeStatuses.map(({ id }) => id);
-		const publicStatusesIds = publicStatuses.map(({ id }) => id);
-
-		const statusIds = Array.from(
-			new Set([...homeStatusesIds, ...publicStatusesIds])
-		);
-
 		const nearbyStatuses = await client.status.findMany({
 			where: {
-				mastodonId: {
-					in: statusIds,
+				NOT: {
+					id: originalStatus.id,
 				},
 				latitudeFrom: {
 					lte: originalLocation.latitudeTo + 0.05,
@@ -124,18 +121,40 @@ export async function GET(
 					gte: originalLocation.longitudeFrom - 0.05,
 				},
 			},
-			select: { id: true },
+			select: { id: true, mastodonId: true, server: true },
 			orderBy: { createdAt: "desc" },
 		});
+
+		const localViewableIds = nearbyStatuses
+			.filter(async (nearbyStatus) => {
+				if (!nearbyStatus.mastodonId) return false;
+
+				if (clientServer === nearbyStatus.server) {
+					const mastodonStatus = await masto.v1.statuses.fetch(
+						nearbyStatus.mastodonId
+					);
+
+					if (mastodonStatus) return true;
+					return false;
+				}
+
+				const search = await masto.v2.search({
+					q: `https://${nearbyStatus.server}/@${originalStatus.handle}/${nearbyStatus.mastodonId}`,
+					resolve: true,
+					type: "statuses",
+				});
+
+				if (!search.statuses[0]) return true;
+				return false;
+			})
+			.map(({ id }) => id);
 
 		// TODO: Add pagination
 
 		return NextResponse.json<NearbyStatusesResponse>({
 			ok: true,
 			originalLocation,
-			nearbyStatuses: nearbyStatuses.filter(
-				({ id }) => id !== originalStatus.id
-			),
+			nearbyIds: localViewableIds,
 		});
 	} catch (error) {
 		return NextResponse.json<NearbyStatusesResponse>(

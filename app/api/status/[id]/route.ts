@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export interface StatusResponse extends DefaultResponse {
 	mastodonStatus?: mastodon.v1.Status;
-	server?: string;
+	clientServer?: string;
 	exact?: boolean | null;
 	location?: {
 		latitudeFrom: number;
@@ -37,7 +37,7 @@ export async function GET(
 		return NextResponse.json<StatusResponse>({ ok: false }, { status: 401 });
 	}
 
-	const { masto, server } = data;
+	const { masto, clientServer } = data;
 
 	if (!masto) {
 		return NextResponse.json<StatusResponse>({ ok: false }, { status: 401 });
@@ -50,13 +50,19 @@ export async function GET(
 			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });
 		}
 
-		const search = await masto.v2.search({
-			q: `https://${status.server}/@he/${status.mastodonId}`,
-			resolve: true,
-			type: "statuses",
-		});
+		let mastodonStatus;
 
-		const mastodonStatus = search.statuses[0];
+		if (clientServer === status.server) {
+			mastodonStatus = await masto.v1.statuses.fetch(status.mastodonId);
+		} else {
+			const search = await masto.v2.search({
+				q: `https://${status.server}/@${status.handle}/${status.mastodonId}`,
+				resolve: true,
+				type: "statuses",
+			});
+
+			mastodonStatus = search.statuses[0];
+		}
 
 		if (!mastodonStatus) {
 			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });
@@ -79,7 +85,7 @@ export async function GET(
 
 		return NextResponse.json<StatusResponse>({
 			ok: true,
-			server,
+			clientServer,
 			mastodonStatus,
 			exact,
 			location,

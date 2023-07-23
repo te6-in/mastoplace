@@ -4,13 +4,8 @@ import { mastodonClient } from "@/libs/server/session";
 import { Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-const MAX_CONSECUTIVE_TIMELINE_FETCHES = process.env
-	.MAX_CONSECUTIVE_TIMELINE_FETCHES
-	? parseInt(process.env.MAX_CONSECUTIVE_TIMELINE_FETCHES)
-	: 3;
-
 export interface StatusesResponse extends DefaultResponse {
-	statuses?: Pick<Status, "id" | "mastodonId">[];
+	localViewableStatuses?: Pick<Status, "id" | "mastodonId">[];
 	nextMaxId?: string;
 }
 
@@ -30,40 +25,42 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
-		const { masto } = data;
+		const { masto, clientServer } = data;
 
-		let statuses;
-		let nextMaxId;
-		let count = 0;
+		const statuses = await client.status.findMany({
+			cursor: maxId ? { id: maxId } : undefined,
+			skip: maxId ? 1 : undefined,
+			take: 20,
+			select: { id: true, mastodonId: true, server: true, handle: true },
+			orderBy: { createdAt: "desc" },
+		});
 
-		do {
-			const homeStatuses = await masto.v1.timelines.listHome({
-				limit: 40,
-				maxId,
+		const localViewableStatuses = statuses.filter(async (status) => {
+			if (!status.mastodonId) return false;
+
+			if (clientServer === status.server) {
+				const mastodonStatus = await masto.v1.statuses.fetch(status.mastodonId);
+
+				if (mastodonStatus) return true;
+				return false;
+			}
+
+			const search = await masto.v2.search({
+				q: `https://${status.server}/@${status.handle}/${status.mastodonId}`,
+				resolve: true,
+				type: "statuses",
 			});
 
-			const homeStatusesIds = homeStatuses.map(({ id }) => id);
+			if (!search.statuses[0]) return true;
+			return false;
+		});
 
-			statuses = await client.status.findMany({
-				where: {
-					mastodonId: { in: homeStatusesIds },
-					NOT: { mastodonId: nextMaxId },
-				},
-				select: { id: true, mastodonId: true },
-				orderBy: { createdAt: "desc" },
-			});
-
-			nextMaxId =
-				count === MAX_CONSECUTIVE_TIMELINE_FETCHES - 1
-					? undefined
-					: homeStatusesIds[homeStatusesIds.length - 1];
-
-			count = count + 1;
-		} while (statuses.length === 0 && count < MAX_CONSECUTIVE_TIMELINE_FETCHES);
+		const nextMaxId =
+			statuses.length === 0 ? undefined : statuses[statuses.length - 1].id;
 
 		return NextResponse.json<StatusesResponse>({
 			ok: true,
-			statuses,
+			localViewableStatuses,
 			nextMaxId,
 		});
 	} catch (error) {
@@ -79,7 +76,7 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json<NewStatusResponse>({ ok: false }, { status: 401 });
 	}
 
-	const { masto, server } = data;
+	const { masto, clientServer, handle } = data;
 
 	try {
 		const { latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } = location;
@@ -87,7 +84,8 @@ export async function POST(request: NextRequest) {
 		const status = await client.status.create({
 			data: {
 				exact,
-				server,
+				server: clientServer,
+				handle,
 				latitudeFrom,
 				latitudeTo,
 				longitudeFrom,
@@ -95,7 +93,7 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		const textWithURL = `${text}\n\nMastoplace: ${process.env.NEXT_PUBLIC_BASE_URL}/status/${status.id}\n\n#Mastoplace`;
+		const textWithURL = `${text}\n\n${process.env.NEXT_PUBLIC_BASE_URL}/status/${status.id}\n\n#Mastoplace`;
 
 		try {
 			const { id: mastodonId } = await masto.v1.statuses.create({
@@ -107,9 +105,10 @@ export async function POST(request: NextRequest) {
 				where: { id: status.id },
 				data: { mastodonId },
 			});
-		} catch {
+		} catch (error) {
 			await client.status.delete({ where: { id: status.id } });
 
+			console.log(error);
 			return NextResponse.json<NewStatusResponse>(
 				{ ok: false },
 				{ status: 500 }
