@@ -15,14 +15,7 @@ export async function GET(request: NextRequest) {
 	});
 
 	if (!data) {
-		return NextResponse.json(
-			{
-				ok: false,
-			},
-			{
-				status: 401,
-			}
-		);
+		return NextResponse.json({ ok: false }, { status: 401 });
 	}
 
 	const { client_id, client_secret } = data;
@@ -75,13 +68,8 @@ export async function GET(request: NextRequest) {
 		return response;
 	} catch (error) {
 		return NextResponse.json<AuthResponse>(
-			{
-				ok: false,
-				error,
-			},
-			{
-				status: 500,
-			}
+			{ ok: false, error },
+			{ status: 500 }
 		);
 	}
 }

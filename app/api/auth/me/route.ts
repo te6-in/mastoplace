@@ -3,7 +3,6 @@ import { decrypt } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface MeResponse extends DefaultResponse {
-	token?: string;
 	error?: unknown;
 }
 
@@ -23,5 +22,5 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json<MeResponse>({ ok: false }, { status: 401 });
 	}
 
-	return NextResponse.json<MeResponse>({ ok: true, token });
+	return NextResponse.json<MeResponse>({ ok: true });
 }

@@ -11,11 +11,19 @@ import useSWR from "swr";
 
 export default function Home() {
 	const { data } = useSWR<StatusesResponse>("/api/status");
-	const { token } = useToken();
+	const { hasValidToken, isLoading: isTokenLoading } = useToken();
 
 	return (
-		<Layout title="홈" showBackground showTabBar isPublic hasFloatingButton>
-			{!token ? (
+		<Layout title="홈" showBackground showTabBar hasFloatingButton>
+			{isTokenLoading ? (
+				<ol className="divide-y">
+					{[1, 2, 3].map((_, index) => (
+						<li key={index} className="p-4">
+							<StatusBlock id={null} />
+						</li>
+					))}
+				</ol>
+			) : !hasValidToken ? (
 				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
 					<p>로그인하면 마스토돈 홈 타임라인에서</p>
 					<p>Mastoplace를 통해 게시된 글을 볼 수 있어요.</p>
@@ -36,10 +44,10 @@ export default function Home() {
 						를 둘러보세요!
 					</p>
 				</div>
-			) : data && data.statuses ? (
+			) : !isTokenLoading && data && data.statuses ? (
 				data.statuses.length !== 0 ? (
 					<>
-						<ol className="divide-y flex-col">
+						<ol className="divide-y">
 							{data.statuses.map((status) => (
 								<li key={status.id} className="p-4">
 									<StatusBlock id={status.id} link />

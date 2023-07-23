@@ -5,11 +5,9 @@ import { mastodon } from "masto";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface StatusResponse extends DefaultResponse {
-	mastodonStatus?: Pick<
-		mastodon.v1.Status,
-		"account" | "content" | "createdAt" | "visibility"
-	>;
+	mastodonStatus?: mastodon.v1.Status;
 	server?: string;
+	exact?: boolean | null;
 	location?: {
 		latitudeFrom: number;
 		latitudeTo: number;
@@ -19,13 +17,20 @@ export interface StatusResponse extends DefaultResponse {
 	error?: unknown;
 }
 
-interface GetParams {
+export interface StatusGetParams {
 	params: {
 		id: string;
 	};
 }
 
-export async function GET(request: NextRequest, { params: { id } }: GetParams) {
+export async function GET(
+	request: NextRequest,
+	{ params: { id } }: StatusGetParams
+) {
+	if (!id) {
+		return NextResponse.json<StatusResponse>({ ok: false }, { status: 400 });
+	}
+
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
@@ -34,11 +39,7 @@ export async function GET(request: NextRequest, { params: { id } }: GetParams) {
 
 	const { masto, server } = data;
 
-	if (!id) {
-		return NextResponse.json<StatusResponse>({ ok: false }, { status: 400 });
-	}
-
-	if (!masto) {
+	if (!masto || !server) {
 		return NextResponse.json<StatusResponse>({ ok: false }, { status: 401 });
 	}
 
@@ -46,6 +47,7 @@ export async function GET(request: NextRequest, { params: { id } }: GetParams) {
 		const status = await client.status.findUnique({
 			where: { id },
 			select: {
+				exact: true,
 				mastodonId: true,
 				latitudeFrom: true,
 				latitudeTo: true,
@@ -60,7 +62,8 @@ export async function GET(request: NextRequest, { params: { id } }: GetParams) {
 
 		const mastodonStatus = await masto.v1.statuses.fetch(status.mastodonId);
 
-		const { latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } = status;
+		const { exact, latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } =
+			status;
 
 		const location =
 			(latitudeFrom &&
@@ -78,6 +81,7 @@ export async function GET(request: NextRequest, { params: { id } }: GetParams) {
 			ok: true,
 			server,
 			mastodonStatus,
+			exact,
 			location,
 		});
 	} catch (error) {

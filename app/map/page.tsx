@@ -11,7 +11,7 @@ export default function Map() {
 	const { latitude, longitude } = useLocation();
 
 	return (
-		<Layout noScroll showTabBar hasFloatingButton isPublic>
+		<Layout noScroll showTabBar hasFloatingButton>
 			{latitude && longitude && (
 				<GoogleMaps
 					position={{ latitude, longitude }}

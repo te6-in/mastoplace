@@ -24,17 +24,17 @@ export async function GET(request: NextRequest) {
 	try {
 		const { masto } = data;
 
-		const mastodonStatuses = await masto.v1.timelines.listHome();
+		// masto.v1.stream.streamUser().then(
+		// 	(stream) => stream.on("update", (status) => console.log(status)),
+		// )
+
+		const homeStatuses = await masto.v1.timelines.listHome({ limit: 40 });
+		const homeStatusesIds = homeStatuses.map(({ id }) => id);
 
 		const statuses = await client.status.findMany({
-			where: {
-				mastodonId: {
-					in: mastodonStatuses.map(({ id }) => id),
-				},
-			},
-			select: {
-				id: true,
-			},
+			where: { mastodonId: { in: homeStatusesIds } },
+			select: { id: true },
+			orderBy: { createdAt: "desc" },
 		});
 
 		// TODO: Add pagination
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-	const { text, location } = await request.json();
+	const { text, exact, location } = await request.json();
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
 
 		const status = await client.status.create({
 			data: {
+				exact,
 				latitudeFrom,
 				latitudeTo,
 				longitudeFrom,

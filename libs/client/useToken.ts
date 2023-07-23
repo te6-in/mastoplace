@@ -15,5 +15,5 @@ export function useToken(redirect: false | string = false) {
 		}
 	}, [data, router]);
 
-	return { token: data?.token, isLoading };
+	return { hasValidToken: data?.ok, isLoading };
 }

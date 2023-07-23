@@ -30,7 +30,7 @@ export default function Profile() {
 	}, [data]);
 
 	return (
-		<Layout>
+		<Layout title="프로필" showBackground showTabBar>
 			<Button
 				isPrimary
 				isLoading={isLoading}

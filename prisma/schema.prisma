@@ -12,9 +12,11 @@ datasource db {
 }
 
 model Status {
-  id         String  @id @default(cuid())
+  id         String   @id @default(cuid())
   mastodonId String?
+  createdAt  DateTime @default(now())
 
+  exact         Boolean?
   latitudeFrom  Float?
   latitudeTo    Float?
   longitudeFrom Float?

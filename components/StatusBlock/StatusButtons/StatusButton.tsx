@@ -37,7 +37,7 @@ export function StatusButton({ type }: StatusButtonProps) {
 			)}
 			aria-label={label}
 		>
-			<Icon className="transition-colors" />
+			<Icon />
 		</button>
 	);
 }

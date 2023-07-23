@@ -10,7 +10,7 @@ interface TabBarProps {
 }
 
 export function TabBar({ show }: TabBarProps) {
-	const { token } = useToken();
+	const { hasValidToken } = useToken();
 
 	return (
 		<nav
@@ -22,7 +22,7 @@ export function TabBar({ show }: TabBarProps) {
 			<TabBarItem Icon={Newspaper} text="홈" href="/" />
 			<TabBarItem Icon={Globe2} text="공개 위치" href="/public" />
 			<TabBarItem Icon={Map} text="지도" href="/map" />
-			{token ? (
+			{hasValidToken ? (
 				<TabBarItem Icon={UserCircle2} text="프로필" href="/profile" />
 			) : (
 				<TabBarItem Icon={LogIn} text="로그인" href="/auth" />

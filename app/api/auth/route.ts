@@ -66,13 +66,8 @@ export async function GET(request: NextRequest) {
 		return response;
 	} catch (error) {
 		return NextResponse.json<AuthResponse>(
-			{
-				ok: false,
-				error,
-			},
-			{
-				status: 500,
-			}
+			{ ok: false, error },
+			{ status: 500 }
 		);
 	}
 }
