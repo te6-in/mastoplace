@@ -60,8 +60,11 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 	return (
 		<div className="flex gap-2">
 			{mastodonStatus ? (
-				<Link href={`https://${server}/@${mastodonStatus.account.acct}`}>
-					<address className="not-italic w-12 h-12 rounded-full overflow-hidden">
+				<Link
+					href={`https://${server}/@${mastodonStatus.account.acct}`}
+					className="not-italic w-12 h-12 rounded-full overflow-hidden"
+				>
+					<address>
 						<img
 							src={mastodonStatus?.account.avatar}
 							alt={`${mastodonStatus?.account.displayName} 사용자의 프로필 사진`}
@@ -88,12 +91,13 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 				) : (
 					<Skeleton width="25%" className="text-lg" />
 				)}
-				{link ? (
+				{server && link && (
 					<Link href={`/status/${id}`}>
-						<Content mastodonStatus={mastodonStatus} />
+						<Content mastodonStatus={mastodonStatus} server={server} />
 					</Link>
-				) : (
-					<Content mastodonStatus={mastodonStatus} />
+				)}
+				{server && !link && (
+					<Content mastodonStatus={mastodonStatus} server={server} />
 				)}
 				{mastodonStatus && position && (
 					<GoogleMaps

@@ -13,6 +13,7 @@ datasource db {
 
 model Status {
   id         String   @id @default(cuid())
+  server     String
   mastodonId String?
   createdAt  DateTime @default(now())
 

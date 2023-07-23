@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json<NewStatusResponse>({ ok: false }, { status: 401 });
 	}
 
-	const { masto } = data;
+	const { masto, server } = data;
 
 	try {
 		const { latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } = location;
@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
 		const status = await client.status.create({
 			data: {
 				exact,
+				server,
 				latitudeFrom,
 				latitudeTo,
 				longitudeFrom,

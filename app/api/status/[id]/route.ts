@@ -39,28 +39,28 @@ export async function GET(
 
 	const { masto, server } = data;
 
-	if (!masto || !server) {
+	if (!masto) {
 		return NextResponse.json<StatusResponse>({ ok: false }, { status: 401 });
 	}
 
 	try {
-		const status = await client.status.findUnique({
-			where: { id },
-			select: {
-				exact: true,
-				mastodonId: true,
-				latitudeFrom: true,
-				latitudeTo: true,
-				longitudeFrom: true,
-				longitudeTo: true,
-			},
-		});
+		const status = await client.status.findUnique({ where: { id } });
 
 		if (!status || !status.mastodonId) {
 			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });
 		}
 
-		const mastodonStatus = await masto.v1.statuses.fetch(status.mastodonId);
+		const search = await masto.v2.search({
+			q: `https://${status.server}/@he/${status.mastodonId}`,
+			resolve: true,
+			type: "statuses",
+		});
+
+		const mastodonStatus = search.statuses[0];
+
+		if (!mastodonStatus) {
+			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });
+		}
 
 		const { exact, latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } =
 			status;
@@ -85,6 +85,7 @@ export async function GET(
 			location,
 		});
 	} catch (error) {
+		console.log(error);
 		return NextResponse.json<StatusResponse>(
 			{ ok: false, error },
 			{ status: 500 }

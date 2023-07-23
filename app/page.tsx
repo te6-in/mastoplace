@@ -78,7 +78,7 @@ export default function Home() {
 					</p>
 				</div>
 			)}
-			{hasValidToken && data && !length && (
+			{hasValidToken && data && length === 0 && (
 				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
 					<p>
 						마스토돈 홈 타임라인에 Mastoplace를 통해 게시된 글이 아직 없어요.
@@ -101,7 +101,7 @@ export default function Home() {
 					</p>
 				</div>
 			)}
-			{hasValidToken && data && length && length > 0 && (
+			{hasValidToken && data && length !== undefined && length > 0 && (
 				<InfiniteScroll
 					dataLength={length}
 					next={() => setSize(size + 1)}

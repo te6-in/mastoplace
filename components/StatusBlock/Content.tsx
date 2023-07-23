@@ -4,12 +4,14 @@ import { mastodon } from "masto";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { parseURL } from "ufo";
 
 interface ContentProps {
 	mastodonStatus: mastodon.v1.Status | undefined;
+	server: string;
 }
 
-export function Content({ mastodonStatus }: ContentProps) {
+export function Content({ mastodonStatus, server }: ContentProps) {
 	return (
 		<article className="text-slate-700 flex gap-1 flex-col break-keep">
 			{mastodonStatus ? (
@@ -19,10 +21,19 @@ export function Content({ mastodonStatus }: ContentProps) {
 							if (domNode.name === "a") {
 								return (
 									<Link
-										href={domNode.attribs.href}
+										href={
+											domNode.attribs.class === "u-url mention"
+												? `https://${server}/@${
+														parseURL(domNode.attribs.href).pathname.split(
+															"/@"
+														)[1]
+												  }@${parseURL(domNode.attribs.href).host}`
+												: domNode.attribs.href
+										}
 										className={j(
 											"break-all text-violet-500 hover:text-violet-600 active:text-violet-700 transition-colors",
-											domNode.attribs.class === "mention hashtag"
+											domNode.attribs.class === "mention hashtag" ||
+												domNode.attribs.class === "u-url mention"
 												? ""
 												: "underline underline-offset-4"
 										)}
