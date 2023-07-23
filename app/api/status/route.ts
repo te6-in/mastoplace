@@ -4,9 +4,14 @@ import { mastodonClient } from "@/libs/server/session";
 import { Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+const MAX_CONSECUTIVE_TIMELINE_FETCHES = process.env
+	.MAX_CONSECUTIVE_TIMELINE_FETCHES
+	? parseInt(process.env.MAX_CONSECUTIVE_TIMELINE_FETCHES)
+	: 3;
+
 export interface StatusesResponse extends DefaultResponse {
-	statuses?: Pick<Status, "id">[];
-	error?: unknown;
+	statuses?: Pick<Status, "id" | "mastodonId">[];
+	nextMaxId?: string;
 }
 
 export interface NewStatusResponse extends DefaultResponse {
@@ -15,6 +20,9 @@ export interface NewStatusResponse extends DefaultResponse {
 }
 
 export async function GET(request: NextRequest) {
+	const { searchParams } = new URL(request.url);
+	const maxId = searchParams.get("max_id");
+
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
@@ -24,27 +32,42 @@ export async function GET(request: NextRequest) {
 	try {
 		const { masto } = data;
 
-		// masto.v1.stream.streamUser().then(
-		// 	(stream) => stream.on("update", (status) => console.log(status)),
-		// )
+		let statuses;
+		let nextMaxId;
+		let count = 0;
 
-		const homeStatuses = await masto.v1.timelines.listHome({ limit: 40 });
-		const homeStatusesIds = homeStatuses.map(({ id }) => id);
+		do {
+			const homeStatuses = await masto.v1.timelines.listHome({
+				limit: 40,
+				maxId,
+			});
 
-		const statuses = await client.status.findMany({
-			where: { mastodonId: { in: homeStatusesIds } },
-			select: { id: true },
-			orderBy: { createdAt: "desc" },
+			const homeStatusesIds = homeStatuses.map(({ id }) => id);
+
+			statuses = await client.status.findMany({
+				where: {
+					mastodonId: { in: homeStatusesIds },
+					NOT: { mastodonId: nextMaxId },
+				},
+				select: { id: true, mastodonId: true },
+				orderBy: { createdAt: "desc" },
+			});
+
+			nextMaxId =
+				count === MAX_CONSECUTIVE_TIMELINE_FETCHES - 1
+					? undefined
+					: homeStatusesIds[homeStatusesIds.length - 1];
+
+			count = count + 1;
+		} while (statuses.length === 0 && count < MAX_CONSECUTIVE_TIMELINE_FETCHES);
+
+		return NextResponse.json<StatusesResponse>({
+			ok: true,
+			statuses,
+			nextMaxId,
 		});
-
-		// TODO: Add pagination
-
-		return NextResponse.json<StatusesResponse>({ ok: true, statuses });
 	} catch (error) {
-		return NextResponse.json<StatusesResponse>(
-			{ ok: false, error },
-			{ status: 500 }
-		);
+		return NextResponse.json<StatusesResponse>({ ok: false }, { status: 500 });
 	}
 }
 

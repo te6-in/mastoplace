@@ -57,8 +57,6 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 		distance !== false &&
 		` | 이 글에서 ${new Intl.NumberFormat("ko-KR").format(distance)}m`;
 
-	console.log(mastodonStatus);
-
 	return (
 		<div className="flex gap-2">
 			{mastodonStatus ? (
@@ -76,7 +74,7 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 				</div>
 			)}
 			<div className="flex flex-col flex-1 gap-1">
-				{mastodonStatus && server && (
+				{mastodonStatus && server ? (
 					<Link href={`https://${server}/@${mastodonStatus.account.acct}`}>
 						<address className="flex items-baseline not-italic flex-wrap">
 							<span className="text-slate-900 font-medium text-lg mr-1">
@@ -87,6 +85,8 @@ export function StatusBlock({ id, link, from }: StatusBlockProps) {
 							</span>
 						</address>
 					</Link>
+				) : (
+					<Skeleton width="25%" className="text-lg" />
 				)}
 				{link ? (
 					<Link href={`/status/${id}`}>

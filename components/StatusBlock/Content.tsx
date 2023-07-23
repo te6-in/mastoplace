@@ -11,7 +11,7 @@ interface ContentProps {
 
 export function Content({ mastodonStatus }: ContentProps) {
 	return (
-		<article className="text-slate-700 flex gap-1 flex-col">
+		<article className="text-slate-700 flex gap-1 flex-col break-keep">
 			{mastodonStatus ? (
 				parse(mastodonStatus.content, {
 					replace: (domNode) => {
@@ -21,7 +21,7 @@ export function Content({ mastodonStatus }: ContentProps) {
 									<Link
 										href={domNode.attribs.href}
 										className={j(
-											"text-violet-500 hover:text-violet-600 active:text-violet-700 transition-colors",
+											"break-all text-violet-500 hover:text-violet-600 active:text-violet-700 transition-colors",
 											domNode.attribs.class === "mention hashtag"
 												? ""
 												: "underline underline-offset-4"

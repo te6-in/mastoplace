@@ -128,6 +128,43 @@ export async function GET(
 
 		// TODO: Add pagination
 
+		// const nearbyStatuses = await client.status.findMany({
+		// 	where: {
+		// 		latitudeFrom: {
+		// 			lte: originalLocation.latitudeTo + 0.05,
+		// 			gte: originalLocation.latitudeFrom - 0.05,
+		// 		},
+		// 		latitudeTo: {
+		// 			lte: originalLocation.latitudeTo + 0.05,
+		// 			gte: originalLocation.latitudeFrom - 0.05,
+		// 		},
+		// 		longitudeFrom: {
+		// 			lte: originalLocation.longitudeTo + 0.05,
+		// 			gte: originalLocation.longitudeFrom - 0.05,
+		// 		},
+		// 		longitudeTo: {
+		// 			lte: originalLocation.longitudeTo + 0.05,
+		// 			gte: originalLocation.longitudeFrom - 0.05,
+		// 		},
+		// 	},
+		// 	select: { id: true, mastodonId: true },
+		// 	orderBy: { createdAt: "desc" },
+		// });
+
+		// const mastodonNearbyStatuses = await Promise.all(
+		// 	nearbyStatuses.map(async (nearbyStatus) => {
+		// 		if (!nearbyStatus.mastodonId) {
+		// 			return null;
+		// 		}
+
+		// 		return await masto.v1.statuses.fetch(nearbyStatus.mastodonId);
+		// 	})
+		// );
+
+		// const mastodonNearbyStatusesFiltered = mastodonNearbyStatuses.filter(
+		// 	(status): status is mastodon.v1.Status => !!status
+		// );
+
 		return NextResponse.json<NearbyStatusesResponse>({
 			ok: true,
 			originalLocation,
