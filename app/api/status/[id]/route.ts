@@ -1,4 +1,5 @@
 import { client } from "@/libs/server/client";
+import { findStatus } from "@/libs/server/findStatus";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { mastodon } from "masto";
@@ -50,19 +51,7 @@ export async function GET(
 			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });
 		}
 
-		let mastodonStatus;
-
-		if (clientServer === status.server) {
-			mastodonStatus = await masto.v1.statuses.fetch(status.mastodonId);
-		} else {
-			const search = await masto.v2.search({
-				q: `https://${status.server}/@${status.handle}/${status.mastodonId}`,
-				resolve: true,
-				type: "statuses",
-			});
-
-			mastodonStatus = search.statuses[0];
-		}
+		const mastodonStatus = await findStatus({ masto, clientServer, status });
 
 		if (!mastodonStatus) {
 			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });
@@ -91,7 +80,6 @@ export async function GET(
 			location,
 		});
 	} catch (error) {
-		console.log(error);
 		return NextResponse.json<StatusResponse>(
 			{ ok: false, error },
 			{ status: 500 }

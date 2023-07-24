@@ -1,5 +1,6 @@
 import { StatusGetParams } from "@/app/api/status/[id]/route";
 import { client } from "@/libs/server/client";
+import { findStatus } from "@/libs/server/findStatus";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
@@ -54,21 +55,11 @@ export async function GET(
 			);
 		}
 
-		let originalMastodonStatus;
-
-		if (clientServer === originalStatus.server) {
-			originalMastodonStatus = await masto.v1.statuses.fetch(
-				originalStatus.mastodonId
-			);
-		} else {
-			const search = await masto.v2.search({
-				q: `https://${originalStatus.server}/@${originalStatus.handle}/${originalStatus.mastodonId}`,
-				resolve: true,
-				type: "statuses",
-			});
-
-			originalMastodonStatus = search.statuses[0];
-		}
+		const originalMastodonStatus = await findStatus({
+			masto,
+			clientServer,
+			status: originalStatus,
+		});
 
 		if (!originalMastodonStatus) {
 			return NextResponse.json<NearbyStatusesResponse>(
@@ -121,33 +112,31 @@ export async function GET(
 					gte: originalLocation.longitudeFrom - 0.05,
 				},
 			},
-			select: { id: true, mastodonId: true, server: true },
+			select: { id: true, mastodonId: true, server: true, handle: true },
 			orderBy: { createdAt: "desc" },
 		});
 
-		const localViewableIds = nearbyStatuses
-			.filter(async (nearbyStatus) => {
+		const isLocalViewable = await Promise.all(
+			nearbyStatuses.map(async (nearbyStatus) => {
 				if (!nearbyStatus.mastodonId) return false;
 
-				if (clientServer === nearbyStatus.server) {
-					const mastodonStatus = await masto.v1.statuses.fetch(
-						nearbyStatus.mastodonId
-					);
-
-					if (mastodonStatus) return true;
-					return false;
-				}
-
-				const search = await masto.v2.search({
-					q: `https://${nearbyStatus.server}/@${originalStatus.handle}/${nearbyStatus.mastodonId}`,
-					resolve: true,
-					type: "statuses",
+				const fetchedStatus = await findStatus({
+					masto,
+					clientServer,
+					status: nearbyStatus,
 				});
 
-				if (!search.statuses[0]) return true;
+				if (fetchedStatus) return true;
+
 				return false;
 			})
-			.map(({ id }) => id);
+		);
+
+		const localViewableIds = nearbyStatuses
+			.filter((_, index) => {
+				return isLocalViewable[index];
+			})
+			.map((nearbyStatus) => nearbyStatus.id);
 
 		// TODO: Add pagination
 

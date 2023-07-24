@@ -58,8 +58,8 @@ export default function Home() {
 			)}
 			{!hasValidToken && !isTokenLoading && (
 				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
-					<p>로그인하면 마스토돈 홈 타임라인에서</p>
-					<p>Mastoplace를 통해 게시된 글을 볼 수 있어요.</p>
+					<p>로그인하면 마스토돈 팔로우한 사람들이</p>
+					<p>Mastoplace를 통해 올린 글을 볼 수 있어요.</p>
 					<p>
 						<Link
 							href="/auth"
@@ -80,9 +80,7 @@ export default function Home() {
 			)}
 			{hasValidToken && data && length === 0 && (
 				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
-					<p>
-						마스토돈 홈 타임라인에 Mastoplace를 통해 게시된 글이 아직 없어요.
-					</p>
+					<p>팔로우하는 사람 중 Mastoplace를 통해 글을 작성한 사람이 없어요.</p>
 					<p>
 						<Link
 							href="/public"
@@ -95,9 +93,8 @@ export default function Home() {
 							href="/status/new"
 							className="underline text-violet-500 underline-offset-4"
 						>
-							첫 번째 글을 작성
+							첫 번째가 되어보세요!
 						</Link>
-						해 보세요!
 					</p>
 				</div>
 			)}
@@ -126,7 +123,7 @@ export default function Home() {
 					</ol>
 				</InfiniteScroll>
 			)}
-			{!hasMore && (
+			{hasValidToken && data && !hasMore && (
 				<div className="my-6 text-slate-500 text-sm font-medium text-center">
 					목록의 끝이에요.
 				</div>
