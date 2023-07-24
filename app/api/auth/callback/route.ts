@@ -6,6 +6,7 @@ import { withQuery } from "ufo";
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
+	const redirectAfterAuth = searchParams.get("redirect");
 	const server = searchParams.get("server");
 	const code = searchParams.get("code");
 
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
 	const params = {
 		client_id,
 		client_secret,
-		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?server=${server}`,
+		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?redirect=${redirectAfterAuth}&server=${server}`,
 		grant_type: "authorization_code",
 		code,
 		scope: (process.env.NEXT_PUBLIC_SCOPE as string).replaceAll(" ", "+"),
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
 		});
 
 		const response = NextResponse.redirect(
-			process.env.NEXT_PUBLIC_BASE_URL as string
+			`${process.env.NEXT_PUBLIC_BASE_URL as string}${redirectAfterAuth}`
 		);
 
 		response.cookies.delete(process.env.CLIENT_COOKIE_NAME as string);

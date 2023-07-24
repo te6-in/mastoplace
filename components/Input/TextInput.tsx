@@ -32,10 +32,10 @@ export function TextInput({
 
 	return (
 		<div className="flex flex-col">
-			<div className="mb-1 flex justify-between px-1 text-sm font-medium">
+			<div className="mb-1 flex flex-wrap justify-between px-1 text-sm font-medium">
 				<Label text={label} id={id} />
 				{error && (
-					<span className="text-red-500 motion-safe:animate-shake">
+					<span className="text-red-500 break-keep text-right motion-safe:animate-shake ml-auto">
 						{error}
 					</span>
 				)}

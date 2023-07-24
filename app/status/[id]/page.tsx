@@ -1,9 +1,11 @@
 "use client";
 
 import { NearbyStatusesResponse } from "@/app/api/status/[id]/nearby/route";
+import { LogInOrPublic } from "@/components/Auth/LogInOrPublic";
 import { Button } from "@/components/Input/Button";
 import { Layout } from "@/components/Layout";
 import { StatusBlock } from "@/components/StatusBlock";
+import { useToken } from "@/libs/client/useToken";
 import useSWR from "swr";
 
 interface StatusParams {
@@ -17,8 +19,32 @@ export default function Status({ params }: StatusParams) {
 		params.id ? `/api/status/${params.id}/nearby` : null
 	);
 
+	const { hasValidToken, isLoading: isTokenLoading } = useToken();
+
 	return (
-		<Layout showBackButton showTabBar showBackground>
+		<Layout
+			showBackButton={isTokenLoading || isLoading ? true : hasValidToken}
+			showTabBar
+			showBackground={isTokenLoading || isLoading ? true : hasValidToken}
+		>
+			{!isTokenLoading && !hasValidToken && (
+				<div className="flex flex-col gap-8 sm:w-96 w-3/4 items-center mx-auto mt-24 break-keep">
+					<div className="flex flex-col gap-2">
+						<p className="text-xl font-medium text-slate-800 text-center">
+							이 글을 보기 위해서는 로그인해야 합니다.
+						</p>
+						<p className="text-center font-semibold text-slate-500 text-sm">
+							Mastoplace 서버에는 글 내용이 저장되지 않기 때문에
+							<br />
+							로그인해야 마스토돈 서버를 통해 글을 확인할 수 있습니다.
+						</p>
+					</div>
+					<LogInOrPublic
+						redirectAfterAuth={location.href}
+						buttonText="로그인한 뒤 이 글로 돌아오기"
+					/>
+				</div>
+			)}
 			{(!params.id || (data && data.ok) === false) && null}
 			{params.id && (
 				<div className="flex flex-col gap-4">
@@ -64,24 +90,30 @@ export default function Status({ params }: StatusParams) {
 					</div>
 				</div>
 			)}
-			{params.id && data && data.ok === false && (
-				<div className="flex flex-col gap-6 px-4 mt-6 text-center">
-					<div className="flex flex-col gap-2">
-						<h1 className="text-slate-800 text-3xl">아쉽네요!</h1>
-						<p className="text-slate-600">
-							없는 글이거나 현재 로그인한 계정으로는 볼 수 없는 글이에요.
-						</p>
+			{!isTokenLoading &&
+				hasValidToken &&
+				params.id &&
+				data &&
+				data.ok === false && (
+					<div className="flex flex-col gap-6 px-4 mt-12 mx-auto text-center w-3/4 sm:w-96">
+						<div className="flex flex-col gap-2">
+							<h1 className="text-slate-800 text-3xl">아쉽네요!</h1>
+							<p className="text-slate-600">
+								없는 글이거나
+								<br />
+								지금 로그인한 계정으로는 볼 수 없는 글이에요.
+							</p>
+						</div>
+						<div className="grid grid-cols-2 gap-2">
+							<Button text="홈으로 가기" href="/" isPrimary isLoading={false} />
+							<Button
+								text="공개 위치 구경하기"
+								href="/public"
+								isLoading={false}
+							/>
+						</div>
 					</div>
-					<div className="flex gap-2 mx-auto">
-						<Button text="홈으로 가기" href="/" isPrimary isLoading={false} />
-						<Button
-							text="공개 위치 구경하기"
-							href="/public"
-							isLoading={false}
-						/>
-					</div>
-				</div>
-			)}
+				)}
 		</Layout>
 	);
 }

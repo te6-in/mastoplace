@@ -1,6 +1,7 @@
 "use client";
 
 import { StatusesResponse } from "@/app/api/status/route";
+import { LogInOrPublic } from "@/components/Auth/LogInOrPublic";
 import { Layout } from "@/components/Layout";
 import { FloatingButton } from "@/components/Layout/FloatingButton";
 import { StatusBlock } from "@/components/StatusBlock";
@@ -57,25 +58,15 @@ export default function Home() {
 				</ol>
 			)}
 			{!hasValidToken && !isTokenLoading && (
-				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
-					<p>로그인하면 마스토돈 팔로우한 사람들이</p>
-					<p>Mastoplace를 통해 올린 글을 볼 수 있어요.</p>
+				<div className="text-center px-4 flex gap-8 items-center flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
 					<p>
-						<Link
-							href="/auth"
-							className="underline text-violet-500 underline-offset-4"
-						>
-							로그인
-						</Link>
-						하거나{" "}
-						<Link
-							href="/public"
-							className="underline text-violet-500 underline-offset-4"
-						>
-							공개 위치
-						</Link>
-						를 둘러보세요!
+						로그인하면 마스토돈에서 팔로우한 사람들이
+						<br />
+						Mastoplace를 통해 올린 글을 볼 수 있어요.
 					</p>
+					<div className="sm:w-96 w-3/4">
+						<LogInOrPublic redirectAfterAuth="/" />
+					</div>
 				</div>
 			)}
 			{hasValidToken && data && length === 0 && (
@@ -128,7 +119,13 @@ export default function Home() {
 					목록의 끝이에요.
 				</div>
 			)}
-			<FloatingButton Icon={Pencil} text="새로운 글 작성" href="/status/new" />
+			{hasValidToken && (
+				<FloatingButton
+					Icon={Pencil}
+					text="새로운 글 작성"
+					href="/status/new"
+				/>
+			)}
 		</Layout>
 	);
 }

@@ -10,11 +10,12 @@ export interface AuthResponse extends DefaultResponse {
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
+	const redirectAfterAuth = searchParams.get("redirect");
 	const server = searchParams.get("server");
 
 	const params = {
 		client_name: "Mastoplace",
-		redirect_uris: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?server=${server}`,
+		redirect_uris: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?redirect=${redirectAfterAuth}&server=${server}`,
 		scopes: process.env.NEXT_PUBLIC_SCOPE,
 	};
 
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
 				client_id,
 				scope: process.env.NEXT_PUBLIC_SCOPE,
 				response_type: "code",
-				redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?server=${server}`,
+				redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?redirect=${redirectAfterAuth}&server=${server}`,
 			}),
 		});
 

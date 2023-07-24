@@ -1,17 +1,12 @@
-"use client";
-
 import { TabBarItem } from "@/components/Layout/TabBar/TabBarItem";
-import { useToken } from "@/libs/client/useToken";
 import { j } from "@/libs/client/utils";
-import { Globe2, LogIn, Map, Newspaper, UserCircle2 } from "lucide-react";
+import { Globe2, Map, Newspaper, UserCircle2 } from "lucide-react";
 
 interface TabBarProps {
 	show?: boolean;
 }
 
 export function TabBar({ show }: TabBarProps) {
-	const { hasValidToken } = useToken();
-
 	return (
 		<nav
 			className={j(
@@ -22,11 +17,7 @@ export function TabBar({ show }: TabBarProps) {
 			<TabBarItem Icon={Newspaper} text="홈" href="/" />
 			<TabBarItem Icon={Globe2} text="공개 위치" href="/public" />
 			<TabBarItem Icon={Map} text="지도" href="/map" />
-			{hasValidToken ? (
-				<TabBarItem Icon={UserCircle2} text="프로필" href="/profile" />
-			) : (
-				<TabBarItem Icon={LogIn} text="로그인" href="/auth" />
-			)}
+			<TabBarItem Icon={UserCircle2} text="프로필" href="/profile" />
 		</nav>
 	);
 }

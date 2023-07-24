@@ -26,10 +26,10 @@ export function Button({
 		<Tag
 			href={href ?? ""}
 			className={j(
-				"flex items-center justify-center rounded-md px-4 py-2 shadow-sm transition-all",
+				"flex items-center border justify-center rounded-md px-4 py-2 w-full shadow-sm transition-all",
 				isPrimary
-					? "bg-violet-500 font-medium  text-white"
-					: "border border-slate-300 bg-white text-slate-700",
+					? "border-violet-500 bg-violet-500 font-medium  text-white"
+					: "border-slate-300 bg-white text-slate-700",
 				isLoading
 					? "cursor-default opacity-60"
 					: isPrimary
@@ -48,7 +48,7 @@ export function Button({
 					/>
 				)
 			)}
-			{text && <span className="ml-2 mr-1">{text}</span>}
+			{text && <span className="ml-2 mr-1 break-keep text-center">{text}</span>}
 		</Tag>
 	);
 }

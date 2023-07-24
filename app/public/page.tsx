@@ -58,7 +58,10 @@ export default function Public() {
 			)}
 			{!isLoading && data && length === 0 && (
 				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
-					<p>Mastoplace를 통해 게시된 글 중에서 볼 수 있는 글이 없어요.</p>
+					<p>
+						Mastoplace를 통해 게시된 글 중에서
+						<br />볼 수 있는 글이 없어요.
+					</p>
 					<p>
 						<Link
 							href="/status/new"
