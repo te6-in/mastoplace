@@ -4,6 +4,7 @@ import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
 import { StatusBlock } from "@/components/StatusBlock";
 import { useMutation } from "@/libs/client/useMutation";
 import { j } from "@/libs/client/utils";
+import { AnimatePresence } from "framer-motion";
 import {
 	ArrowUpRightSquare,
 	Bookmark,
@@ -52,16 +53,18 @@ export function StatusButton({ type, id }: StatusButtonProps) {
 
 	return (
 		<>
-			{id && showDeleteModal && (
-				<FullPageOverlay
-					type="close"
-					buttonLabel="삭제 안 할래요"
-					component={
-						<DeleteModal id={id} setShowDeleteModal={setShowDeleteModal} />
-					}
-					onCloseClick={() => setShowDeleteModal(false)}
-				/>
-			)}
+			<AnimatePresence>
+				{id && showDeleteModal && (
+					<FullPageOverlay
+						type="close"
+						buttonLabel="삭제 안 할래요"
+						component={
+							<DeleteModal id={id} setShowDeleteModal={setShowDeleteModal} />
+						}
+						onCloseClick={() => setShowDeleteModal(false)}
+					/>
+				)}
+			</AnimatePresence>
 			<button
 				className={j(
 					"flex text-slate-600 p-1 rounded-md transition-colors",

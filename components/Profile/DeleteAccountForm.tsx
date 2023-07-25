@@ -6,6 +6,7 @@ import { useMutation } from "@/libs/client/useMutation";
 import { j } from "@/libs/client/utils";
 import {
 	ArrowUpRightSquare,
+	Check,
 	ChevronLast,
 	Eraser,
 	LogOut,
@@ -157,7 +158,13 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 										: "글 개수 로딩 중..."
 								}
 								isLoading={isViewableCountLoading || isDeletePostsLoading}
-								Icon={Trash2}
+								Icon={
+									viewableCountData &&
+									viewableCountData.count !== undefined &&
+									viewableCountData.count > 0
+										? Trash2
+										: Check
+								}
 								disabled={stepsDone !== 0}
 								onClick={onFirstClick}
 							/>
@@ -193,7 +200,13 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 									: "내 정보 개수 로딩 중..."
 							}
 							isLoading={isAllCountLoading || isDeleteDatabaseLoading}
-							Icon={Eraser}
+							Icon={
+								allCountData &&
+								allCountData.count !== undefined &&
+								allCountData.count > 0
+									? Eraser
+									: Check
+							}
 							disabled={stepsDone !== 1}
 							onClick={onSecondClick}
 						/>
@@ -210,7 +223,7 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 							isPrimary={stepsDone === 2}
 							text={`${server} 설정 새 탭에서 열기`}
 							isLoading={false}
-							Icon={ArrowUpRightSquare}
+							Icon={stepsDone === 3 ? Check : ArrowUpRightSquare}
 							disabled={stepsDone !== 2}
 							onClick={() => {
 								window.open(

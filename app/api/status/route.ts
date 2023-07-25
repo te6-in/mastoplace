@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-	const { text, exact, location } = await request.json();
+	const { text, privacy, exact, location } = await request.json();
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
 		try {
 			const { id: mastodonId } = await masto.v1.statuses.create({
 				status: textWithURL,
-				visibility: "direct",
+				visibility: privacy,
 			});
 
 			await client.status.update({

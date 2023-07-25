@@ -1,9 +1,11 @@
 "use client";
 
+import { MyInfoResponse } from "@/app/api/profile/me/route";
 import { NewStatusResponse } from "@/app/api/status/route";
 import { AuthForm } from "@/components/Auth/AuthForm";
 import { GoogleMaps } from "@/components/GoogleMaps";
 import { Checkbox } from "@/components/Input/Checkbox";
+import { PrivacySelector } from "@/components/Input/PrivacySelector";
 import { TextArea } from "@/components/Input/TextArea";
 import { Layout } from "@/components/Layout";
 import { BottomToolbar } from "@/components/Layout/BottomToolbar";
@@ -11,21 +13,26 @@ import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
 import { useLocation } from "@/libs/client/useLocation";
 import { useMutation } from "@/libs/client/useMutation";
 import { useToken } from "@/libs/client/useToken";
+import { AnimatePresence } from "framer-motion";
 import { getCenter } from "geolib";
 import { Check, Map } from "lucide-react";
+import { mastodon } from "masto";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useSWRConfig } from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 interface NewStatusForm {
 	text: string;
+	privacy: mastodon.v1.StatusVisibility;
 	approximate: boolean;
 	exact: boolean;
 }
 
 export default function New() {
 	const { hasValidToken, isLoading: isTokenLoading } = useToken();
+	const { data: meData, isLoading: isMeLoading } =
+		useSWR<MyInfoResponse>("/api/profile/me");
 
 	const router = useRouter();
 	const { mutate } = useSWRConfig();
@@ -102,6 +109,7 @@ export default function New() {
 
 		submit({
 			text: inputs.text,
+			privacy: inputs.privacy,
 			exact: watchExact ? true : watchApproximate ? false : undefined,
 			location: {
 				...(watchExact
@@ -126,6 +134,16 @@ export default function New() {
 		}
 	}, [watchApproximate, setValue]);
 
+	useEffect(() => {
+		if (isMeLoading || !meData?.me) return;
+
+		if (process.env.NODE_ENV === "development") {
+			setValue("privacy", "direct");
+		} else {
+			setValue("privacy", meData.me.defaultPrivacy);
+		}
+	}, [meData, setValue]);
+
 	if (isTokenLoading) return null;
 
 	return (
@@ -135,24 +153,26 @@ export default function New() {
 			showBackButton
 			hasBottomToolbar
 		>
-			{!hasValidToken && (
-				<FullPageOverlay
-					type="back"
-					component={
-						<div className="flex flex-col gap-6">
-							<p className="text-xl font-medium text-slate-800 text-center break-keep">
-								새로운 글을 작성하려면
-								<br />
-								로그인해야 합니다.
-							</p>
-							<AuthForm
-								buttonText="로그인하고 글 작성하기"
-								redirectAfterAuth="/status/new"
-							/>
-						</div>
-					}
-				/>
-			)}
+			<AnimatePresence>
+				{!hasValidToken && (
+					<FullPageOverlay
+						type="back"
+						component={
+							<div className="flex flex-col gap-6">
+								<p className="text-xl font-medium text-slate-800 text-center break-keep">
+									새로운 글을 작성하려면
+									<br />
+									로그인해야 합니다.
+								</p>
+								<AuthForm
+									buttonText="로그인하고 글 작성하기"
+									redirectAfterAuth="/status/new"
+								/>
+							</div>
+						}
+					/>
+				)}
+			</AnimatePresence>
 			<form onSubmit={handleSubmit(onValid)}>
 				<div className="flex flex-col gap-4 px-4">
 					{watchExact && exactPosition && (
@@ -187,6 +207,12 @@ export default function New() {
 						placeholder="거기에선 어떤 일이 일어나고 있나요?"
 						error={errors.text?.message}
 					/>
+					<PrivacySelector
+						register={register("privacy", {
+							required: "공개 범위를 선택해주세요.",
+						})}
+						error={errors.privacy?.message}
+					/>
 					<Checkbox
 						register={register("approximate")}
 						id="approximate"
@@ -200,7 +226,6 @@ export default function New() {
 						label="대략적인 위치보다 조금 더 정밀한 구역으로 구분된 범위가 게시됩니다."
 						disabled={!watchApproximate}
 					/>
-					{/* TODO: Post privacy */}
 				</div>
 				<BottomToolbar
 					primaryButton={{

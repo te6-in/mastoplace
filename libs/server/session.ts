@@ -56,10 +56,16 @@ export async function mastodonClient(cookies: RequestCookies) {
 	try {
 		const account = await masto.v1.accounts.verifyCredentials();
 
-		return { masto, clientServer: server, handle: account.acct } as {
+		return {
+			masto,
+			clientServer: server,
+			handle: account.acct,
+			defaultPrivacy: account.source.privacy,
+		} as {
 			masto: mastodon.Client;
 			clientServer: string;
 			handle: string;
+			defaultPrivacy: mastodon.v1.StatusVisibility | null | undefined;
 		};
 	} catch {
 		return null;

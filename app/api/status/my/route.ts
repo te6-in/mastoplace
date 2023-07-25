@@ -73,7 +73,6 @@ export async function GET(request: NextRequest) {
 			nextMaxId,
 		});
 	} catch (error) {
-		console.log(error);
 		return NextResponse.json<MyStatusesResponse>(
 			{ ok: false },
 			{ status: 500 }

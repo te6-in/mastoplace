@@ -114,12 +114,14 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 					<FillButton server="mastodon.social" setValue={setValue} />
 				</div>
 			)}
-			<Button
-				isPrimary
-				Icon={LogIn}
-				isLoading={isLoading}
-				text={buttonText ?? "서버를 통해 로그인"}
-			/>
+			{watchServer !== "" && (
+				<Button
+					isPrimary
+					Icon={LogIn}
+					isLoading={isLoading}
+					text={buttonText ?? "서버를 통해 로그인"}
+				/>
+			)}
 		</form>
 	);
 }
@@ -136,7 +138,7 @@ function FillButton({ server, setValue }: FillButtonProps) {
 
 	return (
 		<button
-			className="flex items-center justify-between gap-1 rounded-md bg-slate-100 shadow-sm border-slate-200 border py-1.5 px-2.5 hover:bg-slate-200 active:bg-slate-300 transition-colors overflow-hidden"
+			className="flex items-center justify-between gap-1 rounded-md bg-slate-100 shadow-sm border-slate-200 border p-1.5 pl-2.5 hover:bg-slate-200 active:bg-slate-300 transition-colors overflow-hidden"
 			onClick={onClick}
 		>
 			<span>{server}</span>

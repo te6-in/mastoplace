@@ -5,7 +5,7 @@ interface PrivacyProps {
 	privacy: mastodon.v1.StatusVisibility;
 }
 
-function Set(privacy: mastodon.v1.StatusVisibility) {
+export function privacySet(privacy: mastodon.v1.StatusVisibility) {
 	switch (privacy) {
 		case "public":
 			return {
@@ -31,7 +31,7 @@ function Set(privacy: mastodon.v1.StatusVisibility) {
 }
 
 export function Privacy({ privacy }: PrivacyProps) {
-	const { Icon, text } = Set(privacy);
+	const { Icon, text } = privacySet(privacy);
 
 	return (
 		<div className="flex items-center gap-1">
