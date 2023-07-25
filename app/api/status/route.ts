@@ -66,21 +66,30 @@ export async function GET(request: NextRequest) {
 					// 공개 위치 요청 중이 아닌 경우
 
 					// 팔로우 중인 사람의 글만 보임
-					const author = await masto.v1.accounts.fetch(
-						mastodonStatus.account.id
-					);
-					if (!author) return false;
+					try {
+						const author = await masto.v1.accounts.fetch(
+							mastodonStatus.account.id
+						);
 
-					const me = await masto.v1.accounts.verifyCredentials();
-					if (!me) return false;
+						try {
+							await masto.v1.accounts.verifyCredentials();
 
-					const [{ following }] = await masto.v1.accounts.fetchRelationships([
-						author.id,
-					]);
+							try {
+								const [{ following }] =
+									await masto.v1.accounts.fetchRelationships([author.id]);
 
-					if (following) return true;
+								if (following) return true;
+							} catch {
+								return false;
+							}
 
-					return false;
+							return false;
+						} catch {
+							return false;
+						}
+					} catch (error) {
+						return false;
+					}
 				} else {
 					// 로그인 상태가 아니면 리모트 글은 볼 수 없음
 					if (status.server !== "mastodon.social") return false;
@@ -92,14 +101,12 @@ export async function GET(request: NextRequest) {
 
 					if (!mastodonSocial) return false;
 
-					const mastodonStatus = await mastodonSocial.v1.statuses.fetch(
-						status.mastodonId
-					);
-
-					// 글을 볼 수 있는 상태임
-					if (mastodonStatus) return true;
-
-					return false;
+					try {
+						await mastodonSocial.v1.statuses.fetch(status.mastodonId);
+						return true;
+					} catch (error) {
+						return false;
+					}
 				}
 			})
 		);

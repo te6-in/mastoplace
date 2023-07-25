@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/Input/Button";
 import { TextInput } from "@/components/Input/TextInput";
-import { LogIn } from "lucide-react";
+import { ArrowUpLeft, LogIn } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { UseFormSetValue, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { parseURL, withQuery } from "ufo";
 
@@ -34,6 +34,7 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 		handleSubmit,
 		setError,
 		watch,
+		setValue,
 		formState: { errors },
 	} = useForm<AuthInputs>({
 		...(process.env.NODE_ENV === "development" ? { ...devDefault } : {}),
@@ -103,6 +104,16 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 				prefix="https://"
 				error={errors.server?.message}
 			/>
+			{watchServer === "" && (
+				<div className="grid grid-cols-2 text-sm text-slate-700 gap-2">
+					<FillButton server="twingyeo.kr" setValue={setValue} />
+					<FillButton server="planet.moe" setValue={setValue} />
+					<FillButton server="qdon.space" setValue={setValue} />
+					<FillButton server="mustard.blog" setValue={setValue} />
+					<FillButton server="pointless.chat" setValue={setValue} />
+					<FillButton server="mastodon.social" setValue={setValue} />
+				</div>
+			)}
 			<Button
 				isPrimary
 				Icon={LogIn}
@@ -110,5 +121,26 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 				text={buttonText ?? "서버를 통해 로그인"}
 			/>
 		</form>
+	);
+}
+
+interface FillButtonProps {
+	server: string;
+	setValue: UseFormSetValue<Pick<AuthInputs, "server">>;
+}
+
+function FillButton({ server, setValue }: FillButtonProps) {
+	const onClick = () => {
+		setValue("server", server);
+	};
+
+	return (
+		<button
+			className="flex items-center justify-between gap-1 rounded-md bg-slate-100 shadow-sm border-slate-200 border py-1.5 px-2.5 hover:bg-slate-200 active:bg-slate-300 transition-colors overflow-hidden"
+			onClick={onClick}
+		>
+			<span>{server}</span>
+			<ArrowUpLeft width={20} height={20} className="shrink-0" />
+		</button>
 	);
 }

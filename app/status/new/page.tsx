@@ -137,6 +137,7 @@ export default function New() {
 		>
 			{!hasValidToken && (
 				<FullPageOverlay
+					type="back"
 					component={
 						<div className="flex flex-col gap-6">
 							<p className="text-xl font-medium text-slate-800 text-center break-keep">

@@ -8,18 +8,21 @@ interface UseMutationStates<T> {
 
 type UseMutationResult<T> = [(input: unknown) => void, UseMutationStates<T>];
 
-export function useMutation<T>(url: string): UseMutationResult<T> {
+export function useMutation<T>(
+	url: string,
+	type?: "POST" | "DELETE"
+): UseMutationResult<T> {
 	const [states, setStates] = useState<UseMutationStates<T>>({
 		isLoading: false,
 		data: undefined,
 		error: undefined,
 	});
 
-	function mutation(input: unknown) {
+	async function mutation(input: unknown) {
 		setStates((prev) => ({ ...prev, isLoading: true }));
 
-		fetch(url, {
-			method: "POST",
+		await fetch(url, {
+			method: type ?? "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},

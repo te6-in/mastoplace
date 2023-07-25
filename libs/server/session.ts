@@ -53,15 +53,15 @@ export async function mastodonClient(cookies: RequestCookies) {
 		url: `https://${server}`,
 	});
 
-	const account = await masto.v1.accounts.verifyCredentials();
+	try {
+		const account = await masto.v1.accounts.verifyCredentials();
 
-	if (!account) {
+		return { masto, clientServer: server, handle: account.acct } as {
+			masto: mastodon.Client;
+			clientServer: string;
+			handle: string;
+		};
+	} catch {
 		return null;
 	}
-
-	return { masto, clientServer: server, handle: account.acct } as {
-		masto: mastodon.Client;
-		clientServer: string;
-		handle: string;
-	};
 }

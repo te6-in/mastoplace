@@ -13,6 +13,16 @@ module.exports = {
 			sans: ["Pretendard\\ Variable", ...defaultTheme.fontFamily.sans],
 		},
 		extend: {
+			height: {
+				screen: ["100vh", "100dvh"],
+			},
+			minHeight: {
+				screen: ["100vh", "100dvh"],
+			},
+			maxHeight: {
+				screen: ["100vh", "100dvh"],
+				overlaySheet: ["calc(100vh - 3rem)", "calc(100dvh - 3rem)"],
+			},
 			backgroundImage: {
 				"gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
 				"gradient-conic":

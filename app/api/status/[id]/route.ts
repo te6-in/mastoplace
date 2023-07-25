@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 export interface StatusResponse extends DefaultResponse {
 	mastodonStatus?: mastodon.v1.Status;
 	clientServer?: string;
+	clientHandle?: string;
 	exact?: boolean | null;
 	location?: {
 		latitudeFrom: number;
@@ -15,6 +16,10 @@ export interface StatusResponse extends DefaultResponse {
 		longitudeFrom: number;
 		longitudeTo: number;
 	} | null;
+	error?: unknown;
+}
+
+export interface StatusDeleteResponse extends DefaultResponse {
 	error?: unknown;
 }
 
@@ -38,7 +43,7 @@ export async function GET(
 		return NextResponse.json<StatusResponse>({ ok: false }, { status: 401 });
 	}
 
-	const { masto, clientServer } = data;
+	const { masto, clientServer, handle: clientHandle } = data;
 
 	if (!masto) {
 		return NextResponse.json<StatusResponse>({ ok: false }, { status: 401 });
@@ -75,6 +80,7 @@ export async function GET(
 		return NextResponse.json<StatusResponse>({
 			ok: true,
 			clientServer,
+			clientHandle,
 			mastodonStatus,
 			exact,
 			location,
@@ -84,5 +90,100 @@ export async function GET(
 			{ ok: false, error },
 			{ status: 500 }
 		);
+	}
+}
+
+export async function DELETE(
+	request: NextRequest,
+	{ params: { id } }: StatusGetParams
+) {
+	if (!id) {
+		return NextResponse.json<StatusResponse>({ ok: false }, { status: 400 });
+	}
+
+	const { searchParams } = new URL(request.url);
+	const type = searchParams.get("type");
+
+	if (!type) {
+		return NextResponse.json<StatusDeleteResponse>(
+			{ ok: false },
+			{ status: 400 }
+		);
+	}
+
+	const data = await mastodonClient(request.cookies);
+
+	if (!data) {
+		return NextResponse.json<StatusDeleteResponse>(
+			{ ok: false },
+			{ status: 401 }
+		);
+	}
+
+	const { masto, clientServer, handle } = data;
+
+	if (type === "all") {
+		if (!masto || !clientServer || !handle) {
+			return NextResponse.json<StatusDeleteResponse>(
+				{ ok: false },
+				{ status: 401 }
+			);
+		}
+
+		try {
+			const status = await client.status.findUnique({
+				where: { server: clientServer, handle, id },
+				select: { mastodonId: true },
+			});
+
+			if (!status || !status.mastodonId) {
+				return NextResponse.json<StatusDeleteResponse>(
+					{ ok: false },
+					{ status: 404 }
+				);
+			}
+
+			try {
+				await masto.v1.statuses.remove(status.mastodonId);
+			} catch {
+				return NextResponse.json<StatusDeleteResponse>(
+					{ ok: false },
+					{ status: 500 }
+				);
+			}
+
+			await client.status.delete({
+				where: { server: clientServer, handle, id },
+			});
+
+			return NextResponse.json<StatusDeleteResponse>({ ok: true });
+		} catch (error) {
+			return NextResponse.json<StatusDeleteResponse>(
+				{ ok: false },
+				{ status: 500 }
+			);
+		}
+	}
+
+	if (type === "database") {
+		if (!clientServer || !handle) {
+			return NextResponse.json<StatusDeleteResponse>(
+				{ ok: false },
+				{ status: 401 }
+			);
+		}
+
+		try {
+			await client.status.delete({
+				where: { server: clientServer, handle, id },
+			});
+
+			return NextResponse.json<StatusDeleteResponse>({ ok: true });
+		} catch (error) {
+			return NextResponse.json<StatusDeleteResponse>(
+				{ ok: false },
+				{ status: 500 }
+			);
+		}
 	}
 }

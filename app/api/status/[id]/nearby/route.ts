@@ -6,6 +6,7 @@ import { mastodonClient } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface NearbyStatusesResponse extends DefaultResponse {
+	hasLocation?: boolean;
 	originalLocation?: {
 		latitudeFrom: number;
 		latitudeTo: number;
@@ -84,10 +85,10 @@ export async function GET(
 			null;
 
 		if (!originalLocation) {
-			return NextResponse.json<NearbyStatusesResponse>(
-				{ ok: false, error: "요청된 글에 위치 정보가 없습니다." },
-				{ status: 400 }
-			);
+			return NextResponse.json<NearbyStatusesResponse>({
+				ok: true,
+				hasLocation: false,
+			});
 		}
 
 		const nearbyStatuses = await client.status.findMany({
@@ -142,6 +143,7 @@ export async function GET(
 
 		return NextResponse.json<NearbyStatusesResponse>({
 			ok: true,
+			hasLocation: true,
 			originalLocation,
 			nearbyIds: localViewableIds,
 		});

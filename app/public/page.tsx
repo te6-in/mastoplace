@@ -46,7 +46,7 @@ export default function Public() {
 	}, [isLoading]);
 
 	return (
-		<Layout title="홈" showBackground showTabBar hasFloatingButton>
+		<Layout title="공개 위치" showBackground showTabBar hasFloatingButton>
 			{(isTokenLoading || isLoading) && (
 				<ol className="divide-y">
 					{[1, 2, 3].map((_, index) => (

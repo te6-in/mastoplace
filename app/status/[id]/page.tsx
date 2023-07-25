@@ -56,7 +56,7 @@ export default function Status({ params }: StatusParams) {
 							<>
 								<hr className="border-slate-100" />
 								<div className="text-slate-700 text-lg font-medium text-center pt-4 pb-2">
-									이 글이 올라온 곳 주변의 글
+									이곳 근처에서 올라온 글
 								</div>
 							</>
 						)}
@@ -68,6 +68,16 @@ export default function Status({ params }: StatusParams) {
 									</li>
 								))}
 							</ol>
+						)}
+						{data && data.ok && !data.hasLocation && (
+							<div className="my-3 text-slate-500 text-sm font-medium text-center">
+								이 글은 위치가 등록되지 않았기 때문에 주변 글을 볼 수 없어요.
+							</div>
+						)}
+						{data && data.ok && data.nearbyIds && !data.nearbyIds.length && (
+							<div className="my-3 text-slate-500 text-sm font-medium text-center">
+								이곳 주변에는 올라온 글이 없어요.
+							</div>
 						)}
 						{data && data.ok && data.nearbyIds && data.nearbyIds.length !== 0 && (
 							<ol className="divide-y">
@@ -81,11 +91,6 @@ export default function Status({ params }: StatusParams) {
 									</li>
 								))}
 							</ol>
-						)}
-						{data && data.ok && data.nearbyIds && !data.nearbyIds.length && (
-							<div className="my-3 text-slate-500 text-sm font-medium text-center">
-								이곳 주변에는 올라온 글이 없어요.
-							</div>
 						)}
 					</div>
 				</div>

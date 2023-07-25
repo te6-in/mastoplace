@@ -21,9 +21,16 @@ interface StatusBlockProps {
 	link?: boolean;
 	from?: Position;
 	showError?: boolean;
+	hideButtons?: boolean;
 }
 
-export function StatusBlock({ id, link, from, showError }: StatusBlockProps) {
+export function StatusBlock({
+	id,
+	link,
+	from,
+	showError,
+	hideButtons,
+}: StatusBlockProps) {
 	const { data } = useSWR<StatusResponse>(id ? `/api/status/${id}` : null);
 
 	if (data?.ok === false) {
@@ -135,8 +142,12 @@ export function StatusBlock({ id, link, from, showError }: StatusBlockProps) {
 						<Privacy privacy={mastodonStatus.visibility} />
 					</div>
 				)}
-				{mastodonStatus && mastodonStatus.url && (
-					<StatusButtons original={mastodonStatus.url} />
+				{!hideButtons && mastodonStatus && mastodonStatus.url && (
+					<StatusButtons
+						original={mastodonStatus.url}
+						id={id}
+						fromMe={mastodonStatus.account.acct === data.clientHandle}
+					/>
 				)}
 			</div>
 		</div>
