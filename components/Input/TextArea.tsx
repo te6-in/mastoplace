@@ -33,7 +33,7 @@ export function TextArea({
 				rows={rows}
 				id={id}
 				placeholder={placeholder}
-				className="w-full resize-none appearance-none rounded-md border border-slate-300 px-3 py-2 text-slate-900 placeholder-slate-400 shadow-sm"
+				className="w-full resize-none appearance-none rounded-md border border-slate-300 dark:border-zinc-700 px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-600 shadow-sm bg-white dark:bg-zinc-900"
 			/>
 		</div>
 	);

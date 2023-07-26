@@ -19,9 +19,14 @@ import useSWR from "swr";
 interface DeleteAccountFormProps {
 	handle: string;
 	server: string;
+	serverName: string;
 }
 
-export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
+export function DeleteAccountForm({
+	handle,
+	server,
+	serverName,
+}: DeleteAccountFormProps) {
 	const router = useRouter();
 
 	const [deletePosts, { isLoading: isDeletePostsLoading }] =
@@ -103,11 +108,11 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 
 	return (
 		<div className="flex gap-6 flex-col">
-			<div className="flex flex-col gap-1">
-				<div className="text-slate-800 font-medium text-center text-lg">
+			<div className="flex flex-col gap-1 break-keep">
+				<div className="text-slate-800 font-medium text-center text-lg dark:text-zinc-200">
 					Mastoplace 탈퇴
 				</div>
-				<p className="text-sm text-center font-medium text-slate-500">
+				<p className="text-sm text-center font-medium text-slate-500 dark:text-zinc-500">
 					그냥 버튼 몇 번만 누르면 돼요.
 				</p>
 			</div>
@@ -115,10 +120,10 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 				<div className="flex gap-3 z-10">
 					<span
 						className={j(
-							"w-8 h-8 flex items-center justify-center rounded-full font-semibold text-sm ring-4 ring-white p-2",
+							"w-8 h-8 flex items-center justify-center rounded-full font-semibold text-sm ring-4 ring-slate-50 dark:ring-zinc-950 p-2",
 							stepsDone !== 0
-								? "bg-slate-100 text-slate-400"
-								: "bg-slate-200 text-slate-500"
+								? "bg-slate-100 text-slate-400 dark:bg-zinc-900 dark:text-zinc-600"
+								: "bg-slate-200 text-slate-500 dark:text-zinc-500 dark:bg-zinc-800"
 						)}
 					>
 						1
@@ -130,14 +135,18 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 								stepsDone !== 0 ? "opacity-40" : ""
 							)}
 						>
-							<div className={"font-medium text-lg text-slate-900"}>
+							<div
+								className={
+									"font-medium text-lg text-slate-900 dark:text-zinc-100"
+								}
+							>
 								연결된 마스토돈 글 삭제
 							</div>
-							<p className="text-slate-500">
+							<p className="text-slate-500 dark:text-zinc-500">
 								Mastoplace를 통해 게시한 마스토돈 게시물을 내 마스토돈 계정(@
 								{handle}@{server})에서 삭제합니다.
 							</p>
-							<p className="text-slate-400 text-sm mt-1">
+							<p className="text-slate-400 dark:text-zinc-600 text-sm mt-1">
 								마스토돈에 글을 남겨두고 싶다면 이 과정은 건너뛰어도 되지만, 두
 								번째 단계를 진행한 이후에는 마스토돈에서 직접 삭제해야 합니다.
 								마찬가지로, 이전에 마스토돈 글은 삭제하지 않고 Mastoplace 정보만
@@ -155,7 +164,7 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 													viewableCountData.count
 											  )}개 삭제`
 											: "삭제할 글 없음"
-										: "글 개수 로딩 중..."
+										: "글 개수 로딩 중…"
 								}
 								isLoading={isViewableCountLoading || isDeletePostsLoading}
 								Icon={
@@ -197,7 +206,7 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 												allCountData.count
 										  )}개 삭제`
 										: "삭제할 정보 없음"
-									: "내 정보 개수 로딩 중..."
+									: "내 정보 개수 로딩 중…"
 							}
 							isLoading={isAllCountLoading || isDeleteDatabaseLoading}
 							Icon={
@@ -221,7 +230,7 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 					Button={
 						<Button
 							isPrimary={stepsDone === 2}
-							text={`${server} 설정 새 탭에서 열기`}
+							text={`${serverName} 설정 새 탭에서 열기`}
 							isLoading={false}
 							Icon={stepsDone === 3 ? Check : ArrowUpRightSquare}
 							disabled={stepsDone !== 2}
@@ -252,7 +261,7 @@ export function DeleteAccountForm({ handle, server }: DeleteAccountFormProps) {
 						/>
 					}
 				/>
-				<div className="absolute h-full w-0.5 bg-slate-200 left-[0.9375rem] rounded-full" />
+				<div className="absolute h-full w-0.5 bg-slate-200 dark:bg-zinc-800 left-[0.9375rem] rounded-full" />
 			</div>
 		</div>
 	);
@@ -277,20 +286,26 @@ function Step({
 		<div className="flex gap-3 z-10">
 			<span
 				className={j(
-					"w-8 h-8 flex items-center justify-center rounded-full font-semibold text-sm ring-4 ring-white p-2",
+					"w-8 h-8 flex items-center justify-center rounded-full font-semibold text-sm ring-4 ring-slate-50 dark:ring-zinc-950 p-2",
 					disabled
-						? "bg-slate-100 text-slate-400"
-						: "bg-slate-200 text-slate-500"
+						? "bg-slate-100 text-slate-400 dark:bg-zinc-900 dark:text-zinc-600"
+						: "bg-slate-200 text-slate-500 dark:text-zinc-500 dark:bg-zinc-800"
 				)}
 			>
 				{number}
 			</span>
 			<div className="flex-1 break-keep flex flex-col">
 				<div className={j("transition-opacity", disabled ? "opacity-40" : "")}>
-					<div className={"font-medium text-lg text-slate-900"}>{title}</div>
-					<p className="text-slate-500">{text}</p>
+					<div
+						className={"font-medium text-lg text-slate-900 dark:text-zinc-100"}
+					>
+						{title}
+					</div>
+					<p className="text-slate-500 dark:text-zinc-500">{text}</p>
 					{description && (
-						<p className="text-slate-400 text-sm mt-1">{description}</p>
+						<p className="text-slate-400 dark:text-zinc-600 text-sm mt-1">
+							{description}
+						</p>
 					)}
 				</div>
 				<div className="mt-2">{Button}</div>

@@ -5,7 +5,10 @@ interface LabelProps {
 
 export function Label({ text, id }: LabelProps) {
 	return (
-		<label htmlFor={id} className="text-slate-700 mr-1 break-keep">
+		<label
+			htmlFor={id}
+			className="text-slate-700 dark:text-zinc-300 mr-1 break-keep"
+		>
 			{text}
 		</label>
 	);

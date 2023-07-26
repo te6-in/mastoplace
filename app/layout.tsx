@@ -1,3 +1,4 @@
+import { SkeletonProvider } from "@/components/Layout/SkeletonProvider";
 import { SWRProvider } from "@/components/Layout/swrProvider";
 import "./globals.css";
 
@@ -13,8 +14,10 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="ko">
-			<body>
-				<SWRProvider>{children}</SWRProvider>
+			<body className="bg-slate-50 text-zinc-700 dark:bg-zinc-950">
+				<SWRProvider>
+					<SkeletonProvider>{children}</SkeletonProvider>
+				</SWRProvider>
 			</body>
 		</html>
 	);

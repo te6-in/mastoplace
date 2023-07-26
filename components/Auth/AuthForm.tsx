@@ -100,12 +100,12 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 				type="text"
 				id="server"
 				label="마스토돈 서버 주소"
-				placeholder={`예를 들면... mastodon.social`}
+				placeholder={`예를 들면… mastodon.social`}
 				prefix="https://"
 				error={errors.server?.message}
 			/>
 			{watchServer === "" && (
-				<div className="grid grid-cols-2 text-sm text-slate-700 gap-2">
+				<div className="grid grid-cols-1 sm:grid-cols-2 text-sm text-slate-700 dark:text-zinc-300 gap-2">
 					<FillButton server="twingyeo.kr" setValue={setValue} />
 					<FillButton server="planet.moe" setValue={setValue} />
 					<FillButton server="qdon.space" setValue={setValue} />
@@ -138,7 +138,7 @@ function FillButton({ server, setValue }: FillButtonProps) {
 
 	return (
 		<button
-			className="flex items-center justify-between gap-1 rounded-md bg-slate-100 shadow-sm border-slate-200 border p-1.5 pl-2.5 hover:bg-slate-200 active:bg-slate-300 transition-colors overflow-hidden"
+			className="flex items-center justify-between gap-1 rounded-md bg-white shadow-sm border-slate-200 border p-1.5 pl-2.5 hover:bg-slate-100 active:bg-slate-200 dark:bg-zinc-950 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:active:bg-zinc-800 transition-colors overflow-hidden"
 			onClick={onClick}
 		>
 			<span>{server}</span>

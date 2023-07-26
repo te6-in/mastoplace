@@ -16,8 +16,8 @@ export function TabBarItem({ Icon, text, href }: TabBarItemProps) {
 	return (
 		<Link
 			className={j(
-				"flex flex-col items-center justify-center gap-1 rounded-xl  transition-colors sm:flex-row sm:justify-start sm:gap-2 sm:p-4 sm:hover:bg-slate-200 sm:active:bg-slate-300",
-				didMatch ? "text-violet-500" : "text-slate-700"
+				"flex flex-col items-center justify-center gap-1 rounded-xl  transition-colors sm:flex-row sm:justify-start sm:gap-2 sm:p-4 sm:hover:bg-slate-200 sm:active:bg-slate-300 dark:sm:hover:bg-zinc-900 dark:sm:active:bg-zinc-800",
+				didMatch ? "text-violet-600" : "text-slate-700 dark:text-zinc-300"
 			)}
 			href={href}
 		>

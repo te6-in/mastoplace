@@ -36,7 +36,7 @@ export function Privacy({ privacy }: PrivacyProps) {
 	return (
 		<div className="flex items-center gap-1">
 			<Icon width={20} height={20} />
-			<span className="text-slate-500">{text}</span>
+			<span className="text-slate-500 dark:text-zinc-500">{text}</span>
 		</div>
 	);
 }

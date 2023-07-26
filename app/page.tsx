@@ -5,6 +5,7 @@ import { LogInOrPublic } from "@/components/Auth/LogInOrPublic";
 import { Layout } from "@/components/Layout";
 import { FloatingButton } from "@/components/Layout/FloatingButton";
 import { StatusBlock } from "@/components/StatusBlock";
+import { EndIndicator } from "@/components/StatusBlock/EndIndicator";
 import { useToken } from "@/libs/client/useToken";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
@@ -47,9 +48,14 @@ export default function Home() {
 	}, [isLoading]);
 
 	return (
-		<Layout title="홈" showBackground showTabBar hasFloatingButton>
+		<Layout
+			title="Mastoplace"
+			showBackground={isTokenLoading || isLoading ? true : hasValidToken}
+			showTabBar
+			hasFloatingButton
+		>
 			{(isTokenLoading || isLoading) && (
-				<ol className="divide-y">
+				<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
 					{[1, 2, 3].map((_, index) => (
 						<li key={index} className="p-4">
 							<StatusBlock id={null} />
@@ -58,7 +64,7 @@ export default function Home() {
 				</ol>
 			)}
 			{!hasValidToken && !isTokenLoading && (
-				<div className="text-center px-4 flex gap-8 items-center flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
+				<div className="text-center px-4 flex gap-8 items-center flex-col text-slate-800 dark:text-zinc-200 text-lg mt-24 font-medium break-keep">
 					<p>
 						로그인하면 마스토돈에서 팔로우한 사람들이
 						<br />
@@ -70,7 +76,7 @@ export default function Home() {
 				</div>
 			)}
 			{hasValidToken && data && length === 0 && (
-				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
+				<div className="text-center px-4 flex gap-2 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
 					<p>팔로우하는 사람 중 Mastoplace를 통해 글을 작성한 사람이 없어요.</p>
 					<p>
 						<Link
@@ -95,12 +101,12 @@ export default function Home() {
 					next={() => setSize(size + 1)}
 					hasMore={hasMore}
 					loader={
-						<div className="p-4 border-t">
+						<div className="p-4 border-t border-slate-200 dark:border-zinc-800">
 							<StatusBlock id={null} />
 						</div>
 					}
 				>
-					<ol className="divide-y">
+					<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
 						{data &&
 							data.map((page) => {
 								if (!page.localViewableStatuses) return null;
@@ -114,11 +120,7 @@ export default function Home() {
 					</ol>
 				</InfiniteScroll>
 			)}
-			{hasValidToken && data && !hasMore && (
-				<div className="my-6 text-slate-500 text-sm font-medium text-center">
-					목록의 끝이에요.
-				</div>
-			)}
+			{hasValidToken && data && !hasMore && <EndIndicator hasFloatingButton />}
 			{hasValidToken && (
 				<FloatingButton
 					Icon={Pencil}

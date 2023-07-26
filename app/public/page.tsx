@@ -4,6 +4,7 @@ import { StatusesResponse } from "@/app/api/status/route";
 import { Layout } from "@/components/Layout";
 import { FloatingButton } from "@/components/Layout/FloatingButton";
 import { StatusBlock } from "@/components/StatusBlock";
+import { EndIndicator } from "@/components/StatusBlock/EndIndicator";
 import { useToken } from "@/libs/client/useToken";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
@@ -48,7 +49,7 @@ export default function Public() {
 	return (
 		<Layout title="공개 위치" showBackground showTabBar hasFloatingButton>
 			{(isTokenLoading || isLoading) && (
-				<ol className="divide-y">
+				<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
 					{[1, 2, 3].map((_, index) => (
 						<li key={index} className="p-4">
 							<StatusBlock id={null} />
@@ -57,7 +58,7 @@ export default function Public() {
 				</ol>
 			)}
 			{!isLoading && data && length === 0 && (
-				<div className="text-center px-4 flex gap-2 flex-col text-slate-600 text-lg mt-12 font-medium break-keep">
+				<div className="text-center px-4 flex gap-2 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
 					<p>
 						Mastoplace를 통해 게시된 글 중에서
 						<br />볼 수 있는 글이 없어요.
@@ -79,12 +80,12 @@ export default function Public() {
 					next={() => setSize(size + 1)}
 					hasMore={hasMore}
 					loader={
-						<div className="p-4 border-t">
+						<div className="p-4 border-t border-slate-200 dark:border-zinc-800">
 							<StatusBlock id={null} />
 						</div>
 					}
 				>
-					<ol className="divide-y">
+					<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
 						{data &&
 							data.map((page) => {
 								if (!page.localViewableStatuses) return null;
@@ -98,11 +99,7 @@ export default function Public() {
 					</ol>
 				</InfiniteScroll>
 			)}
-			{data && length !== 0 && !hasMore && (
-				<div className="my-6 text-slate-500 text-sm font-medium text-center">
-					목록의 끝이에요.
-				</div>
-			)}
+			{data && length !== 0 && !hasMore && <EndIndicator hasFloatingButton />}
 			<FloatingButton Icon={Pencil} text="새로운 글 작성" href="/status/new" />
 		</Layout>
 	);

@@ -159,13 +159,13 @@ export default function New() {
 						type="back"
 						component={
 							<div className="flex flex-col gap-6">
-								<p className="text-xl font-medium text-slate-800 text-center break-keep">
+								<p className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
 									새로운 글을 작성하려면
 									<br />
 									로그인해야 합니다.
 								</p>
 								<AuthForm
-									buttonText="로그인하고 글 작성하기"
+									buttonText="로그인하고 글 작성"
 									redirectAfterAuth="/status/new"
 								/>
 							</div>
@@ -194,9 +194,13 @@ export default function New() {
 							onClick={() => {
 								setValue("approximate", true);
 							}}
-							className="h-48 rounded-md bg-slate-100 flex cursor-pointer items-center justify-center"
+							className="h-48 rounded-md bg-slate-200 dark:bg-zinc-800 flex cursor-pointer items-center justify-center"
 						>
-							<Map width={48} height={48} className="text-slate-500" />
+							<Map
+								width={48}
+								height={48}
+								className="text-slate-500 dark:text-zinc-500"
+							/>
 						</div>
 					)}
 					<TextArea

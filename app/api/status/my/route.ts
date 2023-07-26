@@ -5,10 +5,6 @@ import { Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface MyStatusesResponse extends DefaultResponse {
-	me?: {
-		handle: string;
-		server: string;
-	};
 	myStatuses?: Pick<Status, "id" | "mastodonId">[];
 	nextMaxId?: string;
 }
@@ -69,7 +65,6 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json<MyStatusesResponse>({
 			ok: true,
 			myStatuses: viewableStatuses,
-			me: { handle: data.handle, server: data.clientServer },
 			nextMaxId,
 		});
 	} catch (error) {

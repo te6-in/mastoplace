@@ -67,19 +67,21 @@ export function StatusButton({ type, id }: StatusButtonProps) {
 			</AnimatePresence>
 			<button
 				className={j(
-					"flex text-slate-600 p-1 rounded-md transition-colors",
-					type === "open" ? "hover:bg-slate-100 active:bg-slate-200" : "",
+					"flex text-slate-600 dark:text-zinc-400 p-1 rounded-md transition-colors",
+					type === "open"
+						? "hover:bg-slate-200 active:bg-slate-300 hover:text-slate-700 dark:hover:bg-zinc-800 dark:active:bg-zinc-700 dark:hover:text-zinc-300"
+						: "",
 					type === "boost"
-						? "hover:bg-emerald-100 active:bg-emerald-200 hover:text-emerald-600"
+						? "hover:bg-emerald-100 active:bg-emerald-200 hover:text-emerald-600 dark:hover:bg-emerald-900 dark:active:bg-emerald-800 dark:hover:text-emerald-400"
 						: "",
 					type === "like"
-						? "hover:bg-yellow-100 active:bg-yellow-200 hover:text-yellow-600"
+						? "hover:bg-yellow-100 active:bg-yellow-200 hover:text-yellow-600 dark:hover:bg-yellow-900 dark:active:bg-yellow-800 dark:hover:text-yellow-400"
 						: "",
 					type === "bookmark"
-						? "hover:bg-rose-100 active:bg-rose-200 hover:text-rose-600"
+						? "hover:bg-rose-100 active:bg-rose-200 hover:text-rose-600 dark:hover:bg-rose-900 dark:active:bg-rose-800 dark:hover:text-rose-400"
 						: "",
 					type === "delete"
-						? "hover:bg-red-100 active:bg-red-200 hover:text-red-600"
+						? "hover:bg-red-100 active:bg-red-200 hover:text-red-600 dark:hover:bg-red-900 dark:active:bg-red-800 dark:hover:text-red-400"
 						: ""
 				)}
 				onClick={onClick}
@@ -136,8 +138,8 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 		<div className="flex flex-col gap-8">
 			<StatusBlock id={id} hideButtons />
 			<div className="relative flex items-center justify-center w-full">
-				<hr className="w-full border-slate-300" />
-				<span className="absolute break-keep text-center font-medium text-slate-700 bg-white px-2">
+				<hr className="w-full border-slate-300 dark:border-zinc-700" />
+				<span className="absolute break-keep text-center font-medium text-slate-700 bg-slate-50 px-2 dark:bg-zinc-950 dark:text-zinc-300">
 					이 글을 삭제하시겠어요?
 				</span>
 			</div>

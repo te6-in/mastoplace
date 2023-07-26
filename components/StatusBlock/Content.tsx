@@ -2,18 +2,37 @@ import { j } from "@/libs/client/utils";
 import parse, { domToReact } from "html-react-parser";
 import { mastodon } from "masto";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { parseURL } from "ufo";
 
 interface ContentProps {
 	mastodonStatus: mastodon.v1.Status | undefined;
+	id: string | null;
 	clientServer: string | undefined;
+	link?: boolean;
 }
 
-export function Content({ mastodonStatus, clientServer }: ContentProps) {
+export function Content({
+	mastodonStatus,
+	clientServer,
+	id,
+	link,
+}: ContentProps) {
+	const router = useRouter();
+
+	const onClick = () => {
+		if (!id) return;
+
+		router.push(`/status/${id}`);
+	};
+
 	return (
-		<article className="text-slate-700 flex gap-1 flex-col break-keep">
+		<article
+			className="text-slate-700 dark:text-zinc-300 flex gap-1 flex-col break-keep cursor-pointer"
+			onClick={link ? onClick : undefined}
+		>
 			{mastodonStatus && clientServer ? (
 				parse(mastodonStatus.content, {
 					replace: (domNode) => {

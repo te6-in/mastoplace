@@ -11,14 +11,16 @@ export function PrivacySelector({ register, error }: PrivacySelectorProps) {
 	return (
 		<div className="flex flex-col">
 			<div className="mb-1 flex justify-between px-1 text-sm font-medium">
-				<span className="text-slate-700 mr-1 break-keep">공개 범위</span>
+				<span className="text-slate-700 dark:text-zinc-300 mr-1 break-keep">
+					공개 범위
+				</span>
 				{error && (
 					<span className="text-red-500 motion-safe:animate-shake">
 						{error}
 					</span>
 				)}
 			</div>
-			<fieldset className="grid gap-1.5 grid-cols-4 p-2 pb-1.5 rounded-md shadow-sm border-slate-300 border">
+			<fieldset className="grid gap-1.5 grid-cols-4 p-2 pb-1.5 rounded-md shadow-sm border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 border">
 				<Input register={register} privacy="public" />
 				<Input register={register} privacy="unlisted" />
 				<Input register={register} privacy="private" />
@@ -37,22 +39,22 @@ function Input({ privacy, register }: InputProps) {
 	const Icon = privacySet(privacy).Icon;
 
 	return (
-		<label className="text-slate-700 flex flex-col gap-1">
+		<label className="flex flex-col gap-1">
 			<div className="relative">
 				<input
 					{...register}
-					className="flex items-center justify-center rounded h-10 w-full checked:bg-violet-500 checked:hover:bg-violet-500 focus-within:checked:bg-violet-500 shadow-sm border-slate-300 checked:bg-none peer transition-colors"
+					className="flex items-center justify-center rounded h-10 w-full checked:bg-violet-500 checked:hover:bg-violet-500 focus-within:checked:bg-violet-500 dark:checked:bg-violet-600 dark:checked:hover:bg-violet-600 dark:focus-within:checked:bg-violet-600 shadow-sm border-slate-300 dark:border-zinc-700 checked:bg-none peer transition-colors bg-white dark:bg-zinc-950"
 					name="privacy"
 					type="radio"
 					value={privacy}
 				/>
 				<Icon
-					className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 peer-checked:text-white"
+					className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-slate-700 dark:text-zinc-300 peer-checked:text-white"
 					width={20}
 					height={20}
 				/>
 			</div>
-			<div className="break-keep px-0.5 text-sm text-slate-500 font-medium text-center">
+			<div className="break-keep px-0.5 text-sm text-slate-500 dark:text-zinc-500 font-medium text-center">
 				{privacySet(privacy).text}
 			</div>
 		</label>

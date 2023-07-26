@@ -7,6 +7,9 @@ export interface MyInfoResponse extends DefaultResponse {
 	me?: {
 		handle: string;
 		server: string;
+		serverName: string;
+		displayName: string;
+		avatar: string;
 		defaultPrivacy: mastodon.v1.StatusVisibility;
 	};
 }
@@ -27,14 +30,23 @@ export async function GET(request: NextRequest) {
 	try {
 		const account = await masto.v1.accounts.verifyCredentials();
 
-		return NextResponse.json<MyInfoResponse>({
-			ok: true,
-			me: {
-				handle,
-				server: clientServer,
-				defaultPrivacy: account.source?.privacy ?? "unlisted",
-			},
-		});
+		try {
+			const server = await masto.v1.instances.fetch();
+
+			return NextResponse.json<MyInfoResponse>({
+				ok: true,
+				me: {
+					handle,
+					server: clientServer,
+					serverName: server.title,
+					displayName: account.displayName,
+					avatar: account.avatar,
+					defaultPrivacy: account.source?.privacy ?? "unlisted",
+				},
+			});
+		} catch {
+			return NextResponse.json<MyInfoResponse>({ ok: false }, { status: 401 });
+		}
 	} catch {
 		return NextResponse.json<MyInfoResponse>({ ok: false }, { status: 401 });
 	}

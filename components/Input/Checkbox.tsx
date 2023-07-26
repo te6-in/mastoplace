@@ -24,17 +24,22 @@ export function Checkbox({
 					type="checkbox"
 					id={id}
 					className={j(
-						"h-5 w-5 rounded-md transition-colors border-slate-300 text-violet-500 shadow-sm",
-						disabled ? "bg-slate-100" : ""
+						"h-5 w-5 rounded-md transition-colors border-slate-300 dark:border-zinc-700 text-violet-500 shadow-sm dark:text-violet-600 bg-white dark:bg-zinc-900",
+						disabled ? "bg-slate-100 dark:bg-zinc-950" : ""
 					)}
 					disabled={disabled}
 				/>
-				<label htmlFor={id} className="flex-1 font-medium text-slate-900">
+				<label
+					htmlFor={id}
+					className="flex-1 font-medium text-slate-900 dark:text-zinc-100"
+				>
 					{title}
 				</label>
 			</div>
 			{label && (
-				<span className="ml-[1.6875rem] text-sm text-slate-500">{label}</span>
+				<span className="ml-[1.6875rem] text-sm text-slate-500 dark:text-zinc-500">
+					{label}
+				</span>
 			)}
 		</div>
 	);

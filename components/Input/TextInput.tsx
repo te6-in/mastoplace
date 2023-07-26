@@ -44,7 +44,7 @@ export function TextInput({
 				{...((prefix ?? suffix) && { className: "flex rounded-md shadow-sm" })}
 			>
 				{prefix && (
-					<span className="flex select-none items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 pb-0.5 text-sm text-slate-500">
+					<span className="flex select-none items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-100 px-3 pb-0.5 text-sm text-slate-500 dark:text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800">
 						{prefix}
 					</span>
 				)}
@@ -54,12 +54,12 @@ export function TextInput({
 					inputMode={type === "number" ? "numeric" : type}
 					id={id}
 					className={j(
-						"w-full appearance-none border px-3 py-2 text-slate-900 placeholder-slate-400",
+						"w-full appearance-none border px-3 py-2 text-slate-900 placeholder-slate-400 dark:text-zinc-100 dark:placeholder-zinc-600 bg-white dark:bg-zinc-900",
 						isSubmitted
 							? error
 								? "border-red-500 ring-1 ring-red-500"
 								: "border-green-500 ring-1 ring-green-500"
-							: "border-slate-300",
+							: "border-slate-300 dark:border-zinc-700",
 						prefix && suffix
 							? ""
 							: prefix
@@ -71,7 +71,7 @@ export function TextInput({
 					placeholder={placeholder}
 				/>
 				{suffix && (
-					<span className="flex select-none items-center justify-center rounded-r-md border border-l-0 border-slate-300 bg-slate-50 px-3 pb-0.5 text-sm text-slate-500">
+					<span className="flex select-none items-center justify-center rounded-r-md border border-l-0 border-slate-300 bg-slate-100 px-3 pb-0.5 text-sm text-slate-500 dark:text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800">
 						{suffix}
 					</span>
 				)}

@@ -1,6 +1,7 @@
 import { StatusResponse } from "@/app/api/status/[id]/route";
 import { GoogleMaps } from "@/components/GoogleMaps";
 import { Content } from "@/components/StatusBlock/Content";
+import { DateTime } from "@/components/StatusBlock/DateTime";
 import { Privacy } from "@/components/StatusBlock/Privacy";
 import { StatusButtons } from "@/components/StatusBlock/StatusButtons";
 import { getCenter, getDistance } from "geolib";
@@ -37,7 +38,7 @@ export function StatusBlock({
 		if (!showError) return null;
 
 		return (
-			<div className="text-slate-700 text-center">
+			<div className="text-slate-800 dark:text-zinc-200 text-center">
 				없는 글이거나 현재 로그인한 계정으로 볼 수 없는 글이에요.
 			</div>
 		);
@@ -100,10 +101,10 @@ export function StatusBlock({
 						href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
 					>
 						<address className="flex items-baseline not-italic flex-wrap">
-							<span className="text-slate-900 font-medium text-lg mr-1">
+							<span className="text-slate-900 dark:text-zinc-100 font-medium text-lg mr-1">
 								{mastodonStatus.account.displayName ?? <Skeleton width="20%" />}
 							</span>
-							<span className="text-slate-500">
+							<span className="text-slate-500 dark:text-zinc-500">
 								@{mastodonStatus.account.acct}
 							</span>
 						</address>
@@ -111,19 +112,12 @@ export function StatusBlock({
 				) : (
 					<Skeleton width="25%" className="text-lg" />
 				)}
-				{link ? (
-					<Link href={`/status/${id}`}>
-						<Content
-							mastodonStatus={mastodonStatus}
-							clientServer={clientServer}
-						/>
-					</Link>
-				) : (
-					<Content
-						mastodonStatus={mastodonStatus}
-						clientServer={clientServer}
-					/>
-				)}
+				<Content
+					mastodonStatus={mastodonStatus}
+					clientServer={clientServer}
+					link={link}
+					id={id}
+				/>
 				{mastodonStatus && position && (
 					<GoogleMaps
 						position={position}
@@ -132,9 +126,9 @@ export function StatusBlock({
 					/>
 				)}
 				{mastodonStatus && (
-					<div className="flex gap-1 text-sm flex-wrap text-slate-500 justify-between items-center mt-2">
+					<div className="flex gap-1 text-sm flex-wrap text-slate-500 dark:text-zinc-500 justify-between items-center mt-2">
 						<span className="mr-2">
-							{mastodonStatus.createdAt}
+							<DateTime dateTime={mastodonStatus.createdAt} />
 							{exact === true && " | 정확한 위치"}
 							{exact === false && " | 대략적인 위치"}
 							{readableDistance}
