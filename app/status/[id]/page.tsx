@@ -5,6 +5,7 @@ import { LogInOrPublic } from "@/components/Auth/LogInOrPublic";
 import { Button } from "@/components/Input/Button";
 import { Layout } from "@/components/Layout";
 import { StatusBlock } from "@/components/StatusBlock";
+import { StatusLoadingList } from "@/components/StatusBlock/StatusLoadingList";
 import { useToken } from "@/libs/client/useToken";
 import { Globe2, Newspaper } from "lucide-react";
 import useSWR from "swr";
@@ -62,15 +63,7 @@ export default function Status({ params }: StatusParams) {
 								</div>
 							</>
 						)}
-						{isLoading && (
-							<ol className="divide-y divide-slate-200 dark:divide-zinc-800 px-4">
-								{[1, 2, 3].map((_, index) => (
-									<li className="py-4" key={index}>
-										<StatusBlock id={null} />
-									</li>
-								))}
-							</ol>
-						)}
+						{isLoading && <StatusLoadingList dividerPadding />}
 						{data && data.ok && !data.hasLocation && (
 							<div className="my-3 text-slate-500 dark:text-zinc-500 text-sm font-medium text-center">
 								이 글은 위치가 등록되지 않았기 때문에 주변 글을 볼 수 없어요.

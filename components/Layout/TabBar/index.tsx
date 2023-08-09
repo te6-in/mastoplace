@@ -1,12 +1,15 @@
 import { TabBarItem } from "@/components/Layout/TabBar/TabBarItem";
 import { j } from "@/libs/client/utils";
 import { Globe2, Map, Newspaper, UserCircle2 } from "lucide-react";
+import useTranslation from "next-translate/useTranslation";
 
 interface TabBarProps {
 	show?: boolean;
 }
 
 export function TabBar({ show }: TabBarProps) {
+	const { t } = useTranslation();
+
 	return (
 		<nav
 			className={j(
@@ -14,10 +17,10 @@ export function TabBar({ show }: TabBarProps) {
 				show ? "grid" : "hidden"
 			)}
 		>
-			<TabBarItem Icon={Newspaper} text="홈" href="/" />
-			<TabBarItem Icon={Globe2} text="공개 위치" href="/public" />
-			<TabBarItem Icon={Map} text="지도" href="/map" />
-			<TabBarItem Icon={UserCircle2} text="프로필" href="/profile" />
+			<TabBarItem Icon={Newspaper} text={t`tabbar.home`} href="/" />
+			<TabBarItem Icon={Globe2} text={t`tabbar.public`} href="/public" />
+			<TabBarItem Icon={Map} text={t`tabbar.map`} href="/map" />
+			<TabBarItem Icon={UserCircle2} text={t`tabbar.profile`} href="/profile" />
 		</nav>
 	);
 }

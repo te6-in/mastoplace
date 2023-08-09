@@ -1,0 +1,8 @@
+{
+	"tabbar": {
+		"home": "Home",
+		"public": "Public",
+		"map": "Map",
+		"profile": "Profile"
+	}
+}

@@ -100,18 +100,18 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 				type="text"
 				id="server"
 				label="마스토돈 서버 주소"
-				placeholder={`예를 들면… mastodon.social`}
+				placeholder="예를 들면… mastodon.social"
 				prefix="https://"
 				error={errors.server?.message}
 			/>
 			{watchServer === "" && (
 				<div className="grid grid-cols-1 sm:grid-cols-2 text-sm text-slate-700 dark:text-zinc-300 gap-2">
-					<FillButton server="twingyeo.kr" setValue={setValue} />
 					<FillButton server="planet.moe" setValue={setValue} />
 					<FillButton server="qdon.space" setValue={setValue} />
 					<FillButton server="mustard.blog" setValue={setValue} />
 					<FillButton server="pointless.chat" setValue={setValue} />
 					<FillButton server="mastodon.social" setValue={setValue} />
+					<FillButton server="mas.to" setValue={setValue} />
 				</div>
 			)}
 			{watchServer !== "" && (

@@ -1,8 +1,8 @@
 "use client";
 
-import { GoogleMaps } from "@/components/GoogleMaps";
 import { Layout } from "@/components/Layout";
 import { FloatingButton } from "@/components/Layout/FloatingButton";
+import { PigeonMap } from "@/components/PigeonMap";
 import { useLocation } from "@/libs/client/useLocation";
 import { j } from "@/libs/client/utils";
 import { Pencil } from "lucide-react";
@@ -13,7 +13,8 @@ export default function Map() {
 	return (
 		<Layout noScroll showTabBar hasFloatingButton>
 			{latitude && longitude && (
-				<GoogleMaps
+				<PigeonMap
+					exact={true}
 					position={{ latitude, longitude }}
 					className={j("h-screen w-full sm:rounded-2xl")}
 				/>

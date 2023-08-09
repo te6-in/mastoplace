@@ -1,8 +1,10 @@
 "use client";
 
 import { StatusesResponse } from "@/app/api/status/route";
+import { LogInOrPublic } from "@/components/Auth/LogInOrPublic";
 import { Layout } from "@/components/Layout";
 import { FloatingButton } from "@/components/Layout/FloatingButton";
+import { Logo } from "@/components/Logo";
 import { StatusBlock } from "@/components/StatusBlock";
 import { EndIndicator } from "@/components/StatusBlock/EndIndicator";
 import { StatusLoadingList } from "@/components/StatusBlock/StatusLoadingList";
@@ -13,15 +15,15 @@ import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useSWRInfinite from "swr/infinite";
 
-export default function Public() {
+export default function Home() {
 	const getKey = (pageIndex: number, previousPageData: StatusesResponse) => {
-		if (pageIndex === 0) return "/api/status?public=true";
+		if (pageIndex === 0) return "/api/status";
 		if (!previousPageData.nextMaxId) return null;
 
-		return `/api/status?public=true&max_id=${previousPageData.nextMaxId}`;
+		return `/api/status?max_id=${previousPageData.nextMaxId}`;
 	};
 
-	const { isLoading: isTokenLoading } = useToken();
+	const { hasValidToken, isLoading: isTokenLoading } = useToken();
 
 	const { data, size, setSize, isLoading } = useSWRInfinite<StatusesResponse>(
 		getKey,
@@ -48,26 +50,47 @@ export default function Public() {
 	}, [isLoading]);
 
 	return (
-		<Layout title="공개 위치" showBackground showTabBar hasFloatingButton>
+		<Layout
+			title="Mastoplace"
+			showBackground={isTokenLoading || isLoading ? true : hasValidToken}
+			showTabBar
+			hasFloatingButton
+		>
 			{(isTokenLoading || isLoading) && <StatusLoadingList />}
-			{!isLoading && data && length === 0 && (
-				<div className="text-center px-4 flex gap-2 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
+			{!hasValidToken && !isTokenLoading && (
+				<div className="text-center px-4 flex gap-8 items-center flex-col text-slate-800 dark:text-zinc-200 text-lg mt-24 font-medium break-keep">
+					<Logo />
 					<p>
-						Mastoplace를 통해 게시된 글 중에서
-						<br />볼 수 있는 글이 없어요.
+						로그인하면 마스토돈에서 팔로우한 사람들이
+						<br />
+						Mastoplace를 통해 올린 글을 볼 수 있어요.
 					</p>
+					<div className="sm:w-96 w-3/4">
+						<LogInOrPublic redirectAfterAuth="/" />
+					</div>
+				</div>
+			)}
+			{hasValidToken && data && length === 0 && (
+				<div className="text-center px-4 flex gap-2 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
+					<p>팔로우하는 사람 중 Mastoplace를 통해 글을 작성한 사람이 없어요.</p>
 					<p>
+						<Link
+							href="/public"
+							className="underline text-violet-500 underline-offset-4"
+						>
+							공개 위치
+						</Link>
+						를 둘러보거나{" "}
 						<Link
 							href="/status/new"
 							className="underline text-violet-500 underline-offset-4"
 						>
-							첫 번째 글을 작성
+							첫 번째가 되어보세요!
 						</Link>
-						해 보세요!
 					</p>
 				</div>
 			)}
-			{!isLoading && data && length !== undefined && length > 0 && (
+			{hasValidToken && data && length !== undefined && length > 0 && (
 				<InfiniteScroll
 					dataLength={length}
 					next={() => setSize(size + 1)}
@@ -92,8 +115,14 @@ export default function Public() {
 					</ol>
 				</InfiniteScroll>
 			)}
-			{data && length !== 0 && !hasMore && <EndIndicator hasFloatingButton />}
-			<FloatingButton Icon={Pencil} text="새로운 글 작성" href="/status/new" />
+			{hasValidToken && data && !hasMore && <EndIndicator hasFloatingButton />}
+			{hasValidToken && (
+				<FloatingButton
+					Icon={Pencil}
+					text="새로운 글 작성"
+					href="/status/new"
+				/>
+			)}
 		</Layout>
 	);
 }

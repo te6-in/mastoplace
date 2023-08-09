@@ -3,13 +3,13 @@
 import { MyInfoResponse } from "@/app/api/profile/me/route";
 import { NewStatusResponse } from "@/app/api/status/route";
 import { AuthForm } from "@/components/Auth/AuthForm";
-import { GoogleMaps } from "@/components/GoogleMaps";
 import { Checkbox } from "@/components/Input/Checkbox";
 import { PrivacySelector } from "@/components/Input/PrivacySelector";
 import { TextArea } from "@/components/Input/TextArea";
 import { Layout } from "@/components/Layout";
 import { BottomToolbar } from "@/components/Layout/BottomToolbar";
 import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
+import { PigeonMap } from "@/components/PigeonMap";
 import { useLocation } from "@/libs/client/useLocation";
 import { useMutation } from "@/libs/client/useMutation";
 import { useToken } from "@/libs/client/useToken";
@@ -176,17 +176,19 @@ export default function New() {
 			<form onSubmit={handleSubmit(onValid)}>
 				<div className="flex flex-col gap-4 px-4">
 					{watchExact && exactPosition && (
-						<GoogleMaps
+						<PigeonMap
 							position={exactPosition}
 							className="h-48 rounded-md"
 							fixed
+							exact
 						/>
 					)}
 					{watchApproximate && !watchExact && approximatePosition && (
-						<GoogleMaps
+						<PigeonMap
 							position={approximatePosition}
 							className="h-48 rounded-md"
 							fixed
+							exact={false}
 						/>
 					)}
 					{!watchApproximate && !watchExact && (

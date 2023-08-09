@@ -1,5 +1,5 @@
 import { StatusResponse } from "@/app/api/status/[id]/route";
-import { GoogleMaps } from "@/components/GoogleMaps";
+import { PigeonMap } from "@/components/PigeonMap";
 import { Content } from "@/components/StatusBlock/Content";
 import { DateTime } from "@/components/StatusBlock/DateTime";
 import { Privacy } from "@/components/StatusBlock/Privacy";
@@ -119,10 +119,11 @@ export function StatusBlock({
 					id={id}
 				/>
 				{mastodonStatus && position && (
-					<GoogleMaps
+					<PigeonMap
 						position={position}
 						className="h-48 rounded-md mt-3"
 						fixed
+						exact={exact ?? false}
 					/>
 				)}
 				{mastodonStatus && (
