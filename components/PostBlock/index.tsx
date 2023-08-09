@@ -1,9 +1,9 @@
-import { StatusResponse } from "@/app/api/status/[id]/route";
+import { StatusResponse } from "@/app/api/post/[id]/route";
 import { PigeonMap } from "@/components/PigeonMap";
-import { Content } from "@/components/StatusBlock/Content";
-import { DateTime } from "@/components/StatusBlock/DateTime";
-import { Privacy } from "@/components/StatusBlock/Privacy";
-import { StatusButtons } from "@/components/StatusBlock/StatusButtons";
+import { Content } from "@/components/PostBlock/Content";
+import { DateTime } from "@/components/PostBlock/DateTime";
+import { PostButtons } from "@/components/PostBlock/PostButtons";
+import { Visibility } from "@/components/PostBlock/Visibility";
 import { getCenter, getDistance } from "geolib";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
@@ -17,7 +17,7 @@ interface Position {
 	longitudeTo: number;
 }
 
-interface StatusBlockProps {
+interface PostBlockProps {
 	id: string | null;
 	link?: boolean;
 	from?: Position;
@@ -25,14 +25,14 @@ interface StatusBlockProps {
 	hideButtons?: boolean;
 }
 
-export function StatusBlock({
+export function PostBlock({
 	id,
 	link,
 	from,
 	showError,
 	hideButtons,
-}: StatusBlockProps) {
-	const { data } = useSWR<StatusResponse>(id ? `/api/status/${id}` : null);
+}: PostBlockProps) {
+	const { data } = useSWR<StatusResponse>(id ? `/api/post/${id}` : null);
 
 	if (data?.ok === false) {
 		if (!showError) return null;
@@ -134,11 +134,11 @@ export function StatusBlock({
 							{exact === false && " | 대략적인 위치"}
 							{readableDistance}
 						</span>
-						<Privacy privacy={mastodonStatus.visibility} />
+						<Visibility visibility={mastodonStatus.visibility} />
 					</div>
 				)}
 				{!hideButtons && mastodonStatus && mastodonStatus.url && (
-					<StatusButtons
+					<PostButtons
 						original={mastodonStatus.url}
 						id={id}
 						fromMe={mastodonStatus.account.acct === data.clientHandle}

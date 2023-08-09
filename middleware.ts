@@ -22,12 +22,9 @@ export function middleware(request: NextRequest) {
 		return headerLocale || defaultLocale;
 	}
 
-	if (
-		request.nextUrl.searchParams.has("lang") === false ||
-		locales.every(
-			(locale) => locale !== request.nextUrl.searchParams.get("lang")
-		)
-	) {
+	const currentLocale = request.nextUrl.searchParams.get("lang");
+
+	if (!currentLocale || locales.every((locale) => locale !== currentLocale)) {
 		const locale = getLocale();
 		const response = NextResponse.redirect(
 			withQuery(
@@ -43,6 +40,15 @@ export function middleware(request: NextRequest) {
 
 		return response;
 	}
+
+	const response = NextResponse.next();
+
+	response.cookies.set(
+		process.env.LANGUAGE_COOKIE_NAME as string,
+		currentLocale
+	);
+
+	return response;
 }
 
 export const config = {

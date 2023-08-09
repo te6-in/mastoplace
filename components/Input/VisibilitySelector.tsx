@@ -1,13 +1,16 @@
-import { privacySet } from "@/components/StatusBlock/Privacy";
+import { visibilitySet } from "@/components/PostBlock/Visibility";
 import { mastodon } from "masto";
 import { UseFormRegisterReturn } from "react-hook-form";
 
-interface PrivacySelectorProps {
+interface VisibilitySelectorProps {
 	register: UseFormRegisterReturn;
 	error?: string;
 }
 
-export function PrivacySelector({ register, error }: PrivacySelectorProps) {
+export function VisibilitySelector({
+	register,
+	error,
+}: VisibilitySelectorProps) {
 	return (
 		<div className="flex flex-col">
 			<div className="mb-1 flex justify-between px-1 text-sm font-medium">
@@ -21,22 +24,22 @@ export function PrivacySelector({ register, error }: PrivacySelectorProps) {
 				)}
 			</div>
 			<fieldset className="grid gap-1.5 grid-cols-4 p-2 pb-1.5 rounded-md shadow-sm border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 border">
-				<Input register={register} privacy="public" />
-				<Input register={register} privacy="unlisted" />
-				<Input register={register} privacy="private" />
-				<Input register={register} privacy="direct" />
+				<Input register={register} visibility="public" />
+				<Input register={register} visibility="unlisted" />
+				<Input register={register} visibility="private" />
+				<Input register={register} visibility="direct" />
 			</fieldset>
 		</div>
 	);
 }
 
 interface InputProps {
-	privacy: mastodon.v1.StatusVisibility;
+	visibility: mastodon.v1.StatusVisibility;
 	register: UseFormRegisterReturn;
 }
 
-function Input({ privacy, register }: InputProps) {
-	const Icon = privacySet(privacy).Icon;
+function Input({ visibility, register }: InputProps) {
+	const Icon = visibilitySet(visibility).Icon;
 
 	return (
 		<label className="flex flex-col gap-1">
@@ -44,9 +47,9 @@ function Input({ privacy, register }: InputProps) {
 				<input
 					{...register}
 					className="flex items-center justify-center rounded h-10 w-full checked:bg-violet-500 checked:hover:bg-violet-500 focus-within:checked:bg-violet-500 dark:checked:bg-violet-600 dark:checked:hover:bg-violet-600 dark:focus-within:checked:bg-violet-600 shadow-sm border-slate-300 dark:border-zinc-700 checked:bg-none peer transition-colors bg-white dark:bg-zinc-950"
-					name="privacy"
+					name="visibility"
 					type="radio"
-					value={privacy}
+					value={visibility}
 				/>
 				<Icon
 					className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-slate-700 dark:text-zinc-300 peer-checked:text-white"
@@ -55,7 +58,7 @@ function Input({ privacy, register }: InputProps) {
 				/>
 			</div>
 			<div className="break-keep px-0.5 text-sm text-slate-500 dark:text-zinc-500 font-medium text-center">
-				{privacySet(privacy).text}
+				{visibilitySet(visibility).text}
 			</div>
 		</label>
 	);

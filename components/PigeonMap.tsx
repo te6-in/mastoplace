@@ -35,7 +35,6 @@ export function PigeonMap({
 					/>
 				)}
 			</Map>
-			;
 		</div>
 	);
 }

@@ -10,7 +10,7 @@ export interface MyInfoResponse extends DefaultResponse {
 		serverName: string;
 		displayName: string;
 		avatar: string;
-		defaultPrivacy: mastodon.v1.StatusVisibility;
+		defaultVisibility: mastodon.v1.StatusVisibility;
 	};
 }
 
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 					serverName: server.title,
 					displayName: account.displayName,
 					avatar: account.avatar,
-					defaultPrivacy: account.source?.privacy ?? "unlisted",
+					defaultVisibility: account.source?.privacy ?? "unlisted",
 				},
 			});
 		} catch {

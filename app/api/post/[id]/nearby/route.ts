@@ -1,6 +1,6 @@
-import { StatusGetParams } from "@/app/api/status/[id]/route";
+import { StatusGetParams } from "@/app/api/post/[id]/route";
 import { client } from "@/libs/server/client";
-import { findStatus } from "@/libs/server/findStatus";
+import { findPosts } from "@/libs/server/findPosts";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
@@ -56,7 +56,7 @@ export async function GET(
 			);
 		}
 
-		const originalMastodonStatus = await findStatus({
+		const originalMastodonStatus = await findPosts({
 			masto,
 			clientServer,
 			status: originalStatus,
@@ -121,7 +121,7 @@ export async function GET(
 			nearbyStatuses.map(async (nearbyStatus) => {
 				if (!nearbyStatus.mastodonId) return false;
 
-				const fetchedStatus = await findStatus({
+				const fetchedStatus = await findPosts({
 					masto,
 					clientServer,
 					status: nearbyStatus,

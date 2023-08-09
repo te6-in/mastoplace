@@ -1,12 +1,12 @@
 import { AtSign, Globe, Lock, Unlock } from "lucide-react";
 import { mastodon } from "masto";
 
-interface PrivacyProps {
-	privacy: mastodon.v1.StatusVisibility;
+interface VisibilityProps {
+	visibility: mastodon.v1.StatusVisibility;
 }
 
-export function privacySet(privacy: mastodon.v1.StatusVisibility) {
-	switch (privacy) {
+export function visibilitySet(visibility: mastodon.v1.StatusVisibility) {
+	switch (visibility) {
 		case "public":
 			return {
 				Icon: Globe,
@@ -30,8 +30,8 @@ export function privacySet(privacy: mastodon.v1.StatusVisibility) {
 	}
 }
 
-export function Privacy({ privacy }: PrivacyProps) {
-	const { Icon, text } = privacySet(privacy);
+export function Visibility({ visibility }: VisibilityProps) {
+	const { Icon, text } = visibilitySet(visibility);
 
 	return (
 		<div className="flex items-center gap-1">

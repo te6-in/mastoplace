@@ -1,6 +1,6 @@
+import { MyCountResponse } from "@/app/api/post/my/count/route";
+import { DeleteAllResponse } from "@/app/api/post/my/route";
 import { LogOutResponse } from "@/app/api/profile/logout/route";
-import { MyCountResponse } from "@/app/api/status/my/count/route";
-import { DeleteAllResponse } from "@/app/api/status/my/route";
 import { Button } from "@/components/Input/Button";
 import { useMutation } from "@/libs/client/useMutation";
 import { j } from "@/libs/client/utils";
@@ -30,10 +30,10 @@ export function DeleteAccountForm({
 	const router = useRouter();
 
 	const [deletePosts, { isLoading: isDeletePostsLoading }] =
-		useMutation<DeleteAllResponse>("/api/status/my?type=statuses", "DELETE");
+		useMutation<DeleteAllResponse>("/api/post/my?type=statuses", "DELETE");
 
 	const [deleteDatabase, { isLoading: isDeleteDatabaseLoading }] =
-		useMutation<DeleteAllResponse>("/api/status/my?type=database", "DELETE");
+		useMutation<DeleteAllResponse>("/api/post/my?type=database", "DELETE");
 
 	const [stepsDone, setStepsDone] = useState(0);
 
@@ -44,13 +44,13 @@ export function DeleteAccountForm({
 		data: viewableCountData,
 		isLoading: isViewableCountLoading,
 		mutate: viewableCountMutate,
-	} = useSWR<MyCountResponse>("api/status/my/count?viewable=true");
+	} = useSWR<MyCountResponse>("api/post/my/count?viewable=true");
 
 	const {
 		data: allCountData,
 		isLoading: isAllCountLoading,
 		mutate: allCountMutate,
-	} = useSWR<MyCountResponse>("api/status/my/count");
+	} = useSWR<MyCountResponse>("api/post/my/count");
 
 	const onFirstClick = () => {
 		if (isViewableCountLoading || isDeletePostsLoading || stepsDone !== 0)

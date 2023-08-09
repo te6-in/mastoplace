@@ -1,8 +1,14 @@
 {
+	"auth": {
+		"description": {
+			"1": "Add location to your Mastodon post,",
+			"2": "and explore communities nearby."
+		}
+	},
 	"tabbar": {
 		"home": "Home",
-		"public": "Public",
 		"map": "Map",
-		"profile": "Profile"
+		"profile": "Profile",
+		"public": "Public"
 	}
 }

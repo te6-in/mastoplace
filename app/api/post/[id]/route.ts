@@ -1,5 +1,5 @@
 import { client } from "@/libs/server/client";
-import { findStatus } from "@/libs/server/findStatus";
+import { findPosts } from "@/libs/server/findPosts";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { mastodon } from "masto";
@@ -56,7 +56,7 @@ export async function GET(
 			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });
 		}
 
-		const mastodonStatus = await findStatus({ masto, clientServer, status });
+		const mastodonStatus = await findPosts({ masto, clientServer, status });
 
 		if (!mastodonStatus) {
 			return NextResponse.json<StatusResponse>({ ok: false }, { status: 404 });

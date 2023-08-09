@@ -1,11 +1,11 @@
 "use client";
 
+import { NewStatusResponse } from "@/app/api/post/route";
 import { MyInfoResponse } from "@/app/api/profile/me/route";
-import { NewStatusResponse } from "@/app/api/status/route";
 import { AuthForm } from "@/components/Auth/AuthForm";
 import { Checkbox } from "@/components/Input/Checkbox";
-import { PrivacySelector } from "@/components/Input/PrivacySelector";
 import { TextArea } from "@/components/Input/TextArea";
+import { VisibilitySelector } from "@/components/Input/VisibilitySelector";
 import { Layout } from "@/components/Layout";
 import { BottomToolbar } from "@/components/Layout/BottomToolbar";
 import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
@@ -17,6 +17,7 @@ import { AnimatePresence } from "framer-motion";
 import { getCenter } from "geolib";
 import { Check, Map } from "lucide-react";
 import { mastodon } from "masto";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -24,7 +25,7 @@ import useSWR, { useSWRConfig } from "swr";
 
 interface NewStatusForm {
 	text: string;
-	privacy: mastodon.v1.StatusVisibility;
+	visibility: mastodon.v1.StatusVisibility;
 	approximate: boolean;
 	exact: boolean;
 }
@@ -35,6 +36,7 @@ export default function New() {
 		useSWR<MyInfoResponse>("/api/profile/me");
 
 	const router = useRouter();
+	const { t } = useTranslation();
 	const { mutate } = useSWRConfig();
 	const { latitude, longitude } = useLocation();
 	const {
@@ -53,7 +55,7 @@ export default function New() {
 	const watchExact = watch("exact");
 
 	const [submit, { data, isLoading }] =
-		useMutation<NewStatusResponse>("/api/status");
+		useMutation<NewStatusResponse>("/api/post");
 
 	const randomValue = () => {
 		const values = [-0.03, -0.02, -0.01, 0, 0.01, 0.02, 0.03];
@@ -109,7 +111,7 @@ export default function New() {
 
 		submit({
 			text: inputs.text,
-			privacy: inputs.privacy,
+			visibility: inputs.visibility,
 			exact: watchExact ? true : watchApproximate ? false : undefined,
 			location: {
 				...(watchExact
@@ -123,8 +125,8 @@ export default function New() {
 
 	useEffect(() => {
 		if (data && data.ok) {
-			mutate("/api/status");
-			router.replace(`/status/${data.id}`);
+			mutate("/api/post");
+			router.replace(`/post/${data.id}`);
 		}
 	}, [data, router]);
 
@@ -138,9 +140,9 @@ export default function New() {
 		if (isMeLoading || !meData?.me) return;
 
 		if (process.env.NODE_ENV === "development") {
-			setValue("privacy", "direct");
+			setValue("visibility", "direct");
 		} else {
-			setValue("privacy", meData.me.defaultPrivacy);
+			setValue("visibility", meData.me.defaultVisibility);
 		}
 	}, [meData, setValue]);
 
@@ -148,7 +150,7 @@ export default function New() {
 
 	return (
 		<Layout
-			title="새로운 글 작성"
+			title={t("action.new-post.default")}
 			showBackground
 			showBackButton
 			hasBottomToolbar
@@ -160,13 +162,13 @@ export default function New() {
 						component={
 							<div className="flex flex-col gap-6">
 								<p className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
-									새로운 글을 작성하려면
+									{t("new-post.log-in-to-write.1")}
 									<br />
-									로그인해야 합니다.
+									{t("new-post.log-in-to-write.2")}
 								</p>
 								<AuthForm
-									buttonText="로그인하고 글 작성"
-									redirectAfterAuth="/status/new"
+									buttonText={t("new-post.log-in-and-write")}
+									redirectAfterAuth="/post/new"
 								/>
 							</div>
 						}
@@ -206,18 +208,20 @@ export default function New() {
 						</div>
 					)}
 					<TextArea
-						register={register("text", { required: "내용을 입력해주세요." })}
+						register={register("text", {
+							required: t("new-post.text.error.required"),
+						})}
 						id="text"
-						label="내용"
+						label={t("new-post.text.label")}
 						rows={3}
-						placeholder="거기에선 어떤 일이 일어나고 있나요?"
+						placeholder={t("new-post.text.placeholder")}
 						error={errors.text?.message}
 					/>
-					<PrivacySelector
-						register={register("privacy", {
+					<VisibilitySelector
+						register={register("visibility", {
 							required: "공개 범위를 선택해주세요.",
 						})}
-						error={errors.privacy?.message}
+						error={errors.visibility?.message}
 					/>
 					<Checkbox
 						register={register("approximate")}

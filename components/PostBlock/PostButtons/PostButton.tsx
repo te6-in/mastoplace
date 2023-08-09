@@ -1,7 +1,7 @@
-import { StatusDeleteResponse } from "@/app/api/status/[id]/route";
+import { StatusDeleteResponse } from "@/app/api/post/[id]/route";
 import { Button } from "@/components/Input/Button";
 import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
-import { StatusBlock } from "@/components/StatusBlock";
+import { PostBlock } from "@/components/PostBlock";
 import { useMutation } from "@/libs/client/useMutation";
 import { j } from "@/libs/client/utils";
 import { AnimatePresence } from "framer-motion";
@@ -17,12 +17,12 @@ import {
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
 
-interface StatusButtonProps {
+interface PostButtonProps {
 	type: "open" | "boost" | "like" | "bookmark" | "delete";
 	id?: string | null;
 }
 
-export function StatusButton({ type, id }: StatusButtonProps) {
+export function PostButton({ type, id }: PostButtonProps) {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 	const Icon = {
@@ -100,13 +100,13 @@ interface DeleteModalProps {
 
 function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 	const [deleteAll, { data: deleteAllData, isLoading: deleteAllLoading }] =
-		useMutation<StatusDeleteResponse>(`/api/status/${id}?type=all`, "DELETE");
+		useMutation<StatusDeleteResponse>(`/api/post/${id}?type=all`, "DELETE");
 
 	const [
 		deleteDatabase,
 		{ data: deleteDatabaseData, isLoading: deleteDatabaseLoading },
 	] = useMutation<StatusDeleteResponse>(
-		`/api/status/${id}?type=database`,
+		`/api/post/${id}?type=database`,
 		"DELETE"
 	);
 
@@ -126,7 +126,7 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 
 	useEffect(() => {
 		if (deleteAllData?.ok || deleteDatabaseData?.ok) {
-			mutate(`/api/status/${id}`, null, {
+			mutate(`/api/post/${id}`, null, {
 				revalidate: true,
 			});
 
@@ -136,7 +136,7 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 
 	return (
 		<div className="flex flex-col gap-8">
-			<StatusBlock id={id} hideButtons />
+			<PostBlock id={id} hideButtons />
 			<div className="relative flex items-center justify-center w-full">
 				<hr className="w-full border-slate-300 dark:border-zinc-700" />
 				<span className="absolute break-keep text-center font-medium text-slate-700 bg-slate-50 px-2 dark:bg-zinc-950 dark:text-zinc-300">

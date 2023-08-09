@@ -60,12 +60,12 @@ export async function mastodonClient(cookies: RequestCookies) {
 			masto,
 			clientServer: server,
 			handle: account.acct,
-			defaultPrivacy: account.source.privacy,
+			defaultVisibility: account.source.privacy,
 		} as {
 			masto: mastodon.Client;
 			clientServer: string;
 			handle: string;
-			defaultPrivacy: mastodon.v1.StatusVisibility | null | undefined;
+			defaultVisibility: mastodon.v1.StatusVisibility | null | undefined;
 		};
 	} catch {
 		return null;

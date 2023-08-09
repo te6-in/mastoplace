@@ -1,8 +1,105 @@
 {
-	"tabbar": {
-		"home": "홈",
-		"public": "공개 위치",
-		"map": "지도",
-		"profile": "프로필"
-	}
+  "accessibility": {
+    "alt": {
+      "my-profile-picture": "내 프로필 사진"
+    }
+  },
+  "action": {
+    "browse-public-posts": "공개 위치 구경",
+    "go-home": "홈으로 가기",
+    "new-post": {
+      "default": "새로운 글 작성",
+      "first": "첫 번째 글 작성"
+    }
+  },
+  "auth": {
+    "description": {
+      "1": "마스토돈 글에 위치를 추가하고",
+      "2": "주변 사람들이 올린 글을 찾아보세요."
+    }
+  },
+  "home": {
+    "log-in-to-see": {
+      "1": "로그인하면 마스토돈에서 팔로우한 사람들이",
+      "2": "Mastoplace를 통해 올린 글을 볼 수 있어요."
+    },
+    "no-post": {
+      "1": "팔로우하는 사람 중",
+      "2": "Mastoplace를 통해 글을 작성한 사람이 없어요."
+    }
+  },
+  "new-post": {
+    "log-in-and-write": "로그인하고 글 작성",
+    "log-in-to-write": {
+      "1": "새로운 글을 작성하려면",
+      "2": "로그인해야 합니다."
+    },
+    "text": {
+      "error": {
+        "required": "내용을 입력해주세요."
+      },
+      "label": "내용",
+      "placeholder": "거기에선 어떤 일이 일어나고 있나요?"
+    },
+    "visibility": {
+      "error": {
+        "required": "공개 범위를 선택해주세요."
+      }
+    }
+  },
+  "post": {
+    "log-in-and-see": "로그인한 뒤 이 글로 돌아오기",
+    "log-in-to-see": {
+      "description": {
+        "1": "Mastoplace 서버에는 글 내용이 저장되지 않기 때문에",
+        "2": "로그인해야 마스토돈 서버를 통해 글을 확인할 수 있습니다."
+      },
+      "title": "이 글을 보기 위해서는 로그인해야 합니다."
+    },
+    "no-post": {
+      "description": {
+        "1": "없는 글이거나",
+        "2": "지금 로그인한 계정으로는 볼 수 없는 글이에요."
+      },
+      "title": "아쉽네요!"
+    },
+    "posts-nearby": {
+      "no-location": "이 글은 위치가 등록되지 않았기 때문에 주변 글을 볼 수 없어요.",
+      "no-post": "이곳 주변에는 올라온 글이 없어요.",
+      "title": "이곳 근처에서 올라온 글"
+    }
+  },
+  "profile": {
+    "delete-account": {
+      "button": "탈퇴",
+      "close-form": "탈퇴 안 할래요"
+    },
+    "edit-on": {
+      "default": "{{server}}에서 프로필 수정",
+      "loading": "프로필 수정"
+    },
+    "log-in-and-see": "로그인하고 내 프로필 확인",
+    "log-in-to-see": {
+      "1": "내 프로필을 확인하려면",
+      "2": "로그인해야 합니다."
+    },
+    "log-out": "로그아웃",
+    "manage-my-locations": "위치 정보 관리",
+    "no-post": {
+      "1": "아직 Mastoplace를 통해",
+      "2": "작성한 글이 없어요."
+    }
+  },
+  "public": {
+    "no-post": {
+      "1": "Mastoplace를 통해 게시된 글 중에서",
+      "2": "볼 수 있는 글이 없어요."
+    }
+  },
+  "tabbar": {
+    "home": "홈",
+    "map": "지도",
+    "profile": "프로필",
+    "public": "공개 위치"
+  }
 }

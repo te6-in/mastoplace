@@ -1,13 +1,13 @@
-import { StatusBlock } from "@/components/StatusBlock";
+import { PostBlock } from "@/components/PostBlock";
 import { j } from "@/libs/client/utils";
 
-interface StatusLoadingListProps {
+interface PostLoadingListProps {
 	dividerPadding?: boolean;
 }
 
-export function StatusLoadingList({
+export function PostLoadingList({
 	dividerPadding = false,
-}: StatusLoadingListProps) {
+}: PostLoadingListProps) {
 	return (
 		<ol
 			className={j(
@@ -20,7 +20,7 @@ export function StatusLoadingList({
 					key={index}
 					className={j(dividerPadding ? "py-4" : "p-4", className)}
 				>
-					<StatusBlock id={null} />
+					<PostBlock id={null} />
 				</li>
 			))}
 		</ol>

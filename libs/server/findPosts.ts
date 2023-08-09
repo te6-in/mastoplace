@@ -1,17 +1,17 @@
 import { Status } from "@prisma/client";
 import { mastodon } from "masto";
 
-interface FindStatusParams {
+interface FindPostsParams {
 	masto: mastodon.Client;
 	clientServer: string;
 	status: Pick<Status, "id" | "mastodonId" | "server" | "handle">;
 }
 
-export async function findStatus({
+export async function findPosts({
 	masto,
 	clientServer,
 	status,
-}: FindStatusParams) {
+}: FindPostsParams) {
 	if (!status.mastodonId) return null;
 
 	if (clientServer === status.server) {

@@ -1,5 +1,5 @@
 import { client } from "@/libs/server/client";
-import { findStatus } from "@/libs/server/findStatus";
+import { findPosts } from "@/libs/server/findPosts";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { Status } from "@prisma/client";
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 					if (status.server === clientServer && status.handle === data.handle)
 						return true;
 
-					const mastodonStatus = await findStatus({
+					const mastodonStatus = await findPosts({
 						masto,
 						clientServer,
 						status,
@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-	const { text, privacy, exact, location } = await request.json();
+	const { text, visibility, exact, location } = await request.json();
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
@@ -153,12 +153,12 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		const textWithURL = `${text}\n\n${process.env.NEXT_PUBLIC_BASE_URL}/status/${status.id}\n\n#Mastoplace`;
+		const textWithURL = `${text}\n\n${process.env.NEXT_PUBLIC_BASE_URL}/post/${status.id}\n\n#Mastoplace`;
 
 		try {
 			const { id: mastodonId } = await masto.v1.statuses.create({
 				status: textWithURL,
-				visibility: privacy,
+				visibility,
 			});
 
 			await client.status.update({

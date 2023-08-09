@@ -25,7 +25,7 @@ export function Content({
 	const onClick = () => {
 		if (!id) return;
 
-		router.push(`/status/${id}`);
+		router.push(`/post/${id}`);
 	};
 
 	return (
