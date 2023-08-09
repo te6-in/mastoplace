@@ -3,8 +3,10 @@ import { PigeonMap } from "@/components/PigeonMap";
 import { Content } from "@/components/PostBlock/Content";
 import { DateTime } from "@/components/PostBlock/DateTime";
 import { PostButtons } from "@/components/PostBlock/PostButtons";
+import { UnavailablePostBlock } from "@/components/PostBlock/UnavailablePostBlock";
 import { Visibility } from "@/components/PostBlock/Visibility";
 import { getCenter, getDistance } from "geolib";
+import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -33,15 +35,12 @@ export function PostBlock({
 	hideButtons,
 }: PostBlockProps) {
 	const { data } = useSWR<StatusResponse>(id ? `/api/post/${id}` : null);
+	const { t } = useTranslation();
 
 	if (data?.ok === false) {
 		if (!showError) return null;
 
-		return (
-			<div className="text-slate-800 dark:text-zinc-200 text-center">
-				없는 글이거나 현재 로그인한 계정으로 볼 수 없는 글이에요.
-			</div>
-		);
+		return <UnavailablePostBlock />;
 	}
 
 	const mastodonStatus = data?.mastodonStatus;
@@ -74,7 +73,7 @@ export function PostBlock({
 		distance !== undefined &&
 		distance !== null &&
 		distance !== false &&
-		` | 이 글에서 ${new Intl.NumberFormat("ko-KR").format(distance)}m`;
+		` | ${t("post.location.distance", { distance })}`;
 
 	return (
 		<div className="flex gap-2">
@@ -86,7 +85,9 @@ export function PostBlock({
 					<address>
 						<img
 							src={mastodonStatus?.account.avatar}
-							alt={`${mastodonStatus?.account.displayName} 사용자의 프로필 사진`}
+							alt={t("accessibility.alt.profile-picture.of", {
+								name: mastodonStatus?.account.displayName,
+							})}
 						/>
 					</address>
 				</Link>
@@ -130,8 +131,8 @@ export function PostBlock({
 					<div className="flex gap-1 text-sm flex-wrap text-slate-500 dark:text-zinc-500 justify-between items-center mt-2">
 						<span className="mr-2">
 							<DateTime dateTime={mastodonStatus.createdAt} />
-							{exact === true && " | 정확한 위치"}
-							{exact === false && " | 대략적인 위치"}
+							{exact === true && ` | ${t("post.location.exact")}`}
+							{exact === false && ` | ${t("post.location.approximate")}`}
 							{readableDistance}
 						</span>
 						<Visibility visibility={mastodonStatus.visibility} />

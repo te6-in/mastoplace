@@ -6,6 +6,7 @@ import { Button } from "@/components/Input/Button";
 import { Layout } from "@/components/Layout";
 import { PostBlock } from "@/components/PostBlock";
 import { PostLoadingList } from "@/components/PostBlock/PostLoadingList";
+import { UnavailablePostBlock } from "@/components/PostBlock/UnavailablePostBlock";
 import { useToken } from "@/libs/client/useToken";
 import { Globe2, Newspaper } from "lucide-react";
 import useTranslation from "next-translate/useTranslation";
@@ -99,20 +100,11 @@ export default function Post({ params }: StatusParams) {
 				data &&
 				data.ok === false && (
 					<div className="flex flex-col gap-6 px-4 mt-12 mx-auto text-center w-3/4 sm:w-96">
-						<div className="flex flex-col gap-2 break-keep">
-							<h1 className="text-slate-800 text-2xl dark:text-zinc-200">
-								{t("post.no-post.title")}
-							</h1>
-							<p className="text-sm text-slate-600 dark:text-zinc-400">
-								{t("post.no-post.description.1")}
-								<br />
-								{t("post.no-post.description.2")}
-							</p>
-						</div>
+						<UnavailablePostBlock />
 						<div className="flex flex-col sm:grid sm:grid-cols-2 gap-2">
 							<Button
 								text={t("action.go-home")}
-								href="/"
+								href="/home"
 								isPrimary
 								isLoading={false}
 								Icon={Newspaper}

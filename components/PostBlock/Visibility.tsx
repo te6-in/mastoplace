@@ -1,31 +1,34 @@
 import { AtSign, Globe, Lock, Unlock } from "lucide-react";
 import { mastodon } from "masto";
+import useTranslation from "next-translate/useTranslation";
 
 interface VisibilityProps {
 	visibility: mastodon.v1.StatusVisibility;
 }
 
 export function visibilitySet(visibility: mastodon.v1.StatusVisibility) {
+	const { t } = useTranslation();
+
 	switch (visibility) {
 		case "public":
 			return {
 				Icon: Globe,
-				text: "공개",
+				text: t("post.visibility.public"),
 			};
 		case "unlisted":
 			return {
 				Icon: Unlock,
-				text: "공개 타임라인에서 숨김",
+				text: t("post.visibility.unlisted"),
 			};
 		case "private":
 			return {
 				Icon: Lock,
-				text: "팔로워만",
+				text: t("post.visibility.followers"),
 			};
 		case "direct":
 			return {
 				Icon: AtSign,
-				text: "언급된 사용자만",
+				text: t("post.visibility.direct"),
 			};
 	}
 }

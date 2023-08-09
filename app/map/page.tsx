@@ -23,7 +23,7 @@ export default function Map() {
 			)}
 			<FloatingButton
 				Icon={Pencil}
-				text={t("action.new-post")}
+				text={t("action.new-post.default")}
 				href="/post/new"
 			/>
 		</Layout>

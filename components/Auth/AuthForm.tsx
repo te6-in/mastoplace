@@ -3,6 +3,7 @@
 import { Button } from "@/components/Input/Button";
 import { TextInput } from "@/components/Input/TextInput";
 import { ArrowUpLeft, LogIn } from "lucide-react";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UseFormSetValue, useForm } from "react-hook-form";
@@ -42,6 +43,7 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 	const watchServer = watch("server");
 
 	const router = useRouter();
+	const { t } = useTranslation();
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { error: serverError } = useSWR(
@@ -73,7 +75,7 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 
 		if (serverError) {
 			setError("server", {
-				message: "올바른 마스토돈 서버가 아닙니다.",
+				message: t("auth.form.server.error.invalid"),
 			});
 
 			return;
@@ -95,12 +97,12 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 		>
 			<TextInput
 				register={register("server", {
-					required: "마스토돈 서버 주소를 입력해주세요.",
+					required: t("auth.form.server.error.required"),
 				})}
 				type="text"
 				id="server"
-				label="마스토돈 서버 주소"
-				placeholder="예를 들면… mastodon.social"
+				label={t("auth.form.server.label")}
+				placeholder={t("auth.form.server.placeholder")}
 				prefix="https://"
 				error={errors.server?.message}
 			/>
@@ -119,7 +121,7 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 					isPrimary
 					Icon={LogIn}
 					isLoading={isLoading}
-					text={buttonText ?? "서버를 통해 로그인"}
+					text={buttonText ?? t("auth.form.log-in")}
 				/>
 			)}
 		</form>

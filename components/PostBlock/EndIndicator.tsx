@@ -1,10 +1,13 @@
 import { j } from "@/libs/client/utils";
+import useTranslation from "next-translate/useTranslation";
 
 interface EndIndicatorProps {
 	hasFloatingButton?: boolean;
 }
 
 export function EndIndicator({ hasFloatingButton }: EndIndicatorProps) {
+	const { t } = useTranslation();
+
 	return (
 		<div
 			className={j(
@@ -12,7 +15,7 @@ export function EndIndicator({ hasFloatingButton }: EndIndicatorProps) {
 				hasFloatingButton ? "mb-1 sm:mb-4" : "mb-4"
 			)}
 		>
-			목록의 끝이에요.
+			{t("post.end-of-list")}
 		</div>
 	);
 }

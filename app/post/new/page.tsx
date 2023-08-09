@@ -219,34 +219,32 @@ export default function New() {
 					/>
 					<VisibilitySelector
 						register={register("visibility", {
-							required: "공개 범위를 선택해주세요.",
+							required: t("new-post.visibility.error.required"),
 						})}
 						error={errors.visibility?.message}
 					/>
 					<Checkbox
 						register={register("approximate")}
 						id="approximate"
-						title="현재 위치 포함"
-						label="임의 가중치가 적용된 대략적인 현재 위치와 그 주변에 올라온 글을 확인할 수 있는 링크가 함께 게시됩니다."
+						title={t("new-post.include-location.title")}
+						label={t("new-post.include-location.description")}
 					/>
 					<Checkbox
 						register={register("exact")}
 						id="includeLocation"
-						title="정확한 위치"
-						label="대략적인 위치보다 조금 더 정밀한 구역으로 구분된 범위가 게시됩니다."
+						title={t("new-post.exact-location.title")}
+						label={t("new-post.exact-location.description")}
 						disabled={!watchApproximate}
 					/>
 				</div>
 				<BottomToolbar
 					primaryButton={{
 						icon: Check,
-						text: `${
-							watchExact
-								? "정확한 위치와 함께"
-								: watchApproximate
-								? "대략적인 위치와 함께"
-								: "위치 없이"
-						} 게시`,
+						text: watchExact
+							? t("new-post.post.with-exact-location")
+							: watchApproximate
+							? t("new-post.post.with-approximate-location")
+							: t("new-post.post.without-location"),
 						isLoading,
 					}}
 				/>

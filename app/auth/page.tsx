@@ -14,7 +14,7 @@ export default function AuthPage() {
 
 	useEffect(() => {
 		if (hasValidToken) {
-			router.push("/");
+			router.push("/home");
 		}
 	}, [hasValidToken]);
 
@@ -22,18 +22,20 @@ export default function AuthPage() {
 
 	return (
 		<Layout hideTabBarCompletely>
-			<div className="flex flex-col gap-8 mt-16 px-4 sm:w-96 mx-auto">
-				<div className="flex gap-2 flex-col">
-					<h1 className="font-bold text-4xl text-center text-slate-800 dark:text-zinc-200">
-						{"Mastoplace"}
-					</h1>
-					<p className="text-slate-500 dark:text-zinc-500 font-medium text-center text-sm break-keep">
-						{t("auth.description.1")}
-						<br />
-						{t("auth.description.2")}
-					</p>
+			<div className="flex flex-col h-screen justify-center">
+				<div className="flex flex-col gap-8 px-4 sm:w-96 mx-auto">
+					<div className="flex gap-2 flex-col">
+						<h1 className="font-bold text-4xl text-center text-slate-800 dark:text-zinc-200">
+							{"Mastoplace"}
+						</h1>
+						<p className="text-slate-500 dark:text-zinc-500 font-medium text-center text-sm break-keep">
+							{t("auth.description.1")}
+							<br />
+							{t("auth.description.2")}
+						</p>
+					</div>
+					<AuthForm redirectAfterAuth="/home" />
 				</div>
-				<AuthForm redirectAfterAuth="/" />
 			</div>
 		</Layout>
 	);

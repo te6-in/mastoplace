@@ -1,5 +1,6 @@
 import { visibilitySet } from "@/components/PostBlock/Visibility";
 import { mastodon } from "masto";
+import useTranslation from "next-translate/useTranslation";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 interface VisibilitySelectorProps {
@@ -11,11 +12,13 @@ export function VisibilitySelector({
 	register,
 	error,
 }: VisibilitySelectorProps) {
+	const { t } = useTranslation();
+
 	return (
 		<div className="flex flex-col">
 			<div className="mb-1 flex justify-between px-1 text-sm font-medium">
 				<span className="text-slate-700 dark:text-zinc-300 mr-1 break-keep">
-					공개 범위
+					{t("new-post.visibility.label")}
 				</span>
 				{error && (
 					<span className="text-red-500 motion-safe:animate-shake">

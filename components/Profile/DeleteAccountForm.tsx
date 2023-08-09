@@ -12,6 +12,7 @@ import {
 	LogOut,
 	Trash2,
 } from "lucide-react";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -39,6 +40,8 @@ export function DeleteAccountForm({
 
 	const [logOut, { data: logOutData, isLoading: isLogOutLoading }] =
 		useMutation<LogOutResponse>("/api/profile/logout");
+
+	const { t } = useTranslation();
 
 	const {
 		data: viewableCountData,
@@ -102,7 +105,7 @@ export function DeleteAccountForm({
 
 	useEffect(() => {
 		if (logOutData?.ok) {
-			router.push("/");
+			router.push("/home");
 		}
 	}, [logOutData]);
 
@@ -110,10 +113,10 @@ export function DeleteAccountForm({
 		<div className="flex gap-6 flex-col">
 			<div className="flex flex-col gap-1 break-keep">
 				<div className="text-slate-800 font-medium text-center text-lg dark:text-zinc-200">
-					Mastoplace 탈퇴
+					{t("profile.delete-account.title")}
 				</div>
 				<p className="text-sm text-center font-medium text-slate-500 dark:text-zinc-500">
-					그냥 버튼 몇 번만 누르면 돼요.
+					{t("profile.delete-account.description")}
 				</p>
 			</div>
 			<div className="relative flex flex-col gap-6">
@@ -140,18 +143,15 @@ export function DeleteAccountForm({
 									"font-medium text-lg text-slate-900 dark:text-zinc-100"
 								}
 							>
-								연결된 마스토돈 글 삭제
+								{t("profile.delete-account.first.title")}
 							</div>
 							<p className="text-slate-500 dark:text-zinc-500">
-								Mastoplace를 통해 게시한 마스토돈 게시물을 내 마스토돈 계정(@
-								{handle}@{server})에서 삭제합니다.
+								{t("profile.delete-account.first.description.primary", {
+									handle: `@${handle}@${server}`,
+								})}
 							</p>
 							<p className="text-slate-400 dark:text-zinc-600 text-sm mt-1">
-								마스토돈에 글을 남겨두고 싶다면 이 과정은 건너뛰어도 되지만, 두
-								번째 단계를 진행한 이후에는 마스토돈에서 직접 삭제해야 합니다.
-								마찬가지로, 이전에 마스토돈 글은 삭제하지 않고 Mastoplace 정보만
-								삭제한 글의 경우 이 단계에서 삭제되지 않습니다. 이러한 경우,
-								#Mastoplace 해시태그를 활용하세요.
+								{t("profile.delete-account.first.description.secondary")}
 							</p>
 						</div>
 						<div className="flex flex-col sm:grid sm:grid-cols-2 gap-2 mt-2">
@@ -160,11 +160,11 @@ export function DeleteAccountForm({
 								text={
 									viewableCountData && viewableCountData.count !== undefined
 										? viewableCountData.count > 0
-											? `마스토돈 글 ${new Intl.NumberFormat("ko-KR").format(
-													viewableCountData.count
-											  )}개 삭제`
-											: "삭제할 글 없음"
-										: "글 개수 로딩 중…"
+											? t("profile.delete-account.first.button.delete", {
+													count: viewableCountData.count,
+											  })
+											: t("profile.delete-account.first.button.unavailable")
+										: t("profile.delete-account.first.button.loading")
 								}
 								isLoading={isViewableCountLoading || isDeletePostsLoading}
 								Icon={
@@ -179,7 +179,7 @@ export function DeleteAccountForm({
 							/>
 							<Button
 								isPrimary={false}
-								text="건너뛰기"
+								text={t("profile.delete-account.first.button.skip")}
 								isLoading={false}
 								Icon={ChevronLast}
 								disabled={stepsDone !== 0}
@@ -192,9 +192,11 @@ export function DeleteAccountForm({
 				</div>
 				<Step
 					number={2}
-					title="저장된 정보 삭제"
-					text={`@${handle}@${server} 계정과 연결된 모든 위치 및 게시 정보를 Mastoplace에서 삭제합니다.`}
-					description="이 숫자가 마스토돈 글 수보다 크다면, 이미 첫 번째 단계를 진행하였거나 마스토돈에서 글을 직접 삭제한 적이 있는 경우입니다."
+					title={t("profile.delete-account.second.title")}
+					text={t("profile.delete-account.second.description.primary", {
+						handle: `@${handle}@${server}`,
+					})}
+					description={t("profile.delete-account.second.description.secondary")}
 					disabled={stepsDone !== 1}
 					Button={
 						<Button
@@ -202,11 +204,11 @@ export function DeleteAccountForm({
 							text={
 								allCountData && allCountData.count !== undefined
 									? allCountData.count > 0
-										? `내 정보 ${new Intl.NumberFormat("ko-KR").format(
-												allCountData.count
-										  )}개 삭제`
-										: "삭제할 정보 없음"
-									: "내 정보 개수 로딩 중…"
+										? t("profile.delete-account.second.button.delete", {
+												count: allCountData.count,
+										  })
+										: t("profile.delete-account.second.button.unavailable")
+									: t("profile.delete-account.second.button.loading")
 							}
 							isLoading={isAllCountLoading || isDeleteDatabaseLoading}
 							Icon={
@@ -223,14 +225,16 @@ export function DeleteAccountForm({
 				/>
 				<Step
 					number={3}
-					title="Mastoplace 권한 해제"
-					text="마스토돈 설정에서 Mastoplace 앱에 부여한 권한을 해제합니다."
-					description="아래 버튼을 눌러 설정 페이지를 연 뒤, Mastoplace 항목을 찾아 삭제 버튼을 누릅니다."
+					title={t("profile.delete-account.third.title")}
+					text={t("profile.delete-account.third.description.primary")}
+					description={t("profile.delete-account.third.description.secondary")}
 					disabled={stepsDone !== 2}
 					Button={
 						<Button
 							isPrimary={stepsDone === 2}
-							text={`${serverName} 설정 새 탭에서 열기`}
+							text={t("profile.delete-account.third.button.open", {
+								server: serverName,
+							})}
 							isLoading={false}
 							Icon={stepsDone === 3 ? Check : ArrowUpRightSquare}
 							disabled={stepsDone !== 2}
@@ -247,13 +251,13 @@ export function DeleteAccountForm({
 				/>
 				<Step
 					number={4}
-					title="로그아웃"
-					description="로그아웃하면 탈퇴가 완료됩니다. 안녕히 가세요!"
+					title={t("profile.log-out")}
+					description={t("profile.delete-account.fourth.description")}
 					disabled={stepsDone !== 3}
 					Button={
 						<Button
 							isPrimary={stepsDone === 3}
-							text="로그아웃"
+							text={t("profile.log-out")}
 							isLoading={isLogOutLoading}
 							Icon={LogOut}
 							onClick={onLastClick}

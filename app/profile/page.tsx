@@ -58,7 +58,7 @@ export default function Profile() {
 
 	useEffect(() => {
 		if (logOutData?.ok) {
-			router.push("/");
+			router.push("/home");
 		}
 	}, [logOutData]);
 
@@ -145,7 +145,7 @@ export default function Profile() {
 								{!isProfileLoading && profileData && profileData.me ? (
 									<img
 										src={profileData.me.avatar}
-										alt={t("accessibility.alt.my-profile-picture")}
+										alt={t("accessibility.alt.profile-picture.mine")}
 									/>
 								) : (
 									<Skeleton className="w-full h-full" circle />

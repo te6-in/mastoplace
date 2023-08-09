@@ -35,7 +35,7 @@ export function Layout({
 			{!hideTabBarCompletely && <TabBar show={showTabBar} />}
 			<main
 				className={j(
-					"mx-auto overflow-x-hidden",
+					"mx-auto overflow-x-hidden bg-slate-50 dark:bg-zinc-950",
 					hideTabBarCompletely ? "max-w-xl sm:pl-0" : "max-w-3xl sm:pl-48",
 					showBackground ? "pt-12 sm:pt-16" : showBackButton ? "sm:pt-16" : "",
 					hasBottomToolbar ? "pb-20 sm:pb-28" : "",

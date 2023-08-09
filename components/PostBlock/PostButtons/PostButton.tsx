@@ -14,6 +14,7 @@ import {
 	Star,
 	Trash2,
 } from "lucide-react";
+import useTranslation from "next-translate/useTranslation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
 
@@ -24,6 +25,7 @@ interface PostButtonProps {
 
 export function PostButton({ type, id }: PostButtonProps) {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const { t } = useTranslation();
 
 	const Icon = {
 		open: ArrowUpRightSquare,
@@ -34,11 +36,11 @@ export function PostButton({ type, id }: PostButtonProps) {
 	}[type];
 
 	const label = {
-		open: "원본 열기",
-		boost: "부스트",
-		like: "좋아요",
-		bookmark: "보관함에 추가",
-		delete: "삭제",
+		open: t("accessibility.action.post.open"),
+		boost: t("accessibility.action.post.boost"),
+		like: t("accessibility.action.post.like"),
+		bookmark: t("accessibility.action.post.bookmark"),
+		delete: t("accessibility.action.post.delete"),
 	}[type];
 
 	const onClick = {
@@ -57,7 +59,7 @@ export function PostButton({ type, id }: PostButtonProps) {
 				{id && showDeleteModal && (
 					<FullPageOverlay
 						type="close"
-						buttonLabel="삭제 안 할래요"
+						buttonLabel={t("post.delete.close-form")}
 						component={
 							<DeleteModal id={id} setShowDeleteModal={setShowDeleteModal} />
 						}
@@ -99,6 +101,7 @@ interface DeleteModalProps {
 }
 
 function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
+	const { t } = useTranslation();
 	const [deleteAll, { data: deleteAllData, isLoading: deleteAllLoading }] =
 		useMutation<StatusDeleteResponse>(`/api/post/${id}?type=all`, "DELETE");
 
@@ -140,19 +143,19 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 			<div className="relative flex items-center justify-center w-full">
 				<hr className="w-full border-slate-300 dark:border-zinc-700" />
 				<span className="absolute break-keep text-center font-medium text-slate-700 bg-slate-50 px-2 dark:bg-zinc-950 dark:text-zinc-300">
-					이 글을 삭제하시겠어요?
+					{t("post.delete.title")}
 				</span>
 			</div>
 			<div className="flex flex-col gap-2">
 				<Button
-					text="마스토돈 글과 Mastoplace 정보 함께 삭제"
+					text={t("post.delete.button.delete-all")}
 					Icon={Eraser}
 					isPrimary
 					isLoading={deleteAllLoading}
 					onClick={onDeleteAllClick}
 				/>
 				<Button
-					text="마스토돈 글은 남기고 Mastoplace 정보만 삭제"
+					text={t("post.delete.button.keep-mastodon-post")}
 					Icon={MapPinOff}
 					isLoading={deleteDatabaseLoading}
 					onClick={onDeleteDatabaseClick}

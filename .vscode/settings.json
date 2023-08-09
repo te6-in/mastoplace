@@ -1,12 +1,8 @@
 {
 	"i18n-ally.localesPaths": ["locales"],
 	"i18n-ally.extract.keyPrefix": "localization",
-	"i18n-ally.sortKeys": true,
 	"i18n-ally.extract.ignored": ["Mastoplace", "noopener noreferrer"],
 	"i18n-ally.extract.autoDetect": true,
 	"i18n-ally.namespace": true,
-	"i18n-ally.pathMatcher": "{locale}/localization.json",
-	"i18n-ally.extract.ignoredByFiles": {
-		"libs/client/utils.ts": ["${title}…"]
-	}
+	"i18n-ally.pathMatcher": "{locale}/localization.json"
 }

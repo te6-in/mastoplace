@@ -1,13 +1,13 @@
-const locales = ["en", "ko"];
+const locales = ["en-US", "ko"];
 
 const formatters = {
 	dateTime: {
-		en: new Intl.DateTimeFormat("en-US"),
-		ko: new Intl.DateTimeFormat("ko-KR"),
+		"en-US": new Intl.DateTimeFormat("en-US"),
+		ko: new Intl.DateTimeFormat("ko"),
 	},
 	number: {
-		en: new Intl.NumberFormat("en-US"),
-		ko: new Intl.NumberFormat("ko-KR"),
+		"en-US": new Intl.NumberFormat("en-US"),
+		ko: new Intl.NumberFormat("ko"),
 	},
 };
 

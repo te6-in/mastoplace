@@ -1,5 +1,6 @@
 import { motion, useAnimate } from "framer-motion";
 import { ChevronLeft, X } from "lucide-react";
+import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -19,6 +20,7 @@ export function FullPageOverlay({
 	const router = useRouter();
 	const [card, animateCard] = useAnimate();
 	const [overlay, animateOverlay] = useAnimate();
+	const { t } = useTranslation();
 
 	const onBackClick = () => {
 		animateCard(card.current, { y: 600, opacity: 0, duration: 0.5 });
@@ -54,8 +56,8 @@ export function FullPageOverlay({
 					{type === "back" && <ChevronLeft width={20} height={20} />}
 					{type === "close" && <X width={20} height={20} />}
 					<span className="pr-0.5">
-						{type === "back" && (buttonLabel ?? "이전 화면으로")}
-						{type === "close" && (buttonLabel ?? "창 닫기")}
+						{type === "back" && (buttonLabel ?? t("action.back"))}
+						{type === "close" && (buttonLabel ?? t("action.close-modal"))}
 					</span>
 				</button>
 			</motion.div>

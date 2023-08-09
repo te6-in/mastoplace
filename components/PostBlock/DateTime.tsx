@@ -1,11 +1,15 @@
 "use client";
 
+import useTranslation from "next-translate/useTranslation";
+
 interface DateTimeProps {
 	dateTime: string;
 }
 
 export function DateTime({ dateTime }: DateTimeProps) {
-	const formatter = new Intl.DateTimeFormat("ko-KR", {
+	const { lang } = useTranslation();
+
+	const formatter = new Intl.DateTimeFormat(lang, {
 		dateStyle: "medium",
 		timeStyle: "short",
 	});

@@ -68,7 +68,7 @@ export default function Home() {
 						{t("home.log-in-to-see.2")}
 					</p>
 					<div className="sm:w-96 w-3/4">
-						<LogInOrPublic redirectAfterAuth="/" />
+						<LogInOrPublic redirectAfterAuth="/home" />
 					</div>
 				</div>
 			)}
@@ -129,7 +129,7 @@ export default function Home() {
 			{hasValidToken && data && length !== undefined && length > 0 && (
 				<FloatingButton
 					Icon={Pencil}
-					text={t("action.new-post")}
+					text={t("action.new-post.default")}
 					href="/post/new"
 				/>
 			)}
