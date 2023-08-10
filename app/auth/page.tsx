@@ -29,9 +29,7 @@ export default function AuthPage() {
 							{"Mastoplace"}
 						</h1>
 						<p className="text-slate-500 dark:text-zinc-500 font-medium text-center text-sm break-keep">
-							{t("auth.description.1")}
-							<br />
-							{t("auth.description.2")}
+							{t("auth.description")}
 						</p>
 					</div>
 					<AuthForm redirectAfterAuth="/home" />

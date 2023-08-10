@@ -41,9 +41,7 @@ export default function Post({ params }: StatusParams) {
 							{t("post.log-in-to-see.title")}
 						</p>
 						<p className="text-center font-medium text-slate-500 dark:text-zinc-500 text-sm">
-							{t("post.log-in-to-see.description.1")}
-							<br />
-							{t("post.log-in-to-see.description.2")}
+							{t("post.log-in-to-see.description")}
 						</p>
 					</div>
 					<LogInOrPublic

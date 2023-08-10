@@ -162,9 +162,7 @@ export default function New() {
 						component={
 							<div className="flex flex-col gap-6">
 								<p className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
-									{t("new-post.log-in-to-write.1")}
-									<br />
-									{t("new-post.log-in-to-write.2")}
+									{t("new-post.log-in-to-write")}
 								</p>
 								<AuthForm
 									buttonText={t("new-post.log-in-and-write")}

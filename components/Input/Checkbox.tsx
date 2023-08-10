@@ -17,7 +17,12 @@ export function Checkbox({
 	disabled,
 }: CheckboxProps) {
 	return (
-		<div className={j("flex flex-col", disabled ? "opacity-50" : "")}>
+		<div
+			className={j(
+				"flex flex-col transition-opacity",
+				disabled ? "opacity-50" : ""
+			)}
+		>
 			<div className="flex items-center justify-between gap-1.5">
 				<input
 					{...register}
@@ -37,7 +42,7 @@ export function Checkbox({
 				</label>
 			</div>
 			{label && (
-				<span className="ml-[1.6875rem] text-sm text-slate-500 dark:text-zinc-500">
+				<span className="ml-[1.625rem] text-sm text-slate-500 dark:text-zinc-500">
 					{label}
 				</span>
 			)}

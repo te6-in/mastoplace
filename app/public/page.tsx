@@ -59,11 +59,7 @@ export default function Public() {
 			{(isTokenLoading || isLoading) && <PostLoadingList />}
 			{!isLoading && data && length === 0 && (
 				<div className="text-center px-4 flex gap-8 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
-					<p>
-						{t("public.no-post.1")}
-						<br />
-						{t("public.no-post.2")}
-					</p>
+					<p>{t("public.no-post")}</p>
 					<Button
 						text={t("action.new-post.first")}
 						href="/post/new"

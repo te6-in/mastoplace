@@ -4,5 +4,15 @@
 	"i18n-ally.extract.ignored": ["Mastoplace", "noopener noreferrer"],
 	"i18n-ally.extract.autoDetect": true,
 	"i18n-ally.namespace": true,
-	"i18n-ally.pathMatcher": "{locale}/localization.json"
+	"i18n-ally.pathMatcher": "{locale}/localization.json",
+	"i18n-ally.sourceLanguage": "ko",
+	"i18n-ally.tabStyle": "tab",
+	"i18n-ally.sortKeys": true,
+	"grammarly.selectors": [
+		{
+			"language": "json",
+			"scheme": "file",
+			"pattern": "locales/en-US/localization.json"
+		}
+	]
 }

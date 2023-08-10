@@ -1,14 +1,194 @@
 {
-	"auth": {
-		"description": {
-			"1": "Add location to your Mastodon post,",
-			"2": "and explore communities nearby."
+	"accessibility": {
+		"action": {
+			"post": {
+				"open": "Open original page",
+				"boost": "Boost",
+				"like": "Favorite",
+				"bookmark": "Add to bookmarks",
+				"delete": "Delete"
+			}
+		},
+		"alt": {
+			"logo": "Mastoplace logo",
+			"profile-picture": {
+				"mine": "My profile picture",
+				"of": "Profile picture of {{name}}"
+			}
 		}
+	},
+	"action": {
+		"back": "Go back",
+		"close-modal": "Close",
+		"go-home": "Go home",
+		"browse-public-posts": "Browse public posts",
+		"new-post": {
+			"default": "New post",
+			"first": "Publish your first post"
+		}
+	},
+	"auth": {
+		"description": "Add location to your Mastodon post, and explore communities nearby.",
+		"form": {
+			"server": {
+				"label": "Mastodon server you are on",
+				"placeholder": "{{server}}, for example",
+				"error": {
+					"invalid": "That doesn’t look like a valid Mastodon server address.",
+					"required": "Please enter the address of the Mastodon server you are on."
+				},
+				"autocomplete": {
+					"1": "mastodon.social",
+					"2": "mstdn.social",
+					"3": "mastodon.world",
+					"4": "mas.to",
+					"5": "mastodon.online",
+					"6": "fosstodon.org"
+				}
+			},
+			"log-in": "Log in to the server"
+		},
+		"divider": "If you don’t feel like logging in,"
+	},
+	"home": {
+		"log-in-to-see": "Log in to see posts from people you follow, and explore communities nearby.",
+		"no-post": "People you follow haven’t posted anything through Mastoplace yet."
+	},
+	"meta": {},
+	"new-post": {
+		"log-in-to-write": "You should log in to write a post.",
+		"log-in-and-write": "Log in and write a post",
+		"text": {
+			"label": "Content",
+			"placeholder": "What’s happening out there?",
+			"error": {
+				"required": "Please enter the content of your post."
+			}
+		},
+		"visibility": {
+			"label": "Visibility",
+			"error": {
+				"required": "Please select the visibility of your post."
+			}
+		},
+		"exact-location": {
+			"title": "Exact location",
+			"description": "Post a location that is slightly more precisely zoned than the approximate location."
+		},
+		"include-location": {
+			"title": "Include location",
+			"description": "Post a randomly weighted approximation of your location with a link to see what has been posted nearby."
+		},
+		"post": {
+			"with-approximate-location": "Post with my approximate location",
+			"with-exact-location": "Post with my exact location",
+			"without-location": "Post without location"
+		}
+	},
+	"post": {
+		"log-in-to-see": {
+			"description": "Since the Mastoplace server doesn't store the content of your posts, you'll need to log in to view them through the Mastodon server you're on.",
+			"title": "You should log in to see this post."
+		},
+		"log-in-and-see": "Log in and come back here",
+		"no-post": {
+			"description": "This post either doesn't exist, or you can't see it with the account you're logged in with.",
+			"title": "That was close!"
+		},
+		"visibility": {
+			"direct": "Mentioned",
+			"followers": "Followers",
+			"public": "Public",
+			"unlisted": "Unlisted"
+		},
+		"location": {
+			"approximate": "Approximate location",
+			"distance": "{{distance, number}}m from the original post",
+			"exact": "Exact location"
+		},
+		"posts-nearby": {
+			"no-location": "You can't see the posts nearby because the original post doesn't have a location.",
+			"no-post": "There are no posts around this location.",
+			"title": "Posts nearby"
+		},
+		"delete": {
+			"button": {
+				"delete-all": "Delete the Mastoplace entry and Mastodon post",
+				"keep-mastodon-post": "Delete the Mastoplace entry but not the Mastodon post"
+			},
+			"close-form": "Nevermind",
+			"title": "Are you sure you want to delete this post?"
+		},
+		"end-of-list": "This is the end of the list."
+	},
+	"profile": {
+		"log-in-to-see": "You should log in to see your profile.",
+		"log-in-and-see": "Log in and see my profile",
+		"no-post": "You haven’t posted anything through Mastoplace yet.",
+		"edit-on": {
+			"default": "Edit profile on {{server}}",
+			"loading": "Edit profile"
+		},
+		"manage-entries": "Manage entries",
+		"log-out": "Log out",
+		"delete-account": {
+			"button": "Delete account",
+			"title": "Delete Mastoplace account",
+			"description": "This is just about pressing some buttons.",
+			"close-form": "Nevermind",
+			"first": {
+				"title": "Delete posts from Mastodon",
+				"description": {
+					"primary": "Delete posts published through Mastoplace from your Mastodon account ({{handle}}).",
+					"secondary": "If you want to leave your posts on Mastodon, you can skip this step. However, if you change your mind later,  you will have to delete it manually from Mastodon. For the same reason, if you've previously deleted your Mastoplace information without deleting the Mastodon posts, this step will not delete the remaining posts. In these cases, consider using the #Mastoplace hashtag."
+				},
+				"button": {
+					"delete": {
+						"one": "Delete {{count, number}} post",
+						"other": "Delete {{count, number}} posts"
+					},
+					"loading": "Loading post count",
+					"skip": "Skip",
+					"unavailable": "No posts to delete"
+				}
+			},
+			"second": {
+				"title": "Delete entries from Mastoplace",
+				"description": {
+					"primary": "Delete all entries including locations and post information associated with your Mastodon account ({{handle}}) from Mastoplace.",
+					"secondary": "If this number is greater than the upper one, it means that you have already taken the first step or have deleted posts from Mastodon yourself."
+				},
+				"button": {
+					"delete": {
+						"one": "Delete {{count, number}} entry",
+						"other": "Delete {{count, number}} entries"
+					},
+					"loading": "Loading entry count",
+					"unavailable": "No entries to delete"
+				}
+			},
+			"third": {
+				"title": "Revoke access of Mastoplace",
+				"description": {
+					"primary": "Revoke the permissions granted to Mastoplace in the Mastodon settings.",
+					"secondary": "Press the button below to open your Mastodon settings, find entries named Mastoplace, and press Revoke."
+				},
+				"button": {
+					"open": "Open {{server}} settings in a new tab"
+				}
+			},
+			"fourth": {
+				"description": "Log out and you're done. Goodbye!"
+			}
+		}
+	},
+	"public": {
+		"no-post": "There are no public posts that you can see for now."
 	},
 	"tabbar": {
 		"home": "Home",
 		"map": "Map",
-		"profile": "Profile",
-		"public": "Public"
+		"public": "Public",
+		"profile": "Profile"
 	}
 }

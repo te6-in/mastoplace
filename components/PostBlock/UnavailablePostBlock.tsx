@@ -9,9 +9,7 @@ export function UnavailablePostBlock() {
 				{t("post.no-post.title")}
 			</h1>
 			<p className="text-sm text-slate-600 dark:text-zinc-400">
-				{t("post.no-post.description.1")}
-				<br />
-				{t("post.no-post.description.2")}
+				{t("post.no-post.description")}
 			</p>
 		</div>
 	);

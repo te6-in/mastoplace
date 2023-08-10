@@ -102,18 +102,38 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 				type="text"
 				id="server"
 				label={t("auth.form.server.label")}
-				placeholder={t("auth.form.server.placeholder")}
+				placeholder={t("auth.form.server.placeholder", {
+					server: t("auth.form.server.autocomplete.1"),
+				})}
 				prefix="https://"
 				error={errors.server?.message}
 			/>
 			{watchServer === "" && (
 				<div className="grid grid-cols-1 sm:grid-cols-2 text-sm text-slate-700 dark:text-zinc-300 gap-2">
-					<FillButton server="planet.moe" setValue={setValue} />
-					<FillButton server="qdon.space" setValue={setValue} />
-					<FillButton server="mustard.blog" setValue={setValue} />
-					<FillButton server="pointless.chat" setValue={setValue} />
-					<FillButton server="mastodon.social" setValue={setValue} />
-					<FillButton server="mas.to" setValue={setValue} />
+					<FillButton
+						server={t("auth.form.server.autocomplete.1")}
+						setValue={setValue}
+					/>
+					<FillButton
+						server={t("auth.form.server.autocomplete.2")}
+						setValue={setValue}
+					/>
+					<FillButton
+						server={t("auth.form.server.autocomplete.3")}
+						setValue={setValue}
+					/>
+					<FillButton
+						server={t("auth.form.server.autocomplete.4")}
+						setValue={setValue}
+					/>
+					<FillButton
+						server={t("auth.form.server.autocomplete.5")}
+						setValue={setValue}
+					/>
+					<FillButton
+						server={t("auth.form.server.autocomplete.6")}
+						setValue={setValue}
+					/>
 				</div>
 			)}
 			{watchServer !== "" && (

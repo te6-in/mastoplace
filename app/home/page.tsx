@@ -62,11 +62,7 @@ export default function Home() {
 			{!hasValidToken && !isTokenLoading && (
 				<div className="text-center px-4 flex gap-8 items-center flex-col text-slate-800 dark:text-zinc-200 text-lg mt-24 font-medium break-keep">
 					<Logo />
-					<p>
-						{t("home.log-in-to-see.1")}
-						<br />
-						{t("home.log-in-to-see.2")}
-					</p>
+					<p>{t("home.log-in-to-see")}</p>
 					<div className="sm:w-96 w-3/4">
 						<LogInOrPublic redirectAfterAuth="/home" />
 					</div>
@@ -74,11 +70,7 @@ export default function Home() {
 			)}
 			{hasValidToken && data && length === 0 && (
 				<div className="text-center px-4 flex gap-8 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
-					<p>
-						{t("home.no-post.1")}
-						<br />
-						{t("home.no-post.2")}
-					</p>
+					<p>{t("home.no-post")}</p>
 					<div className="flex flex-col sm:grid sm:grid-cols-2 gap-2">
 						<Button
 							text={t("action.new-post.first")}

@@ -3,7 +3,7 @@ import { DeleteAllResponse } from "@/app/api/post/my/route";
 import { LogOutResponse } from "@/app/api/profile/logout/route";
 import { Button } from "@/components/Input/Button";
 import { useMutation } from "@/libs/client/useMutation";
-import { j } from "@/libs/client/utils";
+import { ellipsis, j } from "@/libs/client/utils";
 import {
 	ArrowUpRightSquare,
 	Check,
@@ -164,7 +164,7 @@ export function DeleteAccountForm({
 													count: viewableCountData.count,
 											  })
 											: t("profile.delete-account.first.button.unavailable")
-										: t("profile.delete-account.first.button.loading")
+										: ellipsis(t("profile.delete-account.first.button.loading"))
 								}
 								isLoading={isViewableCountLoading || isDeletePostsLoading}
 								Icon={
@@ -208,7 +208,7 @@ export function DeleteAccountForm({
 												count: allCountData.count,
 										  })
 										: t("profile.delete-account.second.button.unavailable")
-									: t("profile.delete-account.second.button.loading")
+									: ellipsis(t("profile.delete-account.second.button.loading"))
 							}
 							isLoading={isAllCountLoading || isDeleteDatabaseLoading}
 							Icon={

@@ -90,9 +90,7 @@ export default function Profile() {
 						component={
 							<div className="flex flex-col gap-6">
 								<p className="text-xl font-medium text-slate-800 dark:text-zinc-200 text-center break-keep">
-									{t("profile.log-in-to-see.1")}
-									<br />
-									{t("profile.log-in-to-see.2")}
+									{t("profile.log-in-to-see")}
 								</p>
 								<AuthForm
 									buttonText={t("profile.log-in-and-see")}
@@ -191,7 +189,7 @@ export default function Profile() {
 							<Button
 								isLoading={false}
 								Icon={Wrench}
-								text={ellipsis(t("profile.manage-my-locations"))}
+								text={ellipsis(t("profile.manage-entries"))}
 								className="col-span-2 sm:col-span-1"
 								onClick={() => setShowInfoModal(true)}
 							/>
@@ -237,11 +235,7 @@ export default function Profile() {
 					)}
 					{data && length === 0 && !hasMore && (
 						<div className="text-center px-4 flex gap-8 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
-							<p>
-								{t("profile.no-post.1")}
-								<br />
-								{t("profile.no-post.2")}
-							</p>
+							<p>{t("profile.no-post")}</p>
 							<Button
 								text={t("action.new-post.first")}
 								href="/post/new"

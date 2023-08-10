@@ -1,13 +1,12 @@
 {
-	"meta": {},
 	"accessibility": {
 		"action": {
 			"post": {
-				"open": "원본 열기",
-				"boost": "부스트",
-				"like": "좋아요",
 				"bookmark": "보관함에 추가",
-				"delete": "삭제"
+				"boost": "부스트",
+				"delete": "삭제",
+				"like": "좋아요",
+				"open": "원본 열기"
 			}
 		},
 		"alt": {
@@ -20,119 +19,73 @@
 	},
 	"action": {
 		"back": "이전 화면으로",
+		"browse-public-posts": "공개 위치 구경",
 		"close-modal": "창 닫기",
 		"go-home": "홈으로 가기",
-		"browse-public-posts": "공개 위치 구경",
 		"new-post": {
 			"default": "새로운 글 작성",
 			"first": "첫 번째 글 작성"
 		}
 	},
-	"tabbar": {
-		"home": "홈",
-		"public": "공개 위치",
-		"map": "지도",
-		"profile": "프로필"
-	},
 	"auth": {
-		"description": {
-			"1": "마스토돈 글에 위치를 추가하고",
-			"2": "주변 사람들이 올린 글을 찾아보세요."
-		},
+		"description": "마스토돈 글에 위치를 추가하고 주변 사람들이 올린 글을 찾아보세요.",
+		"divider": "지금 로그인하고 싶지 않으면",
 		"form": {
+			"log-in": "서버를 통해 로그인",
 			"server": {
-				"label": "마스토돈 서버 주소",
-				"placeholder": "예를 들면… mastodon.social",
+				"autocomplete": {
+					"1": "planet.moe",
+					"2": "qdon.space",
+					"3": "mustard.blog",
+					"4": "pointless.chat",
+					"5": "mastodon.social",
+					"6": "mas.to"
+				},
 				"error": {
 					"invalid": "올바른 마스토돈 서버가 아닙니다.",
 					"required": "마스토돈 서버 주소를 입력해주세요."
-				}
-			},
-			"log-in": "서버를 통해 로그인"
-		},
-		"divider": "지금 로그인하고 싶지 않으면"
+				},
+				"label": "마스토돈 서버 주소",
+				"placeholder": "예를 들면… {{server}}"
+			}
+		}
 	},
 	"home": {
-		"log-in-to-see": {
-			"1": "로그인하면 마스토돈에서 팔로우한 사람들이",
-			"2": "Mastoplace를 통해 올린 글을 볼 수 있어요."
-		},
-		"no-post": {
-			"1": "팔로우하는 사람 중",
-			"2": "Mastoplace를 통해 글을 작성한 사람이 없어요."
-		}
+		"log-in-to-see": "로그인하면 마스토돈에서 팔로우한 사람들이 Mastoplace를 통해 올린 글을 볼 수 있어요.",
+		"no-post": "팔로우하는 사람 중 Mastoplace를 통해 글을 작성한 사람이 없어요."
 	},
-	"public": {
-		"no-post": {
-			"1": "Mastoplace를 통해 게시된 글 중에서",
-			"2": "볼 수 있는 글이 없어요."
-		}
-	},
+	"meta": {},
 	"new-post": {
-		"log-in-to-write": {
-			"1": "새로운 글을 작성하려면",
-			"2": "로그인해야 합니다."
-		},
-		"log-in-and-write": "로그인하고 글 작성",
-		"text": {
-			"label": "내용",
-			"placeholder": "거기에선 어떤 일이 일어나고 있나요?",
-			"error": {
-				"required": "내용을 입력해주세요."
-			}
-		},
-		"visibility": {
-			"label": "공개 범위",
-			"error": {
-				"required": "공개 범위를 선택해주세요."
-			}
-		},
 		"exact-location": {
-			"title": "정확한 위치",
-			"description": "대략적인 위치보다 조금 더 정밀한 구역으로 구분된 범위가 게시됩니다."
+			"description": "대략적인 위치보다 조금 더 정밀한 구역으로 구분된 범위가 게시됩니다.",
+			"title": "정확한 위치"
 		},
 		"include-location": {
-			"title": "현재 위치 포함",
-			"description": "임의 가중치가 적용된 대략적인 현재 위치와 그 주변에 올라온 글을 확인할 수 있는 링크가 함께 게시됩니다."
+			"description": "임의 가중치가 적용된 대략적인 현재 위치와 그 주변에 올라온 글을 확인할 수 있는 링크가 함께 게시됩니다.",
+			"title": "현재 위치 포함"
 		},
+		"log-in-and-write": "로그인하고 글 작성",
+		"log-in-to-write": "새로운 글을 작성하려면 로그인해야 합니다.",
 		"post": {
 			"with-approximate-location": "대략적인 위치와 함께 게시",
 			"with-exact-location": "정확한 위치와 함께 게시",
 			"without-location": "위치 없이 게시"
+		},
+		"text": {
+			"error": {
+				"required": "내용을 입력해주세요."
+			},
+			"label": "내용",
+			"placeholder": "거기에선 어떤 일이 일어나고 있나요?"
+		},
+		"visibility": {
+			"error": {
+				"required": "공개 범위를 선택해주세요."
+			},
+			"label": "공개 범위"
 		}
 	},
 	"post": {
-		"log-in-to-see": {
-			"description": {
-				"1": "Mastoplace 서버에는 글 내용이 저장되지 않기 때문에",
-				"2": "로그인해야 마스토돈 서버를 통해 글을 확인할 수 있습니다."
-			},
-			"title": "이 글을 보기 위해서는 로그인해야 합니다."
-		},
-		"log-in-and-see": "로그인한 뒤 이 글로 돌아오기",
-		"no-post": {
-			"description": {
-				"1": "없는 글이거나",
-				"2": "지금 로그인한 계정으로는 볼 수 없는 글이에요."
-			},
-			"title": "아쉽네요!"
-		},
-		"visibility": {
-			"direct": "언급된 사용자만",
-			"followers": "팔로워만",
-			"public": "공개",
-			"unlisted": "공개 타임라인에서 숨김"
-		},
-		"location": {
-			"approximate": "대략적인 위치",
-			"distance": "이 글에서 {{distance, number}}m",
-			"exact": "정확한 위치"
-		},
-		"posts-nearby": {
-			"no-location": "이 글은 위치가 등록되지 않았기 때문에 주변 글을 볼 수 없어요.",
-			"no-post": "이곳 주변에는 올라온 글이 없어요.",
-			"title": "이곳 근처에서 올라온 글"
-		},
 		"delete": {
 			"button": {
 				"delete-all": "마스토돈 글과 Mastoplace 정보 함께 삭제",
@@ -141,67 +94,95 @@
 			"close-form": "삭제 안 할래요",
 			"title": "이 글을 삭제하시겠어요?"
 		},
-		"end-of-list": "목록의 끝이에요."
+		"end-of-list": "목록의 끝이에요.",
+		"location": {
+			"approximate": "대략적인 위치",
+			"distance": "이 글에서 {{distance, number}}m",
+			"exact": "정확한 위치"
+		},
+		"log-in-and-see": "로그인한 뒤 이 글로 돌아오기",
+		"log-in-to-see": {
+			"description": "Mastoplace 서버에는 글 내용이 저장되지 않기 때문에 로그인해야 마스토돈 서버를 통해 글을 확인할 수 있습니다.",
+			"title": "이 글을 보기 위해서는 로그인해야 합니다."
+		},
+		"no-post": {
+			"description": "없는 글이거나 지금 로그인한 계정으로는 볼 수 없는 글이에요.",
+			"title": "아쉽네요!"
+		},
+		"posts-nearby": {
+			"no-location": "이 글은 위치가 등록되지 않았기 때문에 주변 글을 볼 수 없어요.",
+			"no-post": "이곳 주변에는 올라온 글이 없어요.",
+			"title": "이곳 근처에서 올라온 글"
+		},
+		"visibility": {
+			"direct": "언급된 사용자만",
+			"followers": "팔로워만",
+			"public": "공개",
+			"unlisted": "공개 타임라인에서 숨김"
+		}
 	},
 	"profile": {
-		"log-in-to-see": {
-			"1": "내 프로필을 확인하려면",
-			"2": "로그인해야 합니다."
-		},
-		"log-in-and-see": "로그인하고 내 프로필 확인",
-		"no-post": {
-			"1": "아직 Mastoplace를 통해",
-			"2": "작성한 글이 없어요."
-		},
-		"edit-on": {
-			"default": "{{server}}에서 프로필 수정",
-			"loading": "프로필 수정"
-		},
-		"manage-my-locations": "위치 정보 관리",
-		"log-out": "로그아웃",
 		"delete-account": {
 			"button": "탈퇴",
-			"title": "Mastoplace 탈퇴",
-			"description": "그냥 버튼 몇 번만 누르면 돼요.",
 			"close-form": "탈퇴 안 할래요",
+			"description": "그냥 버튼 몇 번만 누르면 돼요.",
 			"first": {
-				"title": "연결된 마스토돈 글 삭제",
-				"description": {
-					"primary": "Mastoplace를 통해 게시한 마스토돈 게시물을 내 마스토돈 계정({{handle}})에서 삭제합니다.",
-					"secondary": "마스토돈에 글을 남겨두고 싶다면 이 과정은 건너뛰어도 되지만, 두 번째 단계를 진행한 이후에는 마스토돈에서 직접 삭제해야 합니다. 마찬가지로, 이전에 마스토돈 글은 삭제하지 않고 Mastoplace 정보만 삭제한 글의 경우 이 단계에서 삭제되지 않습니다. 이러한 경우, #Mastoplace 해시태그를 활용하세요."
-				},
 				"button": {
 					"delete": "마스토돈 글 {{count, number}}개 삭제",
 					"loading": "글 개수 로딩 중…",
 					"skip": "건너뛰기",
 					"unavailable": "삭제할 글 없음"
-				}
+				},
+				"description": {
+					"primary": "Mastoplace를 통해 게시한 마스토돈 게시물을 마스토돈 계정({{handle}})에서 삭제합니다.",
+					"secondary": "마스토돈에 글을 남겨두고 싶다면 이 과정은 건너뛰어도 되지만, 두 번째 단계를 진행한 이후에는 마스토돈에서 직접 삭제해야 합니다. 마찬가지로, 이전에 마스토돈 글은 삭제하지 않고 Mastoplace 정보만 삭제한 글의 경우 이 단계에서 삭제되지 않습니다. 이러한 경우, #Mastoplace 해시태그를 활용하세요."
+				},
+				"title": "연결된 마스토돈 글 삭제"
+			},
+			"fourth": {
+				"description": "로그아웃하면 탈퇴가 완료됩니다. 안녕히 가세요!"
 			},
 			"second": {
-				"title": "저장된 정보 삭제",
+				"button": {
+					"delete": "정보 {{count, number}}개 삭제",
+					"loading": "정보 개수 로딩 중…",
+					"unavailable": "삭제할 정보 없음"
+				},
 				"description": {
 					"primary": "{{handle}} 계정과 연결된 모든 위치 및 게시 정보를 Mastoplace에서 삭제합니다.",
 					"secondary": "이 숫자가 마스토돈 글 수보다 크다면, 이미 첫 번째 단계를 진행하였거나 마스토돈에서 글을 직접 삭제한 적이 있는 경우입니다."
 				},
-				"button": {
-					"delete": "내 정보 {{count, number}}개 삭제",
-					"loading": "내 정보 개수 로딩 중…",
-					"unavailable": "삭제할 정보 없음"
-				}
+				"title": "저장된 정보 삭제"
 			},
 			"third": {
-				"title": "Mastoplace 권한 해제",
+				"button": {
+					"open": "{{server}} 설정 새 탭에서 열기"
+				},
 				"description": {
 					"primary": "마스토돈 설정에서 Mastoplace 앱에 부여한 권한을 해제합니다.",
 					"secondary": "아래 버튼을 눌러 설정 페이지를 연 뒤, Mastoplace 항목을 찾아 삭제 버튼을 누릅니다."
 				},
-				"button": {
-					"open": "{{server}} 설정 새 탭에서 열기"
-				}
+				"title": "Mastoplace 권한 해제"
 			},
-			"fourth": {
-				"description": "로그아웃하면 탈퇴가 완료됩니다. 안녕히 가세요!"
-			}
-		}
+			"title": "Mastoplace 탈퇴"
+		},
+		"edit-on": {
+			"default": "{{server}}에서 프로필 수정",
+			"loading": "프로필 수정"
+		},
+		"log-in-and-see": "로그인하고 내 프로필 확인",
+		"log-in-to-see": "프로필을 확인하려면 로그인해야 합니다.",
+		"log-out": "로그아웃",
+		"manage-entries": "위치 정보 관리",
+		"no-post": "아직 Mastoplace를 통해 작성한 글이 없어요."
+	},
+	"public": {
+		"no-post": "Mastoplace를 통해 게시된 글 중에서 볼 수 있는 글이 없어요."
+	},
+	"tabbar": {
+		"home": "홈",
+		"map": "지도",
+		"profile": "프로필",
+		"public": "공개 위치"
 	}
 }
