@@ -49,6 +49,20 @@ export function Content({
 												  }@${parseURL(domNode.attribs.href).host}`
 												: domNode.attribs.href
 										}
+										rel={
+											domNode.attribs.href.startsWith(
+												process.env.NEXT_PUBLIC_BASE_URL as string
+											)
+												? undefined
+												: "noopener noreferrer"
+										}
+										target={
+											domNode.attribs.href.startsWith(
+												process.env.NEXT_PUBLIC_BASE_URL as string
+											)
+												? undefined
+												: "_blank"
+										}
 										className={j(
 											"break-all text-violet-500 hover:text-violet-600 active:text-violet-700 transition-colors",
 											domNode.attribs.class === "mention hashtag" ||

@@ -86,6 +86,8 @@ export function PostBlock({
 			{mastodonStatus ? (
 				<Link
 					href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
+					rel="noopener noreferrer"
+					target="_blank"
 					className="not-italic w-12 h-12 rounded-full overflow-hidden"
 				>
 					<address>
@@ -106,6 +108,8 @@ export function PostBlock({
 				{mastodonStatus && clientServer ? (
 					<Link
 						href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
+						rel="noopener noreferrer"
+						target="_blank"
 					>
 						<address className="flex items-baseline not-italic flex-wrap">
 							<span className="text-slate-900 dark:text-zinc-100 font-medium text-lg mr-1">
