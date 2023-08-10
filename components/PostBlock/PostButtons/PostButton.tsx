@@ -139,7 +139,7 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 
 	return (
 		<div className="flex flex-col gap-8">
-			<PostBlock id={id} hideButtons />
+			<PostBlock id={id} preventInteraction />
 			<div className="relative flex items-center justify-center w-full">
 				<hr className="w-full border-slate-300 dark:border-zinc-700" />
 				<span className="absolute break-keep text-center font-medium text-slate-700 bg-slate-50 px-2 dark:bg-zinc-950 dark:text-zinc-300">

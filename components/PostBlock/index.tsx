@@ -5,6 +5,7 @@ import { DateTime } from "@/components/PostBlock/DateTime";
 import { PostButtons } from "@/components/PostBlock/PostButtons";
 import { UnavailablePostBlock } from "@/components/PostBlock/UnavailablePostBlock";
 import { Visibility } from "@/components/PostBlock/Visibility";
+import { j } from "@/libs/client/utils";
 import { getCenter, getDistance } from "geolib";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
@@ -24,7 +25,7 @@ interface PostBlockProps {
 	link?: boolean;
 	from?: Position;
 	showError?: boolean;
-	hideButtons?: boolean;
+	preventInteraction?: boolean;
 }
 
 export function PostBlock({
@@ -32,7 +33,7 @@ export function PostBlock({
 	link,
 	from,
 	showError,
-	hideButtons,
+	preventInteraction,
 }: PostBlockProps) {
 	const { data } = useSWR<StatusResponse>(id ? `/api/post/${id}` : null);
 	const { t } = useTranslation();
@@ -76,7 +77,12 @@ export function PostBlock({
 		` | ${t("post.location.distance", { distance })}`;
 
 	return (
-		<div className="flex gap-2">
+		<div
+			className={j(
+				"flex gap-2",
+				preventInteraction ? "pointer-events-none" : ""
+			)}
+		>
 			{mastodonStatus ? (
 				<Link
 					href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
@@ -138,7 +144,7 @@ export function PostBlock({
 						<Visibility visibility={mastodonStatus.visibility} />
 					</div>
 				)}
-				{!hideButtons && mastodonStatus && mastodonStatus.url && (
+				{!preventInteraction && mastodonStatus && mastodonStatus.url && (
 					<PostButtons
 						original={mastodonStatus.url}
 						id={id}

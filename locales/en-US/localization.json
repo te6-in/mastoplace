@@ -114,10 +114,10 @@
 		"delete": {
 			"button": {
 				"delete-all": "Delete the Mastoplace entry and Mastodon post",
-				"keep-mastodon-post": "Delete the Mastoplace entry but not the Mastodon post"
+				"keep-mastodon-post": "Only delete the Mastoplace entry and keep the Mastodon post"
 			},
 			"close-form": "Nevermind",
-			"title": "Are you sure you want to delete this post?"
+			"title": "How do you want to delete this post?"
 		},
 		"end-of-list": "This is the end of the list."
 	},
