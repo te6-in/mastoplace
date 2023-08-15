@@ -19,7 +19,7 @@ import { Check, Map } from "lucide-react";
 import { mastodon } from "masto";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
 
@@ -30,10 +30,24 @@ interface NewStatusForm {
 	exact: boolean;
 }
 
+export interface NewStatusRequest {
+	text: string;
+	visibility: mastodon.v1.StatusVisibility;
+	location: {
+		latitudeFrom: number;
+		latitudeTo: number;
+		longitudeFrom: number;
+		longitudeTo: number;
+	} | null;
+	exact: boolean | null;
+}
+
 export default function New() {
 	const { hasValidToken, isLoading: isTokenLoading } = useToken();
 	const { data: meData, isLoading: isMeLoading } =
 		useSWR<MyInfoResponse>("/api/profile/me");
+
+	const [isLocationLoading, setIsLocationLoading] = useState(true);
 
 	const router = useRouter();
 	const { t } = useTranslation();
@@ -54,21 +68,39 @@ export default function New() {
 	const watchApproximate = watch("approximate");
 	const watchExact = watch("exact");
 
-	const [submit, { data, isLoading }] =
-		useMutation<NewStatusResponse>("/api/post");
+	const [submit, { data, isLoading }] = useMutation<
+		NewStatusResponse,
+		NewStatusRequest
+	>("/api/post");
 
 	const randomValue = () => {
 		const values = [-0.03, -0.02, -0.01, 0, 0.01, 0.02, 0.03];
 		return values[Math.floor(Math.random() * values.length)];
 	};
 
-	const approximateLocation = latitude &&
-		longitude && {
+	const getApproximateLocation = () => {
+		if (!latitude || !longitude) return null;
+
+		return {
 			latitudeFrom: parseFloat(latitude.toFixed(2)) - 0.05 + randomValue(),
 			latitudeTo: parseFloat(latitude.toFixed(2)) + 0.05 + randomValue(),
 			longitudeFrom: parseFloat(longitude.toFixed(2)) - 0.05 + randomValue(),
 			longitudeTo: parseFloat(longitude.toFixed(2)) + 0.05 + randomValue(),
 		};
+	};
+
+	const getExactLocation = () => {
+		if (!latitude || !longitude) return null;
+
+		return {
+			latitudeFrom: parseFloat(latitude.toFixed(2)),
+			latitudeTo: parseFloat(latitude.toFixed(2)),
+			longitudeFrom: parseFloat(longitude.toFixed(2)),
+			longitudeTo: parseFloat(longitude.toFixed(2)),
+		};
+	};
+
+	const approximateLocation = getApproximateLocation();
 
 	const approximatePosition = approximateLocation && {
 		latitude:
@@ -77,34 +109,29 @@ export default function New() {
 			(approximateLocation.longitudeFrom + approximateLocation.longitudeTo) / 2,
 	};
 
-	const exactLocation = latitude &&
-		longitude && {
-			latitudeFrom: parseFloat(latitude.toFixed(2)),
-			latitudeTo: parseFloat(latitude.toFixed(2)),
-			longitudeFrom: parseFloat(longitude.toFixed(2)),
-			longitudeTo: parseFloat(longitude.toFixed(2)),
-		};
+	const exactLocation = getExactLocation();
 
 	const exactPosition =
-		exactLocation &&
-		getCenter([
-			{
-				latitude: exactLocation.latitudeFrom,
-				longitude: exactLocation.longitudeFrom,
-			},
-			{
-				latitude: exactLocation.latitudeTo,
-				longitude: exactLocation.longitudeTo,
-			},
-			{
-				latitude: exactLocation.latitudeFrom,
-				longitude: exactLocation.longitudeTo,
-			},
-			{
-				latitude: exactLocation.latitudeTo,
-				longitude: exactLocation.longitudeFrom,
-			},
-		]);
+		(exactLocation &&
+			getCenter([
+				{
+					latitude: exactLocation.latitudeFrom,
+					longitude: exactLocation.longitudeFrom,
+				},
+				{
+					latitude: exactLocation.latitudeTo,
+					longitude: exactLocation.longitudeTo,
+				},
+				{
+					latitude: exactLocation.latitudeFrom,
+					longitude: exactLocation.longitudeTo,
+				},
+				{
+					latitude: exactLocation.latitudeTo,
+					longitude: exactLocation.longitudeFrom,
+				},
+			])) ||
+		null;
 
 	const onValid = (inputs: NewStatusForm) => {
 		if (isLoading) return;
@@ -112,14 +139,13 @@ export default function New() {
 		submit({
 			text: inputs.text,
 			visibility: inputs.visibility,
-			exact: watchExact ? true : watchApproximate ? false : undefined,
-			location: {
-				...(watchExact
+			exact: watchExact ? true : watchApproximate ? false : null,
+			location:
+				watchExact && exactLocation
 					? exactLocation
-					: watchApproximate
+					: watchApproximate && approximateLocation
 					? approximateLocation
-					: {}),
-			},
+					: null,
 		});
 	};
 
@@ -129,6 +155,28 @@ export default function New() {
 			router.replace(`/post/${data.id}`);
 		}
 	}, [data, router]);
+
+	useEffect(() => {
+		if (watchApproximate) {
+			if (approximateLocation) {
+				setIsLocationLoading(false);
+				return;
+			}
+
+			setIsLocationLoading(true);
+			return;
+		}
+
+		if (watchExact) {
+			if (exactLocation) {
+				setIsLocationLoading(false);
+				return;
+			}
+
+			setIsLocationLoading(true);
+			return;
+		}
+	}, [watchApproximate, watchExact, approximateLocation, exactLocation]);
 
 	useEffect(() => {
 		if (!watchApproximate) {
@@ -176,24 +224,20 @@ export default function New() {
 			<form onSubmit={handleSubmit(onValid)}>
 				<div className="flex flex-col gap-4 px-4">
 					{watchExact && exactPosition && (
-						<Suspense fallback={<div>asdf</div>}>
-							<PigeonMap
-								position={exactPosition}
-								className="h-48 rounded-md"
-								fixed
-								exact
-							/>
-						</Suspense>
+						<PigeonMap
+							position={exactPosition}
+							className="h-48 rounded-md"
+							fixed
+							exact
+						/>
 					)}
 					{watchApproximate && !watchExact && approximatePosition && (
-						<Suspense fallback={<div>asdf</div>}>
-							<PigeonMap
-								position={approximatePosition}
-								className="h-48 rounded-md"
-								fixed
-								exact={false}
-							/>
-						</Suspense>
+						<PigeonMap
+							position={approximatePosition}
+							className="h-48 rounded-md"
+							fixed
+							exact={false}
+						/>
 					)}
 					{!watchApproximate && !watchExact && (
 						<div
@@ -248,7 +292,7 @@ export default function New() {
 							: watchApproximate
 							? t("new-post.post.with-approximate-location")
 							: t("new-post.post.without-location"),
-						isLoading,
+						isLoading: isLoading || isLocationLoading,
 						animateText: true,
 					}}
 				/>

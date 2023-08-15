@@ -44,6 +44,7 @@ export function BottomToolbar({
 			>
 				{primaryButton && (
 					<button
+						disabled={primaryButton.isLoading}
 						onClick={primaryButton.onClick}
 						className={j(
 							"flex h-full flex-1 items-center justify-center rounded-md bg-violet-500 dark:bg-violet-600 font-medium text-white shadow transition-all",

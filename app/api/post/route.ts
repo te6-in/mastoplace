@@ -1,3 +1,4 @@
+import { NewStatusRequest } from "@/app/post/new/page";
 import { client } from "@/libs/server/client";
 import { findPosts } from "@/libs/server/findPosts";
 import { DefaultResponse } from "@/libs/server/response";
@@ -139,7 +140,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-	const { text, visibility, exact, location } = await request.json();
+	const json = (await request.json()) as NewStatusRequest;
+	const { text, location, visibility, exact } = json;
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
@@ -149,10 +151,23 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
+	if (exact !== null && location === null) {
+		return NextResponse.json<NewStatusResponse>(
+			{ ok: false, error: "Location is null" },
+			{ status: 400 }
+		);
+	}
+
 	const { masto, clientServer, handle } = data;
 
 	try {
-		const { latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } = location;
+		const { latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } =
+			location ?? {
+				latitudeFrom: null,
+				latitudeTo: null,
+				longitudeFrom: null,
+				longitudeTo: null,
+			};
 
 		const status = await client.status.create({
 			data: {
@@ -166,11 +181,17 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		const textWithURL = `${text}\n\n${process.env.NEXT_PUBLIC_BASE_URL}/post/${status.id}\n\n#Mastoplace`;
+		const texts = [
+			text,
+			process.env.NODE_ENV === "production"
+				? `${process.env.NEXT_PUBLIC_BASE_URL}/post/${status.id}`
+				: "[Mastoplace 주소]",
+			"#Mastoplace",
+		];
 
 		try {
 			const { id: mastodonId } = await masto.v1.statuses.create({
-				status: textWithURL,
+				status: texts.join("\n\n"),
 				visibility,
 			});
 
