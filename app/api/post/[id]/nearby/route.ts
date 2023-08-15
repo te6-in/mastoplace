@@ -5,17 +5,17 @@ import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
 
-export interface NearbyStatusesResponse extends DefaultResponse {
-	hasLocation?: boolean;
-	originalLocation?: {
-		latitudeFrom: number;
-		latitudeTo: number;
-		longitudeFrom: number;
-		longitudeTo: number;
-	};
-	nearbyIds?: string[];
-	error?: unknown;
-}
+export type NearbyStatusesResponse = DefaultResponse<{
+	nearbyInfo: {
+		originalLocation: {
+			latitudeFrom: number;
+			latitudeTo: number;
+			longitudeFrom: number;
+			longitudeTo: number;
+		};
+		nearbyIds: string[];
+	} | null;
+}>;
 
 export async function GET(
 	request: NextRequest,
@@ -23,7 +23,7 @@ export async function GET(
 ) {
 	if (!id) {
 		return NextResponse.json<NearbyStatusesResponse>(
-			{ ok: false },
+			{ ok: false, error: "No id" },
 			{ status: 400 }
 		);
 	}
@@ -32,7 +32,7 @@ export async function GET(
 
 	if (!data) {
 		return NextResponse.json<NearbyStatusesResponse>(
-			{ ok: false },
+			{ ok: false, error: "Not logged in" },
 			{ status: 401 }
 		);
 	}
@@ -41,7 +41,7 @@ export async function GET(
 
 	if (!masto || !clientServer) {
 		return NextResponse.json<NearbyStatusesResponse>(
-			{ ok: false },
+			{ ok: false, error: "Can't log in to Mastodon" },
 			{ status: 401 }
 		);
 	}
@@ -51,7 +51,7 @@ export async function GET(
 
 		if (!originalStatus || !originalStatus.mastodonId) {
 			return NextResponse.json<NearbyStatusesResponse>(
-				{ ok: false },
+				{ ok: false, error: "Can't find status on database" },
 				{ status: 404 }
 			);
 		}
@@ -64,7 +64,7 @@ export async function GET(
 
 		if (!originalMastodonStatus) {
 			return NextResponse.json<NearbyStatusesResponse>(
-				{ ok: false },
+				{ ok: false, error: "Can't find status on Mastodon" },
 				{ status: 404 }
 			);
 		}
@@ -87,7 +87,7 @@ export async function GET(
 		if (!originalLocation) {
 			return NextResponse.json<NearbyStatusesResponse>({
 				ok: true,
-				hasLocation: false,
+				nearbyInfo: null,
 			});
 		}
 
@@ -143,13 +143,14 @@ export async function GET(
 
 		return NextResponse.json<NearbyStatusesResponse>({
 			ok: true,
-			hasLocation: true,
-			originalLocation,
-			nearbyIds: localViewableIds,
+			nearbyInfo: {
+				originalLocation,
+				nearbyIds: localViewableIds,
+			},
 		});
-	} catch (error) {
+	} catch {
 		return NextResponse.json<NearbyStatusesResponse>(
-			{ ok: false, error },
+			{ ok: false, error: "Can't get status from database" },
 			{ status: 500 }
 		);
 	}

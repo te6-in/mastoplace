@@ -10,7 +10,7 @@ import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
 import { PostBlock } from "@/components/PostBlock";
 import { EndIndicator } from "@/components/PostBlock/EndIndicator";
 import { DeleteAccountForm } from "@/components/Profile/DeleteAccountForm";
-import { InfoForm } from "@/components/Profile/InfoForm";
+import { ManageEntriesForm } from "@/components/Profile/ManageEntriesForm";
 import { useMutation } from "@/libs/client/useMutation";
 import { useToken } from "@/libs/client/useToken";
 import { ellipsis } from "@/libs/client/utils";
@@ -33,7 +33,7 @@ export default function Profile() {
 		useSWR<MyInfoResponse>("/api/profile/me");
 
 	const getKey = (pageIndex: number, previousPageData: MyStatusesResponse) => {
-		if (pageIndex === 0) return "/api/post/my";
+		if (pageIndex === 0 || !previousPageData.ok) return "/api/post/my";
 		if (!previousPageData.nextMaxId) return null;
 
 		return `/api/post/my?max_id=${previousPageData.nextMaxId}`;
@@ -57,7 +57,7 @@ export default function Profile() {
 	};
 
 	useEffect(() => {
-		if (logOutData?.ok) {
+		if (logOutData && logOutData.ok) {
 			router.push("/home");
 		}
 	}, [logOutData]);
@@ -65,13 +65,17 @@ export default function Profile() {
 	const [hasMore, setHasMore] = useState(true);
 
 	useEffect(() => {
-		if (data && data[data.length - 1].nextMaxId === undefined) {
+		if (!data) return;
+
+		const lastData = data[data.length - 1];
+
+		if (lastData.ok && lastData.nextMaxId === null) {
 			setHasMore(false);
 		}
 	}, [data]);
 
 	const length = data?.reduce((acc, page) => {
-		if (!page.myStatuses) return 0;
+		if (!page.ok || !page.myStatuses) return 0;
 		return acc + page.myStatuses.length;
 	}, 0);
 
@@ -104,14 +108,14 @@ export default function Profile() {
 					!isTokenLoading &&
 					!isProfileLoading &&
 					profileData &&
-					profileData.me && (
+					profileData.ok && (
 						<FullPageOverlay
 							type="close"
 							onCloseClick={() => setShowInfoModal(false)}
 							component={
-								<InfoForm
-									server={profileData.me.server}
-									handle={profileData.me.handle}
+								<ManageEntriesForm
+									handle={profileData.handle}
+									server={profileData.server}
 								/>
 							}
 						/>
@@ -120,16 +124,16 @@ export default function Profile() {
 					!isTokenLoading &&
 					!isProfileLoading &&
 					profileData &&
-					profileData.me && (
+					profileData.ok && (
 						<FullPageOverlay
 							type="close"
 							buttonLabel={t("profile.delete-account.close-form")}
 							onCloseClick={() => setShowDeleteModal(false)}
 							component={
 								<DeleteAccountForm
-									server={profileData.me.server}
-									serverName={profileData.me.serverName}
-									handle={profileData.me.handle}
+									server={profileData.server}
+									serverName={profileData.serverName}
+									handle={profileData.handle}
 								/>
 							}
 						/>
@@ -140,9 +144,9 @@ export default function Profile() {
 					<div className="flex flex-col gap-2 px-4">
 						<address className="flex gap-2 items-center flex-col not-italic my-3">
 							<div className="w-20 h-20 rounded-full overflow-hidden">
-								{!isProfileLoading && profileData && profileData.me ? (
+								{!isProfileLoading && profileData && profileData.ok ? (
 									<img
-										src={profileData.me.avatar}
+										src={profileData.avatar}
 										alt={t("accessibility.alt.profile-picture.mine")}
 									/>
 								) : (
@@ -151,46 +155,47 @@ export default function Profile() {
 							</div>
 							<div className="flex flex-col items-center w-full gap-1">
 								<div className="text-3xl font-semibold text-slate-700 dark:text-zinc-300 w-full text-center">
-									{!isProfileLoading && profileData && profileData.me ? (
-										profileData.me.displayName
+									{!isProfileLoading && profileData && profileData.ok ? (
+										profileData.displayName
 									) : (
 										<Skeleton width="25%" />
 									)}
 								</div>
 								<span className="text-sm text-slate-500 dark:text-zinc-500  font-medium w-full text-center">
-									{!isProfileLoading && profileData && profileData.me ? (
-										`@${profileData.me.handle}@${profileData.me.server}`
+									{!isProfileLoading && profileData && profileData.ok ? (
+										`@${profileData.handle}@${profileData.server}`
 									) : (
 										<Skeleton width="15%" />
 									)}
 								</span>
 							</div>
 						</address>
-						<Button
-							isPrimary
-							Icon={PencilLine}
-							isLoading={false}
-							text={
-								profileData && profileData.me
-									? t("profile.edit-on.default", {
-											server: profileData.me?.serverName,
-									  })
-									: t("profile.edit-on.loading")
-							}
-							href={
-								profileData && profileData.me
-									? `https://${profileData.me.server}/settings/profile`
-									: ""
-							}
-							disabled={isProfileLoading || !profileData || !profileData.me}
-							newTab
-						/>
-						<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+						<div className="grid grid-cols-2 gap-2">
+							<Button
+								isPrimary
+								Icon={PencilLine}
+								isLoading={false}
+								text={
+									profileData && profileData.ok
+										? t("profile.edit-on.default", {
+												server: profileData.serverName,
+										  })
+										: t("profile.edit-on.loading")
+								}
+								href={
+									profileData && profileData.ok
+										? `https://${profileData.server}/settings/profile`
+										: ""
+								}
+								className="col-span-2"
+								disabled={isProfileLoading || !profileData || !profileData.ok}
+								newTab
+							/>
 							<Button
 								isLoading={false}
 								Icon={Wrench}
 								text={ellipsis(t("profile.manage-entries"))}
-								className="col-span-2 sm:col-span-1"
+								className="col-span-2"
 								onClick={() => setShowInfoModal(true)}
 							/>
 							<Button
@@ -222,7 +227,7 @@ export default function Profile() {
 							<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
 								{data &&
 									data.map((page) => {
-										if (!page.myStatuses) return null;
+										if (!page.ok || !page.myStatuses) return null;
 
 										return page.myStatuses.map((status) => (
 											<li key={status.id} className="p-4 empty:hidden">

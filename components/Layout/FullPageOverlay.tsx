@@ -1,4 +1,4 @@
-import { motion, useAnimate } from "framer-motion";
+import { motion, useAnimate, useReducedMotion } from "framer-motion";
 import { ChevronLeft, X } from "lucide-react";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
@@ -22,8 +22,14 @@ export function FullPageOverlay({
 	const [overlay, animateOverlay] = useAnimate();
 	const { t } = useTranslation();
 
+	const reduceMotion = useReducedMotion();
+
 	const onBackClick = () => {
-		animateCard(card.current, { y: 600, opacity: 0, duration: 0.5 });
+		animateCard(card.current, {
+			y: reduceMotion ? 0 : 600,
+			opacity: 0,
+			duration: 0.5,
+		});
 		animateOverlay(overlay.current, { opacity: 0, duration: 0.35 });
 		setTimeout(() => {
 			router.back();
@@ -39,14 +45,22 @@ export function FullPageOverlay({
 	}, []);
 
 	return (
-		<div>
+		<div className="fixed inset-0 z-50">
+			<motion.div
+				ref={overlay}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				transition={{ duration: 0.35, bounce: 0.3, type: "spring" }}
+				className="bg-slate-200 dark:bg-zinc-900 backdrop-blur-sm bg-opacity-70 dark:bg-opacity-70 w-full h-full"
+			/>
 			<motion.div
 				ref={card}
-				initial={{ y: -600, opacity: 0 }}
+				initial={{ y: reduceMotion ? 0 : -600, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
-				exit={{ y: 600, opacity: 0 }}
+				exit={{ y: reduceMotion ? 0 : 600, opacity: 0 }}
 				transition={{ duration: 0.5, bounce: 0.3, type: "spring" }}
-				className="fixed inset-0 z-30 justify-center items-center bg-slate-50 dark:bg-zinc-950 rounded-xl shadow-xl sm:w-[36rem] w-11/12 border border-slate-300 dark:border-zinc-700 flex flex-col gap-3 h-fit max-h-overlaySheet m-auto overflow-hidden"
+				className="fixed inset-0 justify-center items-center bg-slate-50 dark:bg-zinc-950 rounded-xl shadow-xl sm:w-[36rem] w-11/12 border border-slate-300 dark:border-zinc-700 flex flex-col gap-3 h-fit max-h-overlaySheet m-auto overflow-hidden"
 			>
 				<div className="overflow-y-auto p-7 pb-[5.5rem] w-full relative">
 					{component}
@@ -65,14 +79,6 @@ export function FullPageOverlay({
 					</button>
 				</div>
 			</motion.div>
-			<motion.div
-				ref={overlay}
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				exit={{ opacity: 0 }}
-				transition={{ duration: 0.35, bounce: 0.3, type: "spring" }}
-				className="bg-slate-200 dark:bg-zinc-900 backdrop-blur-sm bg-opacity-70 dark:bg-opacity-70 w-full h-full fixed inset-0 z-20"
-			></motion.div>
 		</div>
 	);
 }

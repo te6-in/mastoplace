@@ -1,5 +1,5 @@
-import { MyCountResponse } from "@/app/api/post/my/count/route";
 import { DeleteAllResponse } from "@/app/api/post/my/route";
+import { CountResponse } from "@/app/api/profile/count/route";
 import { LogOutResponse } from "@/app/api/profile/logout/route";
 import { Button } from "@/components/Input/Button";
 import { useMutation } from "@/libs/client/useMutation";
@@ -44,32 +44,25 @@ export function DeleteAccountForm({
 	const { t } = useTranslation();
 
 	const {
-		data: viewableCountData,
-		isLoading: isViewableCountLoading,
-		mutate: viewableCountMutate,
-	} = useSWR<MyCountResponse>("api/post/my/count?viewable=true");
-
-	const {
-		data: allCountData,
-		isLoading: isAllCountLoading,
-		mutate: allCountMutate,
-	} = useSWR<MyCountResponse>("api/post/my/count");
+		data: countData,
+		isLoading: isCountLoading,
+		mutate,
+	} = useSWR<CountResponse>("api/profile/count");
 
 	const onFirstClick = () => {
-		if (isViewableCountLoading || isDeletePostsLoading || stepsDone !== 0)
-			return;
+		if (isCountLoading || isDeletePostsLoading || stepsDone !== 0) return;
 
 		deletePosts({});
-		viewableCountMutate(undefined, {
+		mutate(undefined, {
 			revalidate: true,
 		});
 	};
 
 	const onSecondClick = () => {
-		if (isAllCountLoading || isDeleteDatabaseLoading || stepsDone !== 1) return;
+		if (isCountLoading || isDeleteDatabaseLoading || stepsDone !== 1) return;
 
 		deleteDatabase({});
-		allCountMutate(undefined, {
+		mutate(undefined, {
 			revalidate: true,
 		});
 	};
@@ -81,30 +74,31 @@ export function DeleteAccountForm({
 	};
 
 	useEffect(() => {
-		if (isViewableCountLoading || isAllCountLoading) return;
+		if (isCountLoading) return;
 
 		if (
-			!isViewableCountLoading &&
-			allCountData &&
-			allCountData.count !== undefined &&
-			allCountData.count === 0
+			!isCountLoading &&
+			countData &&
+			countData.ok &&
+			countData.allCount === 0
 		) {
 			setStepsDone(2);
 			return;
 		}
 
 		if (
-			viewableCountData &&
-			viewableCountData.count !== undefined &&
-			viewableCountData.count === 0
+			!isCountLoading &&
+			countData &&
+			countData.ok &&
+			countData.viewableCount === 0
 		) {
 			setStepsDone(1);
 			return;
 		}
-	}, [viewableCountData, allCountData]);
+	}, [countData]);
 
 	useEffect(() => {
-		if (logOutData?.ok) {
+		if (logOutData && logOutData.ok) {
 			router.push("/home");
 		}
 	}, [logOutData]);
@@ -158,19 +152,17 @@ export function DeleteAccountForm({
 							<Button
 								isPrimary={stepsDone === 0}
 								text={
-									viewableCountData && viewableCountData.count !== undefined
-										? viewableCountData.count > 0
+									countData && countData.ok
+										? countData.viewableCount > 0
 											? t("profile.delete-account.first.button.delete", {
-													count: viewableCountData.count,
+													count: countData.viewableCount,
 											  })
 											: t("profile.delete-account.first.button.unavailable")
 										: ellipsis(t("profile.delete-account.first.button.loading"))
 								}
-								isLoading={isViewableCountLoading || isDeletePostsLoading}
+								isLoading={isCountLoading || isDeletePostsLoading}
 								Icon={
-									viewableCountData &&
-									viewableCountData.count !== undefined &&
-									viewableCountData.count > 0
+									countData && countData.ok && countData.viewableCount > 0
 										? Trash2
 										: Check
 								}
@@ -202,19 +194,17 @@ export function DeleteAccountForm({
 						<Button
 							isPrimary={stepsDone === 1}
 							text={
-								allCountData && allCountData.count !== undefined
-									? allCountData.count > 0
+								countData && countData.ok
+									? countData.allCount > 0
 										? t("profile.delete-account.second.button.delete", {
-												count: allCountData.count,
+												count: countData.allCount,
 										  })
 										: t("profile.delete-account.second.button.unavailable")
 									: ellipsis(t("profile.delete-account.second.button.loading"))
 							}
-							isLoading={isAllCountLoading || isDeleteDatabaseLoading}
+							isLoading={isCountLoading || isDeleteDatabaseLoading}
 							Icon={
-								allCountData &&
-								allCountData.count !== undefined &&
-								allCountData.count > 0
+								countData && countData.ok && countData.allCount > 0
 									? Eraser
 									: Check
 							}

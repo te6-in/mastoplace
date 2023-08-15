@@ -17,7 +17,7 @@ import useSWRInfinite from "swr/infinite";
 export default function Public() {
 	const { t } = useTranslation();
 	const getKey = (pageIndex: number, previousPageData: StatusesResponse) => {
-		if (pageIndex === 0) return "/api/post?public=true";
+		if (pageIndex === 0 || !previousPageData.ok) return "/api/post?public=true";
 		if (!previousPageData.nextMaxId) return null;
 
 		return `/api/post?public=true&max_id=${previousPageData.nextMaxId}`;
@@ -33,13 +33,17 @@ export default function Public() {
 	const [hasMore, setHasMore] = useState(true);
 
 	useEffect(() => {
-		if (data && data[data.length - 1].nextMaxId === undefined) {
+		if (!data) return;
+
+		const lastData = data[data.length - 1];
+
+		if (lastData.ok && lastData.nextMaxId === null) {
 			setHasMore(false);
 		}
 	}, [data]);
 
 	const length = data?.reduce((acc, page) => {
-		if (!page.localViewableStatuses) return 0;
+		if (!page.ok || !page.localViewableStatuses) return 0;
 		return acc + page.localViewableStatuses.length;
 	}, 0);
 
@@ -83,7 +87,7 @@ export default function Public() {
 					<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
 						{data &&
 							data.map((page) => {
-								if (!page.localViewableStatuses) return null;
+								if (!page.ok || !page.localViewableStatuses) return null;
 
 								return page.localViewableStatuses.map((status) => (
 									<li key={status.id} className="p-4 empty:hidden">

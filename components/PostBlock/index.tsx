@@ -38,7 +38,7 @@ export function PostBlock({
 	const { data } = useSWR<StatusResponse>(id ? `/api/post/${id}` : null);
 	const { t } = useTranslation();
 
-	if (data?.ok === false) {
+	if (data && data.ok === false) {
 		if (!showError) return null;
 
 		return <UnavailablePostBlock />;
@@ -92,9 +92,9 @@ export function PostBlock({
 				>
 					<address>
 						<img
-							src={mastodonStatus?.account.avatar}
+							src={mastodonStatus.account.avatar}
 							alt={t("accessibility.alt.profile-picture.of", {
-								name: mastodonStatus?.account.displayName,
+								name: mastodonStatus.account.displayName,
 							})}
 						/>
 					</address>

@@ -128,7 +128,10 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 	};
 
 	useEffect(() => {
-		if (deleteAllData?.ok || deleteDatabaseData?.ok) {
+		if (
+			(deleteAllData && deleteAllData.ok) ||
+			(deleteDatabaseData && deleteDatabaseData.ok)
+		) {
 			mutate(`/api/post/${id}`, null, {
 				revalidate: true,
 			});

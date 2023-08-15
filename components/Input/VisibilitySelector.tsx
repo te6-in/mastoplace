@@ -1,21 +1,29 @@
 import { visibilitySet } from "@/components/PostBlock/Visibility";
+import { j } from "@/libs/client/utils";
 import { mastodon } from "masto";
 import useTranslation from "next-translate/useTranslation";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 interface VisibilitySelectorProps {
 	register: UseFormRegisterReturn;
+	disabled: boolean;
 	error?: string;
 }
 
 export function VisibilitySelector({
 	register,
+	disabled,
 	error,
 }: VisibilitySelectorProps) {
 	const { t } = useTranslation();
 
 	return (
-		<div className="flex flex-col">
+		<div
+			className={j(
+				"flex flex-col",
+				disabled ? "cursor-not-allowed opacity-60" : ""
+			)}
+		>
 			<div className="mb-1 flex justify-between px-1 text-sm font-medium">
 				<span className="text-slate-700 dark:text-zinc-300 mr-1 break-keep">
 					{t("new-post.visibility.label")}
@@ -27,10 +35,10 @@ export function VisibilitySelector({
 				)}
 			</div>
 			<fieldset className="grid gap-1.5 grid-cols-4 p-2 pb-1.5 rounded-md shadow-sm border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 border">
-				<Input register={register} visibility="public" />
-				<Input register={register} visibility="unlisted" />
-				<Input register={register} visibility="private" />
-				<Input register={register} visibility="direct" />
+				<Input register={register} visibility="public" disabled={disabled} />
+				<Input register={register} visibility="unlisted" disabled={disabled} />
+				<Input register={register} visibility="private" disabled={disabled} />
+				<Input register={register} visibility="direct" disabled={disabled} />
 			</fieldset>
 		</div>
 	);
@@ -39,9 +47,10 @@ export function VisibilitySelector({
 interface InputProps {
 	visibility: mastodon.v1.StatusVisibility;
 	register: UseFormRegisterReturn;
+	disabled: boolean;
 }
 
-function Input({ visibility, register }: InputProps) {
+function Input({ visibility, register, disabled }: InputProps) {
 	const Icon = visibilitySet(visibility).Icon;
 
 	return (
@@ -53,6 +62,7 @@ function Input({ visibility, register }: InputProps) {
 					name="visibility"
 					type="radio"
 					value={visibility}
+					disabled={disabled}
 				/>
 				<Icon
 					className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-slate-700 dark:text-zinc-300 peer-checked:text-white"

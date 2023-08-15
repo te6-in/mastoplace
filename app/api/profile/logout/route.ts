@@ -1,7 +1,7 @@
-import { DefaultResponse } from "@/libs/server/response";
+import { EmptyResponse } from "@/libs/server/response";
 import { NextResponse } from "next/server";
 
-export interface LogOutResponse extends DefaultResponse {}
+export type LogOutResponse = EmptyResponse;
 
 export function POST() {
 	const response = NextResponse.json<LogOutResponse>({ ok: true });

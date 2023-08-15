@@ -1,6 +1,7 @@
 import { j } from "@/libs/client/utils";
 import { Loader2, LucideIcon } from "lucide-react";
 import Link from "next/link";
+import TextTransition from "react-text-transition";
 
 interface ButtonProps {
 	isPrimary?: boolean;
@@ -12,6 +13,7 @@ interface ButtonProps {
 	onClick?: () => void;
 	href?: string;
 	newTab?: boolean;
+	animateText?: boolean;
 	className?: string;
 }
 
@@ -25,6 +27,7 @@ export function Button({
 	onClick,
 	href,
 	newTab,
+	animateText,
 	className,
 }: ButtonProps) {
 	const Tag = href ? Link : "button";
@@ -59,7 +62,19 @@ export function Button({
 					/>
 				)
 			)}
-			{text && <span className="ml-2 mr-1 break-keep text-center">{text}</span>}
+			{text &&
+				(animateText ? (
+					<TextTransition
+						inline
+						className="ml-2 mr-1 break-keep text-center leading-5"
+					>
+						{text}
+					</TextTransition>
+				) : (
+					<span className="ml-2 mr-1 break-keep text-center leading-5">
+						{text}
+					</span>
+				))}
 		</Tag>
 	);
 }

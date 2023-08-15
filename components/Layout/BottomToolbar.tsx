@@ -2,6 +2,7 @@ import { TextFieldType } from "@/components/Input/TextInput";
 import { j } from "@/libs/client/utils";
 import { Loader2, LucideIcon } from "lucide-react";
 import { UseFormRegisterReturn } from "react-hook-form";
+import TextTransition from "react-text-transition";
 
 interface BottomToolbarProps {
 	primaryButton?: {
@@ -9,6 +10,7 @@ interface BottomToolbarProps {
 		iconFill?: boolean;
 		text?: string;
 		isLoading: boolean;
+		animateText?: boolean;
 		onClick?: () => void;
 	};
 	input?: {
@@ -60,9 +62,14 @@ export function BottomToolbar({
 								/>
 							)
 						)}
-						{primaryButton.text && (
-							<span className="ml-2 mr-1">{primaryButton.text}</span>
-						)}
+						{primaryButton.text &&
+							(primaryButton.animateText ? (
+								<TextTransition inline className="ml-2 mr-1">
+									{primaryButton.text}
+								</TextTransition>
+							) : (
+								<span className="ml-2 mr-1">{primaryButton.text}</span>
+							))}
 					</button>
 				)}
 				{input && (

@@ -3,10 +3,9 @@ import { sealData } from "iron-session";
 import { NextRequest, NextResponse } from "next/server";
 import { withQuery } from "ufo";
 
-export interface AuthResponse extends DefaultResponse {
-	url?: string;
-	error?: unknown;
-}
+export type AuthResponse = DefaultResponse<{
+	url: string;
+}>;
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
@@ -65,9 +64,9 @@ export async function GET(request: NextRequest) {
 		);
 
 		return response;
-	} catch (error) {
+	} catch {
 		return NextResponse.json<AuthResponse>(
-			{ ok: false, error },
+			{ ok: false, error: "Can't get client from Mastodon" },
 			{ status: 500 }
 		);
 	}

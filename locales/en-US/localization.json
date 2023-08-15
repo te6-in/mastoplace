@@ -87,12 +87,12 @@
 	},
 	"post": {
 		"log-in-to-see": {
-			"description": "Since the Mastoplace server doesn't store the content of your posts, you'll need to log in to view them through the Mastodon server you're on.",
+			"description": "Since the Mastoplace server doesn’t store the content of your posts, you’ll need to log in to view them through the Mastodon server you’re on.",
 			"title": "You should log in to see this post."
 		},
 		"log-in-and-see": "Log in and come back here",
 		"no-post": {
-			"description": "This post either doesn't exist, or you can't see it with the account you're logged in with.",
+			"description": "This post either doesn’t exist, or you can’t see it with the account you’re logged in with.",
 			"title": "That was close!"
 		},
 		"visibility": {
@@ -107,7 +107,7 @@
 			"exact": "Exact location"
 		},
 		"posts-nearby": {
-			"no-location": "You can't see the posts nearby because the original post doesn't have a location.",
+			"no-location": "You can’t see the posts nearby because the original post doesn’t have a location.",
 			"no-post": "There are no posts around this location.",
 			"title": "Posts nearby"
 		},
@@ -140,7 +140,7 @@
 				"title": "Delete posts from Mastodon",
 				"description": {
 					"primary": "Delete posts published through Mastoplace from your Mastodon account ({{handle}}).",
-					"secondary": "If you want to leave your posts on Mastodon, you can skip this step. However, if you change your mind later,  you will have to delete it manually from Mastodon. For the same reason, if you've previously deleted your Mastoplace information without deleting the Mastodon posts, this step will not delete the remaining posts. In these cases, consider using the #Mastoplace hashtag."
+					"secondary": "If you want to leave your posts on Mastodon, you can skip this step. However, if you change your mind later,  you will have to delete it manually from Mastodon. For the same reason, if you’ve previously deleted your Mastoplace information without deleting the Mastodon posts, this step will not delete the remaining posts. In these cases, consider using the #Mastoplace hashtag."
 				},
 				"button": {
 					"delete": {
@@ -178,7 +178,7 @@
 				}
 			},
 			"fourth": {
-				"description": "Log out and you're done. Goodbye!"
+				"description": "Log out and you’re done. Goodbye!"
 			}
 		}
 	},

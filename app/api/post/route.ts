@@ -6,15 +6,14 @@ import { Status } from "@prisma/client";
 import { createClient } from "masto";
 import { NextRequest, NextResponse } from "next/server";
 
-export interface StatusesResponse extends DefaultResponse {
-	localViewableStatuses?: Pick<Status, "id" | "mastodonId">[];
-	nextMaxId?: string;
-}
+export type StatusesResponse = DefaultResponse<{
+	localViewableStatuses: Pick<Status, "id" | "mastodonId">[];
+	nextMaxId: string | null;
+}>;
 
-export interface NewStatusResponse extends DefaultResponse {
-	id?: string;
-	error?: unknown;
-}
+export type NewStatusResponse = DefaultResponse<{
+	id: string;
+}>;
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
@@ -24,7 +23,10 @@ export async function GET(request: NextRequest) {
 	const data = await mastodonClient(request.cookies);
 
 	if (!isPublic && !data) {
-		return NextResponse.json<StatusesResponse>({ ok: false }, { status: 401 });
+		return NextResponse.json<StatusesResponse>(
+			{ ok: false, error: "Not logged in" },
+			{ status: 401 }
+		);
 	}
 
 	try {
@@ -87,7 +89,7 @@ export async function GET(request: NextRequest) {
 						} catch {
 							return false;
 						}
-					} catch (error) {
+					} catch {
 						return false;
 					}
 				} else {
@@ -104,7 +106,7 @@ export async function GET(request: NextRequest) {
 					try {
 						await mastodonSocial.v1.statuses.fetch(status.mastodonId);
 						return true;
-					} catch (error) {
+					} catch {
 						return false;
 					}
 				}
@@ -115,16 +117,24 @@ export async function GET(request: NextRequest) {
 			(_, index) => isLocalViewable[index]
 		);
 
+		const leaveOutServerHandle = localViewableStatuses.map((status) => ({
+			id: status.id,
+			mastodonId: status.mastodonId,
+		}));
+
 		const nextMaxId =
-			statuses.length === 0 ? undefined : statuses[statuses.length - 1].id;
+			statuses.length === 0 ? null : statuses[statuses.length - 1].id;
 
 		return NextResponse.json<StatusesResponse>({
 			ok: true,
-			localViewableStatuses,
+			localViewableStatuses: leaveOutServerHandle,
 			nextMaxId,
 		});
-	} catch (error) {
-		return NextResponse.json<StatusesResponse>({ ok: false }, { status: 500 });
+	} catch {
+		return NextResponse.json<StatusesResponse>(
+			{ ok: false, error: "Can't get statuses from database" },
+			{ status: 500 }
+		);
 	}
 }
 
@@ -133,7 +143,10 @@ export async function POST(request: NextRequest) {
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
-		return NextResponse.json<NewStatusResponse>({ ok: false }, { status: 401 });
+		return NextResponse.json<NewStatusResponse>(
+			{ ok: false, error: "Not logged in" },
+			{ status: 401 }
+		);
 	}
 
 	const { masto, clientServer, handle } = data;
@@ -165,19 +178,19 @@ export async function POST(request: NextRequest) {
 				where: { id: status.id },
 				data: { mastodonId },
 			});
-		} catch (error) {
+		} catch {
 			await client.status.delete({ where: { id: status.id } });
 
 			return NextResponse.json<NewStatusResponse>(
-				{ ok: false },
+				{ ok: false, error: "Can't post to Mastodon" },
 				{ status: 500 }
 			);
 		}
 
 		return NextResponse.json<NewStatusResponse>({ ok: true, id: status.id });
-	} catch (error) {
+	} catch {
 		return NextResponse.json<NewStatusResponse>(
-			{ ok: false, error },
+			{ ok: false, error: "Can't create status" },
 			{ status: 500 }
 		);
 	}

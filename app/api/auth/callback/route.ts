@@ -1,4 +1,4 @@
-import { AuthResponse } from "@/app/api/auth/route";
+import { EmptyResponse } from "@/libs/server/response";
 import { decrypt } from "@/libs/server/session";
 import { sealData } from "iron-session";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,7 +16,10 @@ export async function GET(request: NextRequest) {
 	});
 
 	if (!data) {
-		return NextResponse.json({ ok: false }, { status: 401 });
+		return NextResponse.json<EmptyResponse>(
+			{ ok: false, error: "Not logged in" },
+			{ status: 401 }
+		);
 	}
 
 	const { client_id, client_secret } = data;
@@ -67,9 +70,9 @@ export async function GET(request: NextRequest) {
 		);
 
 		return response;
-	} catch (error) {
-		return NextResponse.json<AuthResponse>(
-			{ ok: false, error },
+	} catch {
+		return NextResponse.json<EmptyResponse>(
+			{ ok: false, error: "Can't get token from Mastodon" },
 			{ status: 500 }
 		);
 	}

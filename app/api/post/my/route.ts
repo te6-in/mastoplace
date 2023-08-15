@@ -1,15 +1,15 @@
 import { client } from "@/libs/server/client";
-import { DefaultResponse } from "@/libs/server/response";
+import { DefaultResponse, EmptyResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export interface MyStatusesResponse extends DefaultResponse {
-	myStatuses?: Pick<Status, "id" | "mastodonId">[];
-	nextMaxId?: string;
-}
+export type MyStatusesResponse = DefaultResponse<{
+	myStatuses: Pick<Status, "id" | "mastodonId">[];
+	nextMaxId: string | null;
+}>;
 
-export interface DeleteAllResponse extends DefaultResponse {}
+export type DeleteAllResponse = EmptyResponse;
 
 export async function GET(request: NextRequest) {
 	const data = await mastodonClient(request.cookies);
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
 	if (!data) {
 		return NextResponse.json<MyStatusesResponse>(
-			{ ok: false },
+			{ ok: false, error: "Not logged in" },
 			{ status: 401 }
 		);
 	}
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
 	if (!masto || !clientServer) {
 		return NextResponse.json<MyStatusesResponse>(
-			{ ok: false },
+			{ ok: false, error: "Can't log in to Mastodon" },
 			{ status: 401 }
 		);
 	}
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 				try {
 					await masto.v1.statuses.fetch(status.mastodonId);
 					return true;
-				} catch (error) {
+				} catch {
 					return false;
 				}
 			})
@@ -58,18 +58,16 @@ export async function GET(request: NextRequest) {
 		const viewableStatuses = myStatuses.filter((_, i) => viewable[i]);
 
 		const nextMaxId =
-			myStatuses.length === 0
-				? undefined
-				: myStatuses[myStatuses.length - 1].id;
+			myStatuses.length === 0 ? null : myStatuses[myStatuses.length - 1].id;
 
 		return NextResponse.json<MyStatusesResponse>({
 			ok: true,
 			myStatuses: viewableStatuses,
 			nextMaxId,
 		});
-	} catch (error) {
+	} catch {
 		return NextResponse.json<MyStatusesResponse>(
-			{ ok: false },
+			{ ok: false, error: "Can't get statuses from database" },
 			{ status: 500 }
 		);
 	}
@@ -81,7 +79,7 @@ export async function DELETE(request: NextRequest) {
 
 	if (!type) {
 		return NextResponse.json<MyStatusesResponse>(
-			{ ok: false },
+			{ ok: false, error: "No type" },
 			{ status: 400 }
 		);
 	}
@@ -89,7 +87,10 @@ export async function DELETE(request: NextRequest) {
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
-		return NextResponse.json<DeleteAllResponse>({ ok: false }, { status: 401 });
+		return NextResponse.json<DeleteAllResponse>(
+			{ ok: false, error: "Not logged in" },
+			{ status: 401 }
+		);
 	}
 
 	const { masto, clientServer, handle } = data;
@@ -97,7 +98,7 @@ export async function DELETE(request: NextRequest) {
 	if (type === "statuses") {
 		if (!masto || !clientServer || !handle) {
 			return NextResponse.json<DeleteAllResponse>(
-				{ ok: false },
+				{ ok: false, error: "Can't log in to Mastodon" },
 				{ status: 401 }
 			);
 		}
@@ -119,9 +120,9 @@ export async function DELETE(request: NextRequest) {
 			);
 
 			return NextResponse.json<DeleteAllResponse>({ ok: true });
-		} catch (error) {
+		} catch {
 			return NextResponse.json<DeleteAllResponse>(
-				{ ok: false },
+				{ ok: false, error: "Can't get statuses from database" },
 				{ status: 500 }
 			);
 		}
@@ -130,7 +131,7 @@ export async function DELETE(request: NextRequest) {
 	if (type === "database") {
 		if (!clientServer || !handle) {
 			return NextResponse.json<DeleteAllResponse>(
-				{ ok: false },
+				{ ok: false, error: "Can't log in to Mastodon" },
 				{ status: 401 }
 			);
 		}
@@ -141,9 +142,9 @@ export async function DELETE(request: NextRequest) {
 			});
 
 			return NextResponse.json<DeleteAllResponse>({ ok: true });
-		} catch (error) {
+		} catch {
 			return NextResponse.json<DeleteAllResponse>(
-				{ ok: false },
+				{ ok: false, error: "Can't delete statuses from database" },
 				{ status: 500 }
 			);
 		}

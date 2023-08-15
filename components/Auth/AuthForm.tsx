@@ -1,5 +1,6 @@
 "use client";
 
+import { AuthResponse } from "@/app/api/auth/route";
 import { Button } from "@/components/Input/Button";
 import { TextInput } from "@/components/Input/TextInput";
 import { ArrowUpLeft, LogIn } from "lucide-react";
@@ -65,7 +66,7 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 			.then((response) => response.json())
 			.then((data) => data);
 
-		return data;
+		return data as AuthResponse;
 	}
 
 	const onValid = async (inputs: AuthInputs) => {

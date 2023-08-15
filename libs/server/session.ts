@@ -30,7 +30,7 @@ export async function decrypt({ type, cookies }: DecryptParams) {
 		const json = JSON.parse(data);
 
 		return json;
-	} catch (error) {
+	} catch {
 		return null;
 	}
 }

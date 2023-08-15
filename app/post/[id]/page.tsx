@@ -66,56 +66,58 @@ export default function Post({ params }: StatusParams) {
 							</>
 						)}
 						{isLoading && <PostLoadingList dividerPadding />}
-						{data && data.ok && !data.hasLocation && (
+						{data && data.ok && !data.nearbyInfo && (
 							<div className="my-3 text-slate-500 dark:text-zinc-500 text-sm font-medium text-center">
 								{t("post.posts-nearby.no-location")}
 							</div>
 						)}
-						{data && data.ok && data.nearbyIds && !data.nearbyIds.length && (
-							<div className="my-3 text-slate-500 dark:text-zinc-500 text-sm font-medium text-center">
-								{t("post.posts-nearby.no-post")}
-							</div>
-						)}
-						{data && data.ok && data.nearbyIds && data.nearbyIds.length !== 0 && (
-							<ol className="divide-y divide-slate-200 dark:divide-zinc-800 px-4">
-								{data.nearbyIds.map((nearbyId) => (
-									<li className="py-4 empty:hidden" key={nearbyId}>
-										<PostBlock
-											id={nearbyId}
-											from={data.originalLocation}
-											link
-										/>
-									</li>
-								))}
-							</ol>
-						)}
+						{data &&
+							data.ok &&
+							data.nearbyInfo &&
+							data.nearbyInfo.nearbyIds.length === 0 && (
+								<div className="my-3 text-slate-500 dark:text-zinc-500 text-sm font-medium text-center">
+									{t("post.posts-nearby.no-post")}
+								</div>
+							)}
+						{data &&
+							data.ok &&
+							data.nearbyInfo &&
+							data.nearbyInfo.nearbyIds.length !== 0 && (
+								<ol className="divide-y divide-slate-200 dark:divide-zinc-800 px-4">
+									{data.nearbyInfo.nearbyIds.map((nearbyId) => (
+										<li className="py-4 empty:hidden" key={nearbyId}>
+											<PostBlock
+												id={nearbyId}
+												from={data.nearbyInfo?.originalLocation}
+												link
+											/>
+										</li>
+									))}
+								</ol>
+							)}
 					</div>
 				</div>
 			)}
-			{!isTokenLoading &&
-				hasValidToken &&
-				params.id &&
-				data &&
-				data.ok === false && (
-					<div className="flex flex-col gap-6 px-4 mt-12 mx-auto text-center w-3/4 sm:w-96">
-						<UnavailablePostBlock />
-						<div className="flex flex-col sm:grid sm:grid-cols-2 gap-2">
-							<Button
-								text={t("action.go-home")}
-								href="/home"
-								isPrimary
-								isLoading={false}
-								Icon={Newspaper}
-							/>
-							<Button
-								text={t("action.browse-public-posts")}
-								href="/public"
-								Icon={Globe2}
-								isLoading={false}
-							/>
-						</div>
+			{!isTokenLoading && hasValidToken && params.id && data && !data.ok && (
+				<div className="flex flex-col gap-6 px-4 mt-12 mx-auto text-center w-3/4 sm:w-96">
+					<UnavailablePostBlock />
+					<div className="flex flex-col gap-2">
+						<Button
+							text={t("action.go-home")}
+							href="/home"
+							isPrimary
+							isLoading={false}
+							Icon={Newspaper}
+						/>
+						<Button
+							text={t("action.browse-public-posts")}
+							href="/public"
+							Icon={Globe2}
+							isLoading={false}
+						/>
 					</div>
-				)}
+				</div>
+			)}
 		</Layout>
 	);
 }

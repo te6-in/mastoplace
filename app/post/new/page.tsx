@@ -19,7 +19,7 @@ import { Check, Map } from "lucide-react";
 import { mastodon } from "masto";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
 
@@ -137,12 +137,12 @@ export default function New() {
 	}, [watchApproximate, setValue]);
 
 	useEffect(() => {
-		if (isMeLoading || !meData?.me) return;
+		if (isMeLoading || !meData || !meData.ok) return;
 
 		if (process.env.NODE_ENV === "development") {
 			setValue("visibility", "direct");
 		} else {
-			setValue("visibility", meData.me.defaultVisibility);
+			setValue("visibility", meData.defaultVisibility);
 		}
 	}, [meData, setValue]);
 
@@ -176,20 +176,24 @@ export default function New() {
 			<form onSubmit={handleSubmit(onValid)}>
 				<div className="flex flex-col gap-4 px-4">
 					{watchExact && exactPosition && (
-						<PigeonMap
-							position={exactPosition}
-							className="h-48 rounded-md"
-							fixed
-							exact
-						/>
+						<Suspense fallback={<div>asdf</div>}>
+							<PigeonMap
+								position={exactPosition}
+								className="h-48 rounded-md"
+								fixed
+								exact
+							/>
+						</Suspense>
 					)}
 					{watchApproximate && !watchExact && approximatePosition && (
-						<PigeonMap
-							position={approximatePosition}
-							className="h-48 rounded-md"
-							fixed
-							exact={false}
-						/>
+						<Suspense fallback={<div>asdf</div>}>
+							<PigeonMap
+								position={approximatePosition}
+								className="h-48 rounded-md"
+								fixed
+								exact={false}
+							/>
+						</Suspense>
 					)}
 					{!watchApproximate && !watchExact && (
 						<div
@@ -220,6 +224,7 @@ export default function New() {
 							required: t("new-post.visibility.error.required"),
 						})}
 						error={errors.visibility?.message}
+						disabled={isMeLoading}
 					/>
 					<Checkbox
 						register={register("approximate")}
@@ -244,6 +249,7 @@ export default function New() {
 							? t("new-post.post.with-approximate-location")
 							: t("new-post.post.without-location"),
 						isLoading,
+						animateText: true,
 					}}
 				/>
 			</form>
