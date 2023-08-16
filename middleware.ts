@@ -1,7 +1,6 @@
 import { defaultLocale, locales } from "@/i18n";
 import acceptLanguage from "accept-language";
 import { NextRequest, NextResponse } from "next/server";
-import { joinURL, withQuery } from "ufo";
 
 export function middleware(request: NextRequest) {
 	function getLocale() {
@@ -27,13 +26,7 @@ export function middleware(request: NextRequest) {
 	if (!currentLocale || locales.every((locale) => locale !== currentLocale)) {
 		const locale = getLocale();
 		const response = NextResponse.redirect(
-			withQuery(
-				joinURL(
-					process.env.NEXT_PUBLIC_BASE_URL as string,
-					request.nextUrl.pathname
-				),
-				{ lang: locale }
-			)
+			new URL("?lang=" + locale, request.url)
 		);
 
 		response.cookies.set(process.env.LANGUAGE_COOKIE_NAME as string, locale);
