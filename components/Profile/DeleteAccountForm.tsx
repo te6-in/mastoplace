@@ -30,16 +30,20 @@ export function DeleteAccountForm({
 }: DeleteAccountFormProps) {
 	const router = useRouter();
 
-	const [deletePosts, { isLoading: isDeletePostsLoading }] =
-		useMutation<DeleteAllResponse>("/api/post/my?type=statuses", "DELETE");
+	const [deletePosts, { isLoading: isDeletePostsLoading }] = useMutation<
+		DeleteAllResponse,
+		{}
+	>("/api/post/my?type=statuses", "DELETE");
 
-	const [deleteDatabase, { isLoading: isDeleteDatabaseLoading }] =
-		useMutation<DeleteAllResponse>("/api/post/my?type=database", "DELETE");
+	const [deleteDatabase, { isLoading: isDeleteDatabaseLoading }] = useMutation<
+		DeleteAllResponse,
+		{}
+	>("/api/post/my?type=database", "DELETE");
 
 	const [stepsDone, setStepsDone] = useState(0);
 
 	const [logOut, { data: logOutData, isLoading: isLogOutLoading }] =
-		useMutation<LogOutResponse>("/api/profile/logout");
+		useMutation<LogOutResponse, {}>("/api/profile/logout");
 
 	const { t } = useTranslation();
 

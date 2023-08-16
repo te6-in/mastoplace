@@ -27,10 +27,10 @@ import useSWRInfinite from "swr/infinite";
 
 export default function Profile() {
 	const [logOut, { data: logOutData, isLoading: isLogOutLoading }] =
-		useMutation<LogOutResponse>("/api/profile/logout");
+		useMutation<LogOutResponse, {}>("/api/profile/logout");
 
 	const { data: profileData, isLoading: isProfileLoading } =
-		useSWR<MyInfoResponse>("/api/profile/me");
+		useSWR<MyInfoResponse>("/api/profile/me", { revalidateOnFocus: false });
 
 	const getKey = (pageIndex: number, previousPageData: MyStatusesResponse) => {
 		if (pageIndex === 0 || !previousPageData.ok) return "/api/post/my";
@@ -93,9 +93,9 @@ export default function Profile() {
 						type="back"
 						component={
 							<div className="flex flex-col gap-6">
-								<p className="text-xl font-medium text-slate-800 dark:text-zinc-200 text-center break-keep">
+								<div className="text-xl font-medium text-slate-800 dark:text-zinc-200 text-center break-keep">
 									{t("profile.log-in-to-see")}
-								</p>
+								</div>
 								<AuthForm
 									buttonText={t("profile.log-in-and-see")}
 									redirectAfterAuth="/profile"

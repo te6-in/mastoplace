@@ -23,6 +23,7 @@ export function ManageEntriesForm({ handle, server }: ManageEntriesFormProps) {
 				</p>
 			</div>
 			<div className="flex flex-col gap-6">
+				<div className="font-4xl text-center">🚧 공사중 🚧</div>
 				<div className="bg-slate-100 dark:bg-zinc-900 rounded-md p-4 text-slate-900 dark:text-zinc-100">
 					<div>Mastoplace에 등록된 위치 및 게시 정보</div>
 					<span>

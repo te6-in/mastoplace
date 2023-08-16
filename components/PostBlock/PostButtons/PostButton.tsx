@@ -103,12 +103,12 @@ interface DeleteModalProps {
 function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 	const { t } = useTranslation();
 	const [deleteAll, { data: deleteAllData, isLoading: deleteAllLoading }] =
-		useMutation<StatusDeleteResponse>(`/api/post/${id}?type=all`, "DELETE");
+		useMutation<StatusDeleteResponse, {}>(`/api/post/${id}?type=all`, "DELETE");
 
 	const [
 		deleteDatabase,
 		{ data: deleteDatabaseData, isLoading: deleteDatabaseLoading },
-	] = useMutation<StatusDeleteResponse>(
+	] = useMutation<StatusDeleteResponse, {}>(
 		`/api/post/${id}?type=database`,
 		"DELETE"
 	);

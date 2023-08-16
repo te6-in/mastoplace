@@ -160,6 +160,20 @@ export async function POST(request: NextRequest) {
 
 	const { masto, clientServer, handle } = data;
 
+	if (!masto) {
+		return NextResponse.json<NewStatusResponse>(
+			{ ok: false, error: "Can't log in to Mastodon" },
+			{ status: 401 }
+		);
+	}
+
+	if (clientServer !== "pointless.chat") {
+		return NextResponse.json<NewStatusResponse>(
+			{ ok: false, error: "BETA_POINTLESS" },
+			{ status: 403 }
+		);
+	}
+
 	try {
 		const { latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } =
 			location ?? {

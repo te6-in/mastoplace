@@ -1,8 +1,10 @@
 "use client";
 
 import { NewStatusResponse } from "@/app/api/post/route";
+import { LogOutResponse } from "@/app/api/profile/logout/route";
 import { MyInfoResponse } from "@/app/api/profile/me/route";
 import { AuthForm } from "@/components/Auth/AuthForm";
+import { Button } from "@/components/Input/Button";
 import { Checkbox } from "@/components/Input/Checkbox";
 import { TextArea } from "@/components/Input/TextArea";
 import { VisibilitySelector } from "@/components/Input/VisibilitySelector";
@@ -15,9 +17,10 @@ import { useMutation } from "@/libs/client/useMutation";
 import { useToken } from "@/libs/client/useToken";
 import { AnimatePresence } from "framer-motion";
 import { getCenter } from "geolib";
-import { Check, Map } from "lucide-react";
+import { Check, LogOut, Map } from "lucide-react";
 import { mastodon } from "masto";
 import useTranslation from "next-translate/useTranslation";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -48,6 +51,7 @@ export default function New() {
 		useSWR<MyInfoResponse>("/api/profile/me");
 
 	const [isLocationLoading, setIsLocationLoading] = useState(true);
+	const [showBetaError, setShowBetaError] = useState(false);
 
 	const router = useRouter();
 	const { t } = useTranslation();
@@ -72,6 +76,9 @@ export default function New() {
 		NewStatusResponse,
 		NewStatusRequest
 	>("/api/post");
+
+	const [logOut, { data: logOutData, isLoading: isLogOutLoading }] =
+		useMutation<LogOutResponse, {}>("/api/profile/logout");
 
 	const randomValue = () => {
 		const values = [-0.03, -0.02, -0.01, 0, 0.01, 0.02, 0.03];
@@ -149,10 +156,24 @@ export default function New() {
 		});
 	};
 
+	const onLogOutClick = () => {
+		if (isLogOutLoading) return;
+
+		logOut({});
+	};
+
 	useEffect(() => {
 		if (data && data.ok) {
 			mutate("/api/post");
 			router.replace(`/post/${data.id}`);
+
+			return;
+		}
+
+		if (data && !data.ok && data.error === "BETA_POINTLESS") {
+			setShowBetaError(true);
+
+			return;
 		}
 	}, [data, router]);
 
@@ -194,6 +215,12 @@ export default function New() {
 		}
 	}, [meData, setValue]);
 
+	useEffect(() => {
+		if (logOutData && logOutData.ok) {
+			router.push("/home");
+		}
+	}, [logOutData]);
+
 	if (isTokenLoading) return null;
 
 	return (
@@ -209,15 +236,47 @@ export default function New() {
 						type="back"
 						component={
 							<div className="flex flex-col gap-6">
-								<p className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
+								<div className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
 									{t("new-post.log-in-to-write")}
-								</p>
+								</div>
 								<AuthForm
 									buttonText={t("new-post.log-in-and-write")}
 									redirectAfterAuth="/post/new"
 								/>
 							</div>
 						}
+					/>
+				)}
+				{showBetaError && (
+					<FullPageOverlay
+						type="close"
+						component={
+							<div className="flex flex-col gap-6">
+								<div className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
+									앗...
+								</div>
+								<p className="text-slate-600 text-center break-keep dark:text-zinc-400">
+									베타 버전에서는{" "}
+									<Link
+										href="https://pointless.chat/"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="underline text-violet-500 dark:text-violet-600 font-bold underline-offset-2"
+									>
+										포인트리스 서버
+									</Link>
+									에 있는 계정에서만 게시할 수 있습니다.
+								</p>
+								<Button
+									isPrimary
+									text="로그아웃하고 다시 로그인"
+									isLoading={isLogOutLoading}
+									Icon={LogOut}
+									onClick={onLogOutClick}
+								/>
+							</div>
+						}
+						onCloseClick={() => setShowBetaError(false)}
 					/>
 				)}
 			</AnimatePresence>
