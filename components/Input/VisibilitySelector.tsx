@@ -51,7 +51,8 @@ interface InputProps {
 }
 
 function Input({ visibility, register, disabled }: InputProps) {
-	const Icon = visibilitySet(visibility).Icon;
+	const { t } = useTranslation();
+	const { Icon, text } = visibilitySet(t, visibility);
 
 	return (
 		<label className="flex flex-col gap-1">
@@ -71,7 +72,7 @@ function Input({ visibility, register, disabled }: InputProps) {
 				/>
 			</div>
 			<div className="break-keep px-0.5 text-sm text-slate-500 dark:text-zinc-500 font-medium text-center">
-				{visibilitySet(visibility).text}
+				{text}
 			</div>
 		</label>
 	);

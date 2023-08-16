@@ -74,7 +74,7 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 		return data as AuthResponse;
 	}
 
-	const onValid = async (inputs: AuthInputs) => {
+	const onValid = async () => {
 		if (isLoading) return;
 
 		if (serverError || !serverData || !serverData.title) {

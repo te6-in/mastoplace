@@ -1,14 +1,16 @@
 import { AtSign, Globe, Lock, Unlock } from "lucide-react";
 import { mastodon } from "masto";
+import { Translate } from "next-translate";
 import useTranslation from "next-translate/useTranslation";
 
 interface VisibilityProps {
 	visibility: mastodon.v1.StatusVisibility;
 }
 
-export function visibilitySet(visibility: mastodon.v1.StatusVisibility) {
-	const { t } = useTranslation();
-
+export function visibilitySet(
+	t: Translate,
+	visibility: mastodon.v1.StatusVisibility
+) {
 	switch (visibility) {
 		case "public":
 			return {
@@ -34,7 +36,8 @@ export function visibilitySet(visibility: mastodon.v1.StatusVisibility) {
 }
 
 export function Visibility({ visibility }: VisibilityProps) {
-	const { Icon, text } = visibilitySet(visibility);
+	const { t } = useTranslation();
+	const { Icon, text } = visibilitySet(t, visibility);
 
 	return (
 		<div className="flex items-center gap-1">
