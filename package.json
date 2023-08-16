@@ -26,7 +26,7 @@
 		"lucide-react": "^0.263.1",
 		"masto": "^5.11.4",
 		"next": "13.4.10",
-		"next-translate": "^2.5.2",
+		"next-translate": "^2.5.3",
 		"pigeon-maps": "^0.21.3",
 		"postcss": "8.4.26",
 		"react": "18.2.0",
@@ -41,7 +41,7 @@
 		"ufo": "^1.1.2"
 	},
 	"devDependencies": {
-		"next-translate-plugin": "^2.5.2",
+		"next-translate-plugin": "^2.5.3",
 		"prettier": "^3.0.0",
 		"prettier-plugin-tailwindcss": "^0.4.1",
 		"prisma": "^5.0.0"
