@@ -99,13 +99,13 @@ export function DeleteAccountForm({
 			setStepsDone(1);
 			return;
 		}
-	}, [countData]);
+	}, [countData, isCountLoading]);
 
 	useEffect(() => {
 		if (logOutData && logOutData.ok) {
 			router.push("/home");
 		}
-	}, [logOutData]);
+	}, [logOutData, router]);
 
 	return (
 		<div className="flex gap-6 flex-col">

@@ -11,7 +11,6 @@ import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UseFormSetValue, useForm } from "react-hook-form";
-import useSWR from "swr";
 import { withQuery } from "ufo";
 
 interface CreateAppInputs {
@@ -28,36 +27,29 @@ export interface AuthFormProps {
 }
 
 export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
-	const devDefault = {
-		defaultValues: {
-			server: "mas.to",
-		},
-	};
-
 	const {
 		register,
 		handleSubmit,
 		setError,
 		watch,
 		setValue,
-		formState: { errors },
-	} = useForm<AuthInputs>(
-		process.env.NODE_ENV === "development" ? devDefault : undefined
-	);
+		setFocus,
+		formState: { errors, isSubmitted },
+	} = useForm<AuthInputs>();
 
 	const watchServer = watch("server");
-
 	const router = useRouter();
 	const { t } = useTranslation();
 	const [showOverlay, setShowOverlay] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-
-	const { data: serverData, error: serverError } = useSWR<mastodon.v1.Instance>(
-		`https://${watchServer}/api/v1/instance`
-	);
+	const [isFetchLoading, setIsFetchLoading] = useState(false);
+	const [isLogInLoading, setIsLogInLoading] = useState(false);
+	const [server, setServer] = useState<{
+		url: string;
+		title: string;
+	} | null>(null);
 
 	async function auth({ server }: CreateAppInputs) {
-		setIsLoading(true);
+		setIsLogInLoading(true);
 
 		const data = await fetch(
 			withQuery("/api/auth", { server, redirect: redirectAfterAuth }),
@@ -74,26 +66,51 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 		return data as AuthResponse;
 	}
 
-	const onValid = async () => {
-		if (isLoading) return;
+	const onValid = async (inputs: AuthInputs) => {
+		if (isFetchLoading) return;
 
-		if (serverError || !serverData || !serverData.title) {
+		setIsFetchLoading(true);
+
+		try {
+			const serverData = (await fetch(
+				`https://${inputs.server}/api/v1/instance`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			).then((response) => response.json())) as mastodon.v1.Instance;
+
+			if (!serverData.uri || !serverData.title) {
+				throw null;
+			}
+
+			setServer({
+				url: serverData.uri,
+				title: serverData.title,
+			});
+
+			setShowOverlay(true);
+		} catch {
 			setError("server", {
 				message: t("auth.form.server.error.invalid"),
 			});
 
+			setFocus("server");
+
+			setIsFetchLoading(false);
+
 			return;
 		}
-
-		setShowOverlay(true);
 	};
 
 	const onLogInClick = async () => {
-		if (!serverData) return;
+		if (!server) return;
 
-		setIsLoading(true);
+		setIsLogInLoading(true);
 
-		const data = await auth({ server: serverData.uri });
+		const data = await auth({ server: server.url });
 
 		if (data.ok) {
 			router.push(data.url);
@@ -103,11 +120,14 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 	return (
 		<>
 			<AnimatePresence>
-				{serverData && showOverlay && (
+				{server && showOverlay && (
 					<FullPageOverlay
 						type="close"
 						buttonLabel="로그인하지 않기"
-						onCloseClick={() => setShowOverlay(false)}
+						onCloseClick={() => {
+							setShowOverlay(false);
+							setIsFetchLoading(false);
+						}}
 						component={
 							<div className="flex flex-col gap-1 break-keep">
 								<div className="text-slate-800 font-medium text-center text-lg dark:text-zinc-200">
@@ -119,26 +139,26 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 								<ol className="text-slate-600 dark:text-zinc-400 my-4 list-decimal text-left flex gap-2 flex-col text-sm pl-4">
 									<li>
 										로그인만 하는 경우 Mastoplace 서버에 저장되는 내용은 없지만,
-										웹 브라우저 - Mastoplace 서버 - {serverData.title} 서버를
-										거쳐 타임라인과 글 정보를 불러오게 됩니다.
+										웹 브라우저 - Mastoplace 서버 - {server.title} 서버를 거쳐
+										타임라인과 글 정보를 불러오게 됩니다.
 									</li>
 									<li>
 										글을 게시하는 경우 글의 내용은 Mastoplace 서버가 아닌{" "}
-										{serverData.title} 서버에 저장됩니다. Mastoplace에는 서버(
-										{serverData.uri}), 핸들(로그인하는 계정의 아이디), 글을
-										참조할 수 있는 고유 번호와 위치(선택)가 서로 연결되어
-										저장됩니다. 따라서 Mastoplace는 글의 고유 번호를 통해{" "}
-										{serverData.title} 서버를 거쳐 글 내용을 불러오게 됩니다.
+										{server.title} 서버에 저장됩니다. Mastoplace에는 서버(
+										{server.url}), 핸들(로그인하는 계정의 아이디), 글을 참조할
+										수 있는 고유 번호와 위치(선택)가 서로 연결되어 저장됩니다.
+										따라서 Mastoplace는 글의 고유 번호를 통해 {server.title}{" "}
+										서버를 거쳐 글 내용을 불러오게 됩니다.
 									</li>
 									<li>
 										게시한 글 및 위치 정보를 완전히 삭제하고자 하는 경우,
 										Mastoplace에서 삭제해야 합니다. 마스토돈에서만 삭제하는 경우
 										Mastoplace에 위치 정보가 남게 됩니다. 마스토돈에 존재하지
-										않는 글에 대한 위치 정보를 일괄 삭제하는 기능은 개발
+										않는 글에 대한 찌꺼기 위치 정보만 일괄 삭제하는 기능은 개발
 										중입니다.
 									</li>
 									<li>
-										언제든지 프로필 메뉴의 탈퇴 버튼을 통해 등록한 모든 정보를
+										언제든지 프로필 메뉴의 탈퇴 버튼을 통해 등록된 모든 정보를
 										삭제하고 Mastoplace를 탈퇴할 수 있습니다.
 									</li>
 									<li>
@@ -159,9 +179,9 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 								<Button
 									isPrimary
 									Icon={LogIn}
-									text={`${serverData.title} 서버를 통해 로그인`}
+									text={`${server.title} 서버를 통해 로그인`}
 									onClick={onLogInClick}
-									isLoading={isLoading}
+									isLoading={isLogInLoading}
 								/>
 							</div>
 						}
@@ -184,8 +204,9 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 					})}
 					prefix="https://"
 					error={errors.server?.message}
+					isSubmitted={isSubmitted}
 				/>
-				{watchServer === "" && (
+				{!watchServer && (
 					<div className="grid grid-cols-1 sm:grid-cols-2 text-sm text-slate-700 dark:text-zinc-300 gap-2">
 						<FillButton
 							server={t("auth.form.server.autocomplete.1")}
@@ -213,11 +234,11 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 						/>
 					</div>
 				)}
-				{watchServer !== "" && (
+				{watchServer !== undefined && watchServer !== "" && (
 					<Button
 						isPrimary
 						Icon={LogIn}
-						isLoading={isLoading}
+						isLoading={isFetchLoading}
 						text={buttonText ?? t("auth.form.log-in")}
 					/>
 				)}

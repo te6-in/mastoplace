@@ -1,8 +1,10 @@
-import { EmptyResponse } from "@/libs/server/response";
+import { DefaultResponse } from "@/libs/server/response";
 import { decrypt } from "@/libs/server/session";
 import { sealData } from "iron-session";
 import { NextRequest, NextResponse } from "next/server";
 import { withQuery } from "ufo";
+
+type CallbackResponse = DefaultResponse;
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
@@ -16,7 +18,7 @@ export async function GET(request: NextRequest) {
 	});
 
 	if (!data) {
-		return NextResponse.json<EmptyResponse>(
+		return NextResponse.json<CallbackResponse>(
 			{ ok: false, error: "Not logged in" },
 			{ status: 401 }
 		);
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest) {
 		redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?redirect=${redirectAfterAuth}&server=${server}`,
 		grant_type: "authorization_code",
 		code,
-		scope: (process.env.NEXT_PUBLIC_SCOPE as string).replaceAll(" ", "+"),
+		scope: (process.env.SCOPES as string).replaceAll(" ", "+"),
 	};
 
 	try {
@@ -71,7 +73,7 @@ export async function GET(request: NextRequest) {
 
 		return response;
 	} catch {
-		return NextResponse.json<EmptyResponse>(
+		return NextResponse.json<CallbackResponse>(
 			{ ok: false, error: "Can't get token from Mastodon" },
 			{ status: 500 }
 		);

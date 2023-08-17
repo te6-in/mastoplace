@@ -1,5 +1,5 @@
 import { client } from "@/libs/server/client";
-import { DefaultResponse, EmptyResponse } from "@/libs/server/response";
+import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,7 +9,7 @@ export type MyStatusesResponse = DefaultResponse<{
 	nextMaxId: string | null;
 }>;
 
-export type DeleteAllResponse = EmptyResponse;
+export type DeleteAllResponse = DefaultResponse;
 
 export async function GET(request: NextRequest) {
 	const data = await mastodonClient(request.cookies);

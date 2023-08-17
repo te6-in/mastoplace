@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 	const params = {
 		client_name: "Mastoplace",
 		redirect_uris: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?redirect=${redirectAfterAuth}&server=${server}`,
-		scopes: process.env.NEXT_PUBLIC_SCOPE,
+		scopes: process.env.SCOPES as string,
 	};
 
 	try {
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 			ok: true,
 			url: withQuery(`https://${server}/oauth/authorize`, {
 				client_id,
-				scope: process.env.NEXT_PUBLIC_SCOPE,
+				scope: process.env.SCOPES as string,
 				response_type: "code",
 				redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback?redirect=${redirectAfterAuth}&server=${server}`,
 			}),

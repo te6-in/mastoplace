@@ -20,7 +20,6 @@ import { getCenter } from "geolib";
 import { Check, LogOut, Map } from "lucide-react";
 import { mastodon } from "masto";
 import useTranslation from "next-translate/useTranslation";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -170,7 +169,7 @@ export default function New() {
 			return;
 		}
 
-		if (data && !data.ok && data.error === "BETA_POINTLESS") {
+		if (data && !data.ok && data.error === "BETA_LIMITED_SERVER_ERROR") {
 			setShowBetaError(true);
 
 			return;
@@ -208,18 +207,18 @@ export default function New() {
 	useEffect(() => {
 		if (isMeLoading || !meData || !meData.ok) return;
 
-		if (process.env.NODE_ENV === "development") {
-			setValue("visibility", "direct");
-		} else {
+		if (process.env.NODE_ENV === "production") {
 			setValue("visibility", meData.defaultVisibility);
+		} else {
+			setValue("visibility", "direct");
 		}
-	}, [meData, setValue]);
+	}, [meData, isMeLoading, setValue]);
 
 	useEffect(() => {
 		if (logOutData && logOutData.ok) {
 			router.push("/home");
 		}
-	}, [logOutData]);
+	}, [logOutData, router]);
 
 	if (isTokenLoading) return null;
 
@@ -251,25 +250,29 @@ export default function New() {
 					<FullPageOverlay
 						type="close"
 						component={
-							<div className="flex flex-col gap-6">
+							<div className="flex flex-col gap-2">
 								<div className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
-									앗...
+									아직은 게시할 수 있는 서버가 한정되어 있어요.
 								</div>
 								<p className="text-slate-600 text-center break-keep dark:text-zinc-400">
-									베타 버전에서는{" "}
-									<Link
-										href="https://pointless.chat/"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="underline text-violet-500 dark:text-violet-600 font-bold underline-offset-2"
-									>
-										포인트리스 서버
-									</Link>
-									에 있는 계정에서만 게시할 수 있습니다.
+									지금은 다음 서버에서만 게시할 수 있어요.
 								</p>
+								<div className="grid grid-cols-2 sm:grid-cols-3 my-2 gap-2">
+									{data &&
+										!data.ok &&
+										data.supportedServers &&
+										data.supportedServers.map((server, index) => (
+											<div
+												key={index}
+												className="flex items-center justify-center text-sm font-medium p-2 rounded-md bg-slate-200 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400"
+											>
+												{server}
+											</div>
+										))}
+								</div>
 								<Button
 									isPrimary
-									text="로그아웃하고 다시 로그인"
+									text="로그아웃하고 다른 계정으로 로그인"
 									isLoading={isLogOutLoading}
 									Icon={LogOut}
 									onClick={onLogOutClick}

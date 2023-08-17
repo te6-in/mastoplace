@@ -1,12 +1,12 @@
-interface FailResponse {
+type FailResponse<T> = {
 	ok: false;
 	error: string;
-}
+} & T;
 
 type SuccessResponse<T> = {
 	ok: true;
 } & T;
 
-export type DefaultResponse<T> = FailResponse | SuccessResponse<T>;
-
-export type EmptyResponse = DefaultResponse<{}>;
+export type DefaultResponse<T = {}, U = {}> =
+	| SuccessResponse<T>
+	| FailResponse<U>;

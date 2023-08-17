@@ -60,7 +60,7 @@ export default function Profile() {
 		if (logOutData && logOutData.ok) {
 			router.push("/home");
 		}
-	}, [logOutData]);
+	}, [logOutData, router]);
 
 	const [hasMore, setHasMore] = useState(true);
 

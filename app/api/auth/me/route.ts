@@ -1,8 +1,8 @@
-import { EmptyResponse } from "@/libs/server/response";
+import { DefaultResponse } from "@/libs/server/response";
 import { decrypt } from "@/libs/server/session";
 import { NextRequest, NextResponse } from "next/server";
 
-export type MeResponse = EmptyResponse;
+export type MeResponse = DefaultResponse;
 
 export async function GET(request: NextRequest) {
 	const data = await decrypt({

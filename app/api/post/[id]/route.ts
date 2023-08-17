@@ -1,6 +1,6 @@
 import { client } from "@/libs/server/client";
 import { findPosts } from "@/libs/server/findPosts";
-import { DefaultResponse, EmptyResponse } from "@/libs/server/response";
+import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
 import { mastodon } from "masto";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,7 +18,7 @@ export type StatusResponse = DefaultResponse<{
 	} | null;
 }>;
 
-export type StatusDeleteResponse = EmptyResponse;
+export type StatusDeleteResponse = DefaultResponse;
 
 export interface StatusGetParams {
 	params: {

@@ -138,7 +138,7 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 
 			setShowDeleteModal(false);
 		}
-	}, [deleteAllData, deleteDatabaseData]);
+	}, [deleteAllData, deleteDatabaseData, id, mutate, setShowDeleteModal]);
 
 	return (
 		<div className="flex flex-col gap-8">

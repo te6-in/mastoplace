@@ -12,9 +12,14 @@ export type StatusesResponse = DefaultResponse<{
 	nextMaxId: string | null;
 }>;
 
-export type NewStatusResponse = DefaultResponse<{
-	id: string;
-}>;
+export type NewStatusResponse = DefaultResponse<
+	{
+		id: string;
+	},
+	{
+		supportedServers?: string[];
+	}
+>;
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
@@ -167,9 +172,18 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	if (clientServer !== "pointless.chat") {
+	const supportedServers = [
+		"planet.moe",
+		"qdon.space",
+		"mustard.blog",
+		"pointless.chat",
+		"uri.life",
+		"duk.space",
+	];
+
+	if (!supportedServers.includes(clientServer)) {
 		return NextResponse.json<NewStatusResponse>(
-			{ ok: false, error: "BETA_POINTLESS" },
+			{ ok: false, error: "BETA_LIMITED_SERVER_ERROR", supportedServers },
 			{ status: 403 }
 		);
 	}

@@ -16,7 +16,7 @@ export default function AuthPage() {
 		if (hasValidToken) {
 			router.push("/home");
 		}
-	}, [hasValidToken]);
+	}, [hasValidToken, router]);
 
 	if (isTokenLoading || hasValidToken) return null;
 
