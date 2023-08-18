@@ -18,10 +18,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
 	return (
 		<html lang={lang}>
-			<head>
-				<link rel="me" href="https://mastodon.social/@mastoplace" />
-				<link rel="me" href="https://fosstodon.org/@mastoplace" />
-			</head>
 			<body className="bg-slate-50 dark:bg-zinc-950">
 				<SWRProvider>
 					<SkeletonProvider>{children}</SkeletonProvider>
