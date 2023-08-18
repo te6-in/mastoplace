@@ -1,11 +1,11 @@
-"use client";
-
-import { useEffect } from "react";
+import { Redirect } from "@/components/Redirect";
 
 export default function Base() {
-	useEffect(() => {
-		window.location.href = "/home";
-	});
-
-	return null;
+	return (
+		<>
+			<a rel="me" href="https://mastodon.social/@mastoplace"></a>
+			<a rel="me" href="https://fosstodon.org/@mastoplace"></a>
+			<Redirect />
+		</>
+	);
 }
