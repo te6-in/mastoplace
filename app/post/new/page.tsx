@@ -233,6 +233,7 @@ export default function New() {
 				{!hasValidToken && (
 					<FullPageOverlay
 						type="back"
+						closeOrBackEvent="new-post-not-logged-in-back"
 						component={
 							<div className="flex flex-col gap-6">
 								<div className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
@@ -249,6 +250,7 @@ export default function New() {
 				{data && !data.ok && showBetaError && (
 					<FullPageOverlay
 						type="close"
+						closeOrBackEvent="new-post-beta-close"
 						component={
 							<div className="flex flex-col gap-2">
 								<div className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">

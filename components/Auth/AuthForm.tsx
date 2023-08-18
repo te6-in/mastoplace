@@ -123,6 +123,7 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 				{server && showOverlay && (
 					<FullPageOverlay
 						type="close"
+						closeOrBackEvent="auth-close"
 						buttonLabel="로그인하지 않기"
 						onCloseClick={() => {
 							setShowOverlay(false);
@@ -269,6 +270,8 @@ function FillButton({ server, setValue }: FillButtonProps) {
 		<button
 			className="flex items-center justify-between gap-1 rounded-md bg-white shadow-sm border-slate-200 border p-1.5 pl-2.5 hover:bg-slate-100 active:bg-slate-200 dark:bg-zinc-950 dark:border-zinc-800 dark:hover:bg-zinc-900 dark:active:bg-zinc-800 transition-colors overflow-hidden"
 			onClick={onClick}
+			data-umami-event="auth-autocomplete"
+			data-umami-event-server={server}
 		>
 			<span>{server}</span>
 			<ArrowUpLeft width={20} height={20} className="shrink-0" />

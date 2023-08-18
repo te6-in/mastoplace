@@ -7,6 +7,10 @@ import { useEffect } from "react";
 interface FullPageOverlayProps {
 	type: "back" | "close";
 	buttonLabel?: string;
+	closeOrBackEvent: string;
+	closeOrBackEventData?: {
+		[key: string]: string;
+	};
 	onCloseClick?: () => void;
 	component: React.ReactNode;
 }
@@ -14,6 +18,8 @@ interface FullPageOverlayProps {
 export function FullPageOverlay({
 	type,
 	buttonLabel,
+	closeOrBackEvent,
+	closeOrBackEventData,
 	onCloseClick,
 	component,
 }: FullPageOverlayProps) {
@@ -44,6 +50,13 @@ export function FullPageOverlay({
 		};
 	}, []);
 
+	const closeOrBackEventDataProps: any = {};
+
+	for (const key in closeOrBackEventData) {
+		closeOrBackEventDataProps[`data-umami-event-${key}`] =
+			closeOrBackEventData[key];
+	}
+
 	return (
 		<div className="fixed inset-0 z-50">
 			<motion.div
@@ -69,6 +82,8 @@ export function FullPageOverlay({
 					<button
 						className="flex gap-1 items-center text-sm text-slate-500 dark:text-zinc-500 font-semibold p-2 mt-3 mb-4 hover:bg-slate-400 dark:hover:bg-zinc-600 hover:bg-opacity-20 dark:hover:bg-opacity-20 active:bg-opacity-30 dark:active:bg-opacity-30 w-fit rounded-md transition-colors mx-auto"
 						onClick={type === "back" ? onBackClick : onCloseClick}
+						data-umami-event={closeOrBackEvent}
+						{...closeOrBackEventDataProps}
 					>
 						{type === "back" && <ChevronLeft width={20} height={20} />}
 						{type === "close" && <X width={20} height={20} />}

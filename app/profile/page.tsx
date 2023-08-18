@@ -91,6 +91,7 @@ export default function Profile() {
 				{!isTokenLoading && !hasValidToken && (
 					<FullPageOverlay
 						type="back"
+						closeOrBackEvent="profile-not-logged-in-back"
 						component={
 							<div className="flex flex-col gap-6">
 								<div className="text-xl font-medium text-slate-800 dark:text-zinc-200 text-center break-keep">
@@ -111,6 +112,7 @@ export default function Profile() {
 					profileData.ok && (
 						<FullPageOverlay
 							type="close"
+							closeOrBackEvent="profile-manage-entries-close"
 							onCloseClick={() => setShowInfoModal(false)}
 							component={
 								<ManageEntriesForm
@@ -127,6 +129,7 @@ export default function Profile() {
 					profileData.ok && (
 						<FullPageOverlay
 							type="close"
+							closeOrBackEvent="profile-delete-account-nevermind"
 							buttonLabel={t("profile.delete-account.close-form")}
 							onCloseClick={() => setShowDeleteModal(false)}
 							component={
