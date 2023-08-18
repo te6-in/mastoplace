@@ -1,9 +1,10 @@
 import "@/app/globals.css";
 import { SkeletonProvider } from "@/components/Layout/SkeletonProvider";
 import { SWRProvider } from "@/components/Layout/swrProvider";
+import { Metadata } from "next";
 import useTranslation from "next-translate/useTranslation";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Mastoplace",
 	description: "Your Passport to Local Connections 🗺️",
 };
@@ -17,6 +18,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
 	return (
 		<html lang={lang}>
+			<head>
+				<link rel="me" href="https://mastodon.social/@mastoplace" />
+				<link rel="me" href="https://fosstodon.org/@mastoplace" />
+			</head>
 			<body className="bg-slate-50 dark:bg-zinc-950">
 				<SWRProvider>
 					<SkeletonProvider>{children}</SkeletonProvider>
