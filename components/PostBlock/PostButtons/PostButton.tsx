@@ -59,6 +59,7 @@ export function PostButton({ type, id }: PostButtonProps) {
 				{id && showDeleteModal && (
 					<FullPageOverlay
 						type="close"
+						closeOrBackEvent="post-delete-nevermind"
 						buttonLabel={t("post.delete.close-form")}
 						component={
 							<DeleteModal id={id} setShowDeleteModal={setShowDeleteModal} />
@@ -88,6 +89,7 @@ export function PostButton({ type, id }: PostButtonProps) {
 				)}
 				onClick={onClick}
 				aria-label={label}
+				data-umami-event={`post-${type}`}
 			>
 				<Icon />
 			</button>
@@ -156,12 +158,14 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 					isPrimary
 					isLoading={deleteAllLoading}
 					onClick={onDeleteAllClick}
+					event="post-delete-all"
 				/>
 				<Button
 					text={t("post.delete.button.keep-mastodon-post")}
 					Icon={MapPinOff}
 					isLoading={deleteDatabaseLoading}
 					onClick={onDeleteDatabaseClick}
+					event="post-delete-database"
 				/>
 			</div>
 		</div>

@@ -14,6 +14,10 @@ interface ButtonProps {
 	href?: string;
 	newTab?: boolean;
 	animateText?: boolean;
+	event: string;
+	eventData?: {
+		[key: string]: string;
+	};
 	className?: string;
 }
 
@@ -28,14 +32,24 @@ export function Button({
 	href,
 	newTab,
 	animateText,
+	event,
+	eventData,
 	className,
 }: ButtonProps) {
 	const Tag = href ? Link : "button";
+
+	const eventDataProps: any = {};
+
+	for (let key in eventData ?? {}) {
+		eventDataProps[`data-umami-event-${key}`] = eventData?.[key];
+	}
+
 	return (
 		<Tag
 			href={disabled ? "" : href ?? ""}
 			rel={newTab ? "noopener noreferrer" : undefined}
 			target={newTab ? "_blank" : undefined}
+			data-umami-event={event}
 			className={j(
 				"flex items-center border justify-center rounded-md px-4 py-2 w-full shadow-sm transition-all",
 				isPrimary
@@ -50,6 +64,7 @@ export function Button({
 			)}
 			onClick={onClick}
 			disabled={isLoading || disabled}
+			{...eventDataProps}
 		>
 			{isLoading ? (
 				<Loader2 className="animate-spin shrink-0" />

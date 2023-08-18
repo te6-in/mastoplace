@@ -108,12 +108,14 @@ export default function Post({ params }: StatusParams) {
 							isPrimary
 							isLoading={false}
 							Icon={Newspaper}
+							event="post-unavailable-go-home"
 						/>
 						<Button
 							text={t("action.browse-public-posts")}
 							href="/public"
 							Icon={Globe2}
 							isLoading={false}
+							event="post-unavailable-browse-public-posts"
 						/>
 					</div>
 				</div>
