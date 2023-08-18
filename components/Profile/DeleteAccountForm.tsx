@@ -172,6 +172,12 @@ export function DeleteAccountForm({
 								}
 								disabled={stepsDone !== 0}
 								onClick={onFirstClick}
+								event="delete-account-delete-posts"
+								eventData={{
+									count: String(
+										countData && countData.ok ? countData.viewableCount : 0
+									),
+								}}
 							/>
 							<Button
 								isPrimary={false}
@@ -181,6 +187,12 @@ export function DeleteAccountForm({
 								disabled={stepsDone !== 0}
 								onClick={() => {
 									setStepsDone(1);
+								}}
+								event="delete-account-skip-posts"
+								eventData={{
+									count: String(
+										countData && countData.ok ? countData.viewableCount : 0
+									),
 								}}
 							/>
 						</div>
@@ -214,6 +226,12 @@ export function DeleteAccountForm({
 							}
 							disabled={stepsDone !== 1}
 							onClick={onSecondClick}
+							event="delete-account-delete-database"
+							eventData={{
+								count: String(
+									countData && countData.ok ? countData.allCount : 0
+								),
+							}}
 						/>
 					}
 				/>
@@ -240,6 +258,7 @@ export function DeleteAccountForm({
 
 								setStepsDone(3);
 							}}
+							event="delete-account-open-apps"
 						/>
 					}
 				/>
@@ -256,6 +275,7 @@ export function DeleteAccountForm({
 							Icon={LogOut}
 							onClick={onLastClick}
 							disabled={stepsDone !== 3}
+							event="delete-account-log-out"
 						/>
 					}
 				/>

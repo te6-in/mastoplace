@@ -190,6 +190,7 @@ export default function Profile() {
 								className="col-span-2"
 								disabled={isProfileLoading || !profileData || !profileData.ok}
 								newTab
+								event="profile-edit-on"
 							/>
 							<Button
 								isLoading={false}
@@ -197,18 +198,21 @@ export default function Profile() {
 								text={ellipsis(t("profile.manage-entries"))}
 								className="col-span-2"
 								onClick={() => setShowInfoModal(true)}
+								event="profile-manage-entries"
 							/>
 							<Button
 								isLoading={isLogOutLoading}
 								Icon={LogOut}
 								text={t("profile.log-out")}
 								onClick={onLogOutClick}
+								event="profile-log-out"
 							/>
 							<Button
 								isLoading={false}
 								Icon={UserX2}
 								text={ellipsis(t("profile.delete-account.button"))}
 								onClick={() => setShowDeleteModal(true)}
+								event="profile-delete-account"
 							/>
 						</div>
 					</div>
@@ -247,6 +251,7 @@ export default function Profile() {
 								Icon={Pencil}
 								isLoading={false}
 								isPrimary
+								event="profile-empty-new-post"
 							/>
 						</div>
 					)}

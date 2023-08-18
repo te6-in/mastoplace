@@ -23,6 +23,7 @@ export function LogInOrPublic({
 				href="/public"
 				isLoading={false}
 				Icon={Globe2}
+				event="auth-browse-public-posts-without-login"
 			/>
 		</div>
 	);

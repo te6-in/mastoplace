@@ -18,6 +18,7 @@ export type NewStatusResponse = DefaultResponse<
 	},
 	{
 		supportedServers?: string[];
+		clientServer?: string;
 	}
 >;
 
@@ -183,7 +184,12 @@ export async function POST(request: NextRequest) {
 
 	if (!supportedServers.includes(clientServer)) {
 		return NextResponse.json<NewStatusResponse>(
-			{ ok: false, error: "BETA_LIMITED_SERVER_ERROR", supportedServers },
+			{
+				ok: false,
+				error: "BETA_LIMITED_SERVER_ERROR",
+				supportedServers,
+				clientServer,
+			},
 			{ status: 403 }
 		);
 	}

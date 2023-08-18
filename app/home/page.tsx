@@ -82,12 +82,14 @@ export default function Home() {
 							Icon={Pencil}
 							isLoading={false}
 							isPrimary
+							event="home-empty-new-post"
 						/>
 						<Button
 							text={t("action.browse-public-posts")}
 							href="/public"
 							Icon={Globe2}
 							isLoading={false}
+							event="home-empty-browse-public-posts"
 						/>
 					</div>
 				</div>

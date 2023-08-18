@@ -70,6 +70,7 @@ export default function Public() {
 						Icon={Pencil}
 						isLoading={false}
 						isPrimary
+						event="public-empty-new-post"
 					/>
 				</div>
 			)}

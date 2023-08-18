@@ -182,6 +182,10 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 									text={`${server.title} 서버를 통해 로그인`}
 									onClick={onLogInClick}
 									isLoading={isLogInLoading}
+									event="auth-continue"
+									eventData={{
+										server: server.url,
+									}}
 								/>
 							</div>
 						}
@@ -240,6 +244,10 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 						Icon={LogIn}
 						isLoading={isFetchLoading}
 						text={buttonText ?? t("auth.form.log-in")}
+						event="auth-log-in"
+						eventData={{
+							server: watchServer,
+						}}
 					/>
 				)}
 			</form>

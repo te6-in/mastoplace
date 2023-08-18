@@ -156,12 +156,14 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 					isPrimary
 					isLoading={deleteAllLoading}
 					onClick={onDeleteAllClick}
+					event="post-delete-all"
 				/>
 				<Button
 					text={t("post.delete.button.keep-mastodon-post")}
 					Icon={MapPinOff}
 					isLoading={deleteDatabaseLoading}
 					onClick={onDeleteDatabaseClick}
+					event="post-delete-database"
 				/>
 			</div>
 		</div>

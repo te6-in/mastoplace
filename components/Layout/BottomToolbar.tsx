@@ -12,6 +12,10 @@ interface BottomToolbarProps {
 		isLoading: boolean;
 		animateText?: boolean;
 		onClick?: () => void;
+		event: string;
+		eventData?: {
+			[key: string]: string;
+		};
 	};
 	input?: {
 		register: UseFormRegisterReturn;
@@ -25,6 +29,10 @@ interface BottomToolbarProps {
 		iconFill?: "default" | "accent";
 		isLoading: boolean;
 		onClick?: () => void;
+		event: string;
+		eventData?: {
+			[key: string]: string;
+		};
 	}[];
 }
 
@@ -35,6 +43,26 @@ export function BottomToolbar({
 }: BottomToolbarProps) {
 	const Tag = input ? "form" : "div";
 	const PrimaryIcon = primaryButton?.icon;
+
+	const primaryButtonEventProps: any = {};
+
+	for (let key in primaryButton?.eventData ?? {}) {
+		primaryButtonEventProps[`data-umami-event-${key}`] =
+			primaryButton?.eventData?.[key];
+	}
+
+	const secondaryButtonsEventProps: any = [];
+
+	for (let secondaryButton of secondaryButtons ?? []) {
+		const secondaryButtonEventProps: any = {};
+
+		for (let key in secondaryButton?.eventData ?? {}) {
+			secondaryButtonEventProps[`data-${key}`] =
+				secondaryButton?.eventData?.[key];
+		}
+
+		secondaryButtonsEventProps.push(secondaryButtonEventProps);
+	}
 
 	return (
 		<div className="fixed bottom-0 left-0 z-10 w-full border-t border-slate-300 dark:border-zinc-700 border-opacity-60 dark:border-opacity-60 bg-slate-50 dark:bg-zinc-950 bg-opacity-50 dark:bg-opacity-50 pb-[env(safe-area-inset-bottom)] shadow-upward-sm backdrop-blur sm:bottom-3 sm:left-1/2 sm:w-96 sm:translate-x-[calc(-50%+5rem)] sm:rounded-2xl sm:border sm:shadow-md">
@@ -52,6 +80,8 @@ export function BottomToolbar({
 								? "cursor-default opacity-60"
 								: "hover:bg-violet-600 active:bg-violet-700 dark:hover:bg-violet-700 dark:active:bg-violet-800"
 						)}
+						data-umami-event={primaryButton.event}
+						{...primaryButtonEventProps}
 					>
 						{primaryButton.isLoading ? (
 							<Loader2 className="animate-spin" />
@@ -98,6 +128,8 @@ export function BottomToolbar({
 										? "cursor-default opacity-60"
 										: "hover:bg-slate-100 active:bg-slate-200 dark:hover:bg-zinc-800 dark:active:bg-zinc-700"
 								)}
+								data-umami-event={secondaryButton.event}
+								{...secondaryButtonsEventProps[index]}
 							>
 								{secondaryButton.isLoading ? (
 									<Loader2 className="animate-spin" />

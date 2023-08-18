@@ -246,13 +246,13 @@ export default function New() {
 						}
 					/>
 				)}
-				{showBetaError && (
+				{data && !data.ok && showBetaError && (
 					<FullPageOverlay
 						type="close"
 						component={
 							<div className="flex flex-col gap-2">
 								<div className="text-xl font-medium text-slate-800 text-center break-keep dark:text-zinc-200">
-									아직은 게시할 수 있는 서버가 한정되어 있어요.
+									{data.clientServer}... 조금만 기다려주세요!
 								</div>
 								<p className="text-slate-600 text-center break-keep dark:text-zinc-400">
 									지금은 다음 서버에서만 게시할 수 있어요.
@@ -276,6 +276,13 @@ export default function New() {
 									isLoading={isLogOutLoading}
 									Icon={LogOut}
 									onClick={onLogOutClick}
+									event="new-post-beta-logout"
+									eventData={{
+										clientServer:
+											data && !data.ok && data.clientServer
+												? data.clientServer
+												: "unknown",
+									}}
 								/>
 							</div>
 						}
@@ -356,6 +363,15 @@ export default function New() {
 							: t("new-post.post.without-location"),
 						isLoading: isLoading || isLocationLoading,
 						animateText: true,
+						event: "new-post-post",
+						eventData: {
+							visibility: watch("visibility"),
+							includeLocation: watch("exact")
+								? "exact"
+								: watch("approximate")
+								? "approximate"
+								: "none",
+						},
 					}}
 				/>
 			</form>
