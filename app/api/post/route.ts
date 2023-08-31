@@ -17,7 +17,7 @@ export type NewStatusResponse = DefaultResponse<
 		id: string;
 	},
 	{
-		supportedServers?: string[];
+		supportedLanguages?: string[];
 		clientServer?: string;
 	}
 >;
@@ -173,21 +173,20 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	const supportedServers = [
-		"planet.moe",
-		"qdon.space",
-		"mustard.blog",
-		"pointless.chat",
-		"uri.life",
-		"duk.space",
-	];
+	const supportedLanguages = ["ko"];
 
-	if (!supportedServers.includes(clientServer)) {
+	const server = await masto.v1.instances.fetch();
+
+	const serverSupportsLanguages = supportedLanguages.some((lang) =>
+		server.languages.includes(lang)
+	);
+
+	if (!serverSupportsLanguages) {
 		return NextResponse.json<NewStatusResponse>(
 			{
 				ok: false,
 				error: "BETA_LIMITED_SERVER_ERROR",
-				supportedServers,
+				supportedLanguages,
 				clientServer,
 			},
 			{ status: 403 }

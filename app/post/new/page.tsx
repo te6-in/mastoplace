@@ -259,18 +259,19 @@ export default function New() {
 									{data.clientServer}... 조금만 기다려주세요!
 								</div>
 								<p className="text-slate-600 text-center break-keep dark:text-zinc-400">
-									지금은 다음 서버에서만 게시할 수 있어요.
+									지금은 다음 언어를 지원하는 것으로 표시된 서버에서만 글을 쓸
+									수 있습니다.
 								</p>
-								<div className="grid grid-cols-2 sm:grid-cols-3 my-2 gap-2">
+								<div className="grid grid-cols-1 my-2 gap-2">
 									{data &&
 										!data.ok &&
-										data.supportedServers &&
-										data.supportedServers.map((server, index) => (
+										data.supportedLanguages &&
+										data.supportedLanguages.map((language, index) => (
 											<div
 												key={index}
 												className="flex items-center justify-center text-sm font-medium p-2 rounded-md bg-slate-200 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400"
 											>
-												{server}
+												{language}
 											</div>
 										))}
 								</div>
