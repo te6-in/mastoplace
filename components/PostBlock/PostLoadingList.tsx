@@ -1,4 +1,4 @@
-import { PostBlock } from "@/components/PostBlock";
+import { PostBlockLoading } from "@/components/PostBlock";
 import { j } from "@/libs/client/utils";
 
 interface PostLoadingListProps {
@@ -20,7 +20,7 @@ export function PostLoadingList({
 					key={index}
 					className={j(dividerPadding ? "py-4" : "p-4", className)}
 				>
-					<PostBlock id={null} />
+					<PostBlockLoading />
 				</li>
 			))}
 		</ol>

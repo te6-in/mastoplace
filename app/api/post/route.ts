@@ -1,14 +1,14 @@
 import { NewStatusRequest } from "@/app/post/new/page";
+import { PostBlockPost } from "@/components/PostBlock";
 import { client } from "@/libs/server/client";
 import { findPosts } from "@/libs/server/findPosts";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
-import { Status } from "@prisma/client";
 import { createClient } from "masto";
 import { NextRequest, NextResponse } from "next/server";
 
 export type StatusesResponse = DefaultResponse<{
-	localViewableStatuses: Pick<Status, "id" | "mastodonId">[];
+	statuses: PostBlockPost[];
 	nextMaxId: string | null;
 }>;
 
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 	}
 
 	try {
-		const statuses = await client.status.findMany({
+		const databaseStatuses = await client.status.findMany({
 			cursor: maxId ? { id: maxId } : undefined,
 			skip: maxId ? 1 : undefined,
 			take: 20,
@@ -45,96 +45,121 @@ export async function GET(request: NextRequest) {
 			orderBy: { createdAt: "desc" },
 		});
 
-		const isLocalViewable = await Promise.all(
-			statuses.map(async (status) => {
-				if (!status.mastodonId) return false;
+		const viewableStatuses: (PostBlockPost | undefined)[] = await Promise.all(
+			databaseStatuses.map(async (status) => {
+				let clientToUse, clientServerToUse;
+
+				// mastodonId 없는 글은 어차피 못 봄
+				if (!status.mastodonId) return;
 
 				// 로그인 상태인 경우
 				if (data) {
 					const { masto, clientServer } = data;
 
-					if (!masto || !clientServer) return false;
+					if (!masto || !clientServer) return;
 
-					// 내가 쓴 글은 항상 보임
-					if (status.server === clientServer && status.handle === data.handle)
-						return true;
+					clientServerToUse = clientServer;
+					clientToUse = masto;
+				} else {
+					// 로그인 상태가 아니면 리모트 글은 볼 수 없음
+					if (status.server !== "mastodon.social") return;
 
+					// 로그인 상태가 아닌 경우 mastodon.social 사용
+					clientServerToUse = "mastodon.social";
+					clientToUse = createClient({
+						url: "https://mastodon.social",
+					});
+				}
+
+				try {
 					const mastodonStatus = await findPosts({
-						masto,
-						clientServer,
+						masto: clientToUse,
+						clientServer: clientServerToUse,
 						status,
 					});
 
-					if (!mastodonStatus) return false;
+					if (!mastodonStatus) return;
 
-					// 글을 볼 수 있는 상태임
+					const {
+						account: { avatar, acct, displayName },
+						content,
+						createdAt,
+						visibility,
+						uri,
+					} = mastodonStatus;
 
-					// 공개 위치 요청 중이면 볼 수 있는 글은 다 보임
-					if (isPublic) return true;
-
-					// 공개 위치 요청 중이 아닌 경우
-
-					// 팔로우 중인 사람의 글만 보임
-					try {
-						const author = await masto.v1.accounts.fetch(
-							mastodonStatus.account.id
-						);
-
-						try {
-							await masto.v1.accounts.verifyCredentials();
-
-							try {
-								const [{ following }] =
-									await masto.v1.accounts.fetchRelationships([author.id]);
-
-								if (following) return true;
-							} catch {
-								return false;
-							}
-
-							return false;
-						} catch {
-							return false;
-						}
-					} catch {
-						return false;
-					}
-				} else {
-					// 로그인 상태가 아니면 리모트 글은 볼 수 없음
-					if (status.server !== "mastodon.social") return false;
-
-					// 로그인 상태가 아닌 경우 mastodon.social 사용
-					const mastodonSocial = createClient({
-						url: "https://mastodon.social",
+					const databaseLocation = await client.status.findUnique({
+						where: { id: status.id },
+						select: {
+							exact: true,
+							latitudeFrom: true,
+							latitudeTo: true,
+							longitudeFrom: true,
+							longitudeTo: true,
+						},
 					});
 
-					if (!mastodonSocial) return false;
+					if (!databaseLocation) return;
 
-					try {
-						await mastodonSocial.v1.statuses.fetch(status.mastodonId);
-						return true;
-					} catch {
-						return false;
+					let location: PostBlockPost["location"];
+
+					const {
+						exact,
+						latitudeFrom,
+						latitudeTo,
+						longitudeFrom,
+						longitudeTo,
+					} = databaseLocation;
+
+					if (
+						exact === null ||
+						latitudeFrom === null ||
+						latitudeTo === null ||
+						longitudeFrom === null ||
+						longitudeTo === null
+					) {
+						location = null;
+					} else {
+						location = {
+							exact,
+							latitudeFrom,
+							latitudeTo,
+							longitudeFrom,
+							longitudeTo,
+						};
 					}
+
+					return {
+						databaseId: status.id,
+						mastodonStatus: {
+							uri,
+							avatar,
+							displayName,
+							acct,
+							content,
+							createdAt,
+							visibility,
+						},
+						location,
+					};
+				} catch {
+					return;
 				}
 			})
 		);
 
-		const localViewableStatuses = statuses.filter(
-			(_, index) => isLocalViewable[index]
+		const viewableStatusesOptimized = viewableStatuses.filter(
+			(status): status is PostBlockPost => status !== undefined
 		);
 
-		const leaveOutServerHandle = localViewableStatuses.map((status) => ({
-			id: status.id,
-			mastodonId: status.mastodonId,
-		}));
-
 		const nextMaxId =
-			statuses.length === 0 ? null : statuses[statuses.length - 1].id;
+			databaseStatuses.length === 0
+				? null
+				: databaseStatuses[databaseStatuses.length - 1].id;
 
 		return NextResponse.json<StatusesResponse>({
 			ok: true,
-			localViewableStatuses: leaveOutServerHandle,
+			statuses: viewableStatusesOptimized,
 			nextMaxId,
 		});
 	} catch {

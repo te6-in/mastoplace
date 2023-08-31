@@ -1,17 +1,15 @@
-import { StatusResponse } from "@/app/api/post/[id]/route";
 import { PigeonMap } from "@/components/PigeonMap";
 import { Content } from "@/components/PostBlock/Content";
 import { DateTime } from "@/components/PostBlock/DateTime";
 import { PostButtons } from "@/components/PostBlock/PostButtons";
-import { UnavailablePostBlock } from "@/components/PostBlock/UnavailablePostBlock";
 import { Visibility } from "@/components/PostBlock/Visibility";
 import { j } from "@/libs/client/utils";
 import { getCenter, getDistance } from "geolib";
+import { mastodon } from "masto";
 import useTranslation from "next-translate/useTranslation";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import useSWR from "swr";
 
 interface Position {
 	latitudeFrom: number;
@@ -20,42 +18,66 @@ interface Position {
 	longitudeTo: number;
 }
 
+export type PostBlockLocation = {
+	exact: boolean;
+	latitudeFrom: number;
+	latitudeTo: number;
+	longitudeFrom: number;
+	longitudeTo: number;
+};
+
+export interface PostBlockPost {
+	databaseId: string;
+	mastodonStatus: {
+		uri: string;
+		avatar: string;
+		displayName: string;
+		acct: string;
+		content: string;
+		createdAt: string;
+		visibility: mastodon.v1.StatusVisibility;
+	};
+	location: PostBlockLocation | null;
+}
+
 interface PostBlockProps {
-	id: string | null;
+	post: PostBlockPost;
+	clientServer: string;
+	clientHandle: string;
 	link?: boolean;
 	from?: Position;
-	showError?: boolean;
 	preventInteraction?: boolean;
 }
 
 export function PostBlock({
-	id,
+	post,
+	clientServer,
+	clientHandle,
 	link,
 	from,
-	showError,
 	preventInteraction,
 }: PostBlockProps) {
-	const { data } = useSWR<StatusResponse>(id ? `/api/post/${id}` : null);
 	const { t } = useTranslation();
 
-	if (data && data.ok === false) {
-		if (!showError) return null;
-
-		return <UnavailablePostBlock />;
-	}
-
-	const mastodonStatus = data?.mastodonStatus;
-	const exact = data?.exact;
-	const location = data?.location;
-	const clientServer = data?.clientServer;
-
 	const position =
-		location &&
+		post.location &&
 		getCenter([
-			{ latitude: location.latitudeFrom, longitude: location.longitudeFrom },
-			{ latitude: location.latitudeTo, longitude: location.longitudeTo },
-			{ latitude: location.latitudeFrom, longitude: location.longitudeTo },
-			{ latitude: location.latitudeTo, longitude: location.longitudeFrom },
+			{
+				latitude: post.location.latitudeFrom,
+				longitude: post.location.longitudeFrom,
+			},
+			{
+				latitude: post.location.latitudeTo,
+				longitude: post.location.longitudeTo,
+			},
+			{
+				latitude: post.location.latitudeFrom,
+				longitude: post.location.longitudeTo,
+			},
+			{
+				latitude: post.location.latitudeTo,
+				longitude: post.location.longitudeFrom,
+			},
 		]);
 
 	const fromPosition =
@@ -83,78 +105,88 @@ export function PostBlock({
 				preventInteraction ? "pointer-events-none" : ""
 			)}
 		>
-			{mastodonStatus ? (
+			<Link
+				href={`https://${clientServer}/@${post.mastodonStatus.acct}`}
+				rel="noopener noreferrer"
+				target="_blank"
+				className="not-italic w-12 h-12 rounded-full overflow-hidden"
+			>
+				<address>
+					<img
+						src={post.mastodonStatus.avatar}
+						alt={t("accessibility.alt.profile-picture.of", {
+							name: post.mastodonStatus.displayName,
+						})}
+					/>
+				</address>
+			</Link>
+			<div className="flex flex-col flex-1 gap-1">
 				<Link
-					href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
+					href={`https://${clientServer}/@${post.mastodonStatus.acct}`}
 					rel="noopener noreferrer"
 					target="_blank"
-					className="not-italic w-12 h-12 rounded-full overflow-hidden"
 				>
-					<address>
-						<img
-							src={mastodonStatus.account.avatar}
-							alt={t("accessibility.alt.profile-picture.of", {
-								name: mastodonStatus.account.displayName,
-							})}
-						/>
+					<address className="flex items-baseline not-italic flex-wrap">
+						<span className="text-slate-900 dark:text-zinc-100 font-medium text-lg mr-1">
+							{post.mastodonStatus.displayName}
+						</span>
+						<span className="text-slate-500 dark:text-zinc-500">
+							@{post.mastodonStatus.acct}
+						</span>
 					</address>
 				</Link>
-			) : (
-				<div className="w-12 h-12">
-					<Skeleton className="w-full h-full" circle />
-				</div>
-			)}
-			<div className="flex flex-col flex-1 gap-1">
-				{mastodonStatus && clientServer ? (
-					<Link
-						href={`https://${clientServer}/@${mastodonStatus.account.acct}`}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						<address className="flex items-baseline not-italic flex-wrap">
-							<span className="text-slate-900 dark:text-zinc-100 font-medium text-lg mr-1">
-								{mastodonStatus.account.displayName ?? <Skeleton width="20%" />}
-							</span>
-							<span className="text-slate-500 dark:text-zinc-500">
-								@{mastodonStatus.account.acct}
-							</span>
-						</address>
-					</Link>
-				) : (
-					<Skeleton width="25%" className="text-lg" />
-				)}
 				<Content
-					mastodonStatus={mastodonStatus}
+					mastodonStatusContent={post.mastodonStatus.content}
 					clientServer={clientServer}
 					link={link}
-					id={id}
+					id={post.databaseId}
 				/>
-				{mastodonStatus && position && (
+				{position && (
 					<PigeonMap
 						position={position}
 						className="h-48 rounded-md mt-3"
 						fixed
-						exact={exact ?? false}
+						exact={post.location?.exact ?? false}
 					/>
 				)}
-				{mastodonStatus && (
+				{post.mastodonStatus && (
 					<div className="flex gap-1 text-sm flex-wrap text-slate-500 dark:text-zinc-500 justify-between items-center mt-2">
 						<span className="mr-2">
-							<DateTime dateTime={mastodonStatus.createdAt} />
-							{exact === true && ` | ${t("post.location.exact")}`}
-							{exact === false && ` | ${t("post.location.approximate")}`}
+							<DateTime dateTime={post.mastodonStatus.createdAt} />
+							{post.location?.exact === true &&
+								` | ${t("post.location.exact")}`}
+							{post.location?.exact === false &&
+								` | ${t("post.location.approximate")}`}
 							{readableDistance}
 						</span>
-						<Visibility visibility={mastodonStatus.visibility} />
+						<Visibility visibility={post.mastodonStatus.visibility} />
 					</div>
 				)}
-				{!preventInteraction && mastodonStatus && mastodonStatus.url && (
-					<PostButtons
-						original={mastodonStatus.url}
-						id={id}
-						fromMe={mastodonStatus.account.acct === data.clientHandle}
-					/>
-				)}
+				{!preventInteraction &&
+					post.mastodonStatus &&
+					post.mastodonStatus.uri && (
+						<PostButtons
+							original={post.mastodonStatus.uri}
+							id={post.databaseId}
+							fromMe={post.mastodonStatus.acct === clientHandle}
+						/>
+					)}
+			</div>
+		</div>
+	);
+}
+
+export function PostBlockLoading() {
+	return (
+		<div className="flex gap-2">
+			<div className="not-italic w-12 h-12 rounded-full overflow-hidden">
+				<Skeleton circle className="w-full h-full" />
+			</div>
+			<div className="flex flex-col flex-1 gap-1">
+				<span className="text-slate-900 dark:text-zinc-100 font-medium text-lg mr-1">
+					<Skeleton width="20%" />
+				</span>
+				<Skeleton count={3} className="w-full" />
 			</div>
 		</div>
 	);
