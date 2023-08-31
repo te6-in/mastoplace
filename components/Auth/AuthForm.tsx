@@ -82,12 +82,12 @@ export function AuthForm({ buttonText, redirectAfterAuth }: AuthFormProps) {
 				}
 			).then((response) => response.json())) as mastodon.v1.Instance;
 
-			if (!serverData.uri || !serverData.title) {
+			if (!serverData.title) {
 				throw null;
 			}
 
 			setServer({
-				url: serverData.uri,
+				url: inputs.server,
 				title: serverData.title,
 			});
 
