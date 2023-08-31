@@ -6,7 +6,9 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"studio": "dotenv -e .env -e .env.local -- npx prisma studio",
+		"pushdb": "dotenv -e .env -e .env.local -- npx prisma db push"
 	},
 	"dependencies": {
 		"@prisma/client": "^5.0.0",
