@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	const json = (await request.json()) as NewStatusRequest;
-	const { text, location, visibility, exact } = json;
+	const { text, location, visibility, exact, lang } = json;
 	const data = await mastodonClient(request.cookies);
 
 	if (!data) {
@@ -215,11 +215,22 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
+		const getPrefix = (lang: string) => {
+			switch (lang) {
+				case "ko":
+					return "주변 글 보기";
+				case "en-US":
+					return "View nearby posts";
+			}
+		};
+
 		const texts = [
 			text,
-			process.env.NODE_ENV === "production"
-				? `${process.env.NEXT_PUBLIC_BASE_URL}/post/${status.id}`
-				: "[Mastoplace 주소]",
+			`${getPrefix(lang)}: ${
+				process.env.NODE_ENV === "production"
+					? `${process.env.NEXT_PUBLIC_BASE_URL}/post/${status.id}`
+					: "[Mastoplace 주소]"
+			}`,
 			"#Mastoplace",
 		];
 

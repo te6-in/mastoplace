@@ -42,6 +42,7 @@ export interface NewStatusRequest {
 		longitudeTo: number;
 	} | null;
 	exact: boolean | null;
+	lang: string;
 }
 
 export default function New() {
@@ -53,7 +54,7 @@ export default function New() {
 	const [showBetaError, setShowBetaError] = useState(false);
 
 	const router = useRouter();
-	const { t } = useTranslation();
+	const { t, lang } = useTranslation();
 	const { mutate } = useSWRConfig();
 	const { latitude, longitude } = useLocation();
 	const {
@@ -152,6 +153,7 @@ export default function New() {
 					: watchApproximate && approximateLocation
 					? approximateLocation
 					: null,
+			lang,
 		});
 	};
 
