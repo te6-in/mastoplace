@@ -208,7 +208,9 @@ export async function POST(request: NextRequest) {
 		server.languages.includes(lang)
 	);
 
-	if (!serverSupportsLanguages) {
+	const isFirefish = server.version.includes("Firefish");
+
+	if (!serverSupportsLanguages && !isFirefish) {
 		return NextResponse.json<NewStatusResponse>(
 			{
 				ok: false,
