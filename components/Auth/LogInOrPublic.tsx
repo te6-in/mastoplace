@@ -19,11 +19,11 @@ export function LogInOrPublic({
 				</span>
 			</div>
 			<Button
-				text={t("action.browse-public-posts")}
-				href="/public"
+				text={t("action.discover")}
+				href="/discover"
 				isLoading={false}
 				Icon={Globe2}
-				event="auth-browse-public-posts-without-login"
+				event="auth-discover-without-login"
 			/>
 		</div>
 	);

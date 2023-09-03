@@ -25,11 +25,11 @@ export type NewStatusResponse = DefaultResponse<
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);
 	const maxId = searchParams.get("max_id");
-	const isPublic = searchParams.get("public") === "true";
+	const isDiscover = searchParams.get("discover") === "true";
 
 	const data = await mastodonClient(request.cookies);
 
-	if (!isPublic && !data) {
+	if (!isDiscover && !data) {
 		return NextResponse.json<StatusesResponse>(
 			{ ok: false, error: "Not logged in" },
 			{ status: 401 }
@@ -75,7 +75,9 @@ export async function GET(request: NextRequest) {
 					const mastodonStatus = await findPosts({
 						masto: clientToUse,
 						clientServer: clientServerToUse,
+						clientHandle: data?.handle ?? "",
 						status,
+						option: isDiscover ? "onlyNotFollowing" : "onlyFollowingOrMine",
 					});
 
 					if (!mastodonStatus) return;

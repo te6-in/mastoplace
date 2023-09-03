@@ -39,7 +39,7 @@ export async function GET(
 		);
 	}
 
-	const { masto, clientServer } = data;
+	const { masto, clientServer, handle } = data;
 
 	if (!masto) {
 		return NextResponse.json<StatusResponse>(
@@ -58,7 +58,13 @@ export async function GET(
 			);
 		}
 
-		const mastodonStatus = await findPosts({ masto, clientServer, status });
+		const mastodonStatus = await findPosts({
+			masto,
+			clientServer,
+			clientHandle: handle,
+			status,
+			option: "whatever",
+		});
 
 		if (!mastodonStatus) {
 			return NextResponse.json<StatusResponse>(
@@ -143,7 +149,9 @@ export async function GET(
 					const mastodonStatus = await findPosts({
 						masto,
 						clientServer,
+						clientHandle: handle,
 						status: nearbyStatus,
+						option: "whatever",
 					});
 
 					if (!mastodonStatus) return;

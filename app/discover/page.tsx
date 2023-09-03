@@ -19,10 +19,10 @@ export default function Public() {
 	const { t } = useTranslation();
 	const getKey = (pageIndex: number, previousPageData: StatusesResponse) => {
 		if (pageIndex === 0 || !previousPageData || !previousPageData.ok)
-			return "/api/post?public=true";
+			return "/api/post?discover=true";
 		if (!previousPageData.nextMaxId) return null;
 
-		return `/api/post?public=true&max_id=${previousPageData.nextMaxId}`;
+		return `/api/post?discover=true&max_id=${previousPageData.nextMaxId}`;
 	};
 
 	const { data, size, setSize, isLoading } = useSWRInfinite<StatusesResponse>(
@@ -58,7 +58,7 @@ export default function Public() {
 
 	return (
 		<Layout
-			title={t("tabbar.public")}
+			title={t("tabbar.discover")}
 			showBackground={isMeLoading || isLoading || !meData ? true : meData.ok}
 			showTabBar
 			hasFloatingButton
@@ -66,7 +66,7 @@ export default function Public() {
 			{(isMeLoading || isLoading) && <PostLoadingList />}
 			{!isLoading && data && length === 0 && (
 				<div className="text-center px-4 flex gap-8 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
-					<p>{t("public.no-post")}</p>
+					<p>{t("discover.no-post")}</p>
 					<Button
 						text={t("action.new-post.first")}
 						href="/post/new"

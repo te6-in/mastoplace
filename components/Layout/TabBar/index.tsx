@@ -18,7 +18,7 @@ export function TabBar({ show }: TabBarProps) {
 			)}
 		>
 			<TabBarItem Icon={Newspaper} text={t("tabbar.home")} href="/home" />
-			<TabBarItem Icon={Globe2} text={t("tabbar.public")} href="/public" />
+			<TabBarItem Icon={Globe2} text={t("tabbar.discover")} href="/discover" />
 			<TabBarItem Icon={Map} text={t("tabbar.map")} href="/map" />
 			<TabBarItem
 				Icon={UserCircle2}

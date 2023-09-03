@@ -21,7 +21,7 @@
 		"back": "Go back",
 		"close-modal": "Close",
 		"go-home": "Go home",
-		"browse-public-posts": "Browse public posts",
+		"discover": "Discover posts",
 		"new-post": {
 			"default": "New post",
 			"first": "Publish your first post"
@@ -182,13 +182,13 @@
 			}
 		}
 	},
-	"public": {
+	"discover": {
 		"no-post": "There are no public posts that you can see for now."
 	},
 	"tabbar": {
 		"home": "Home",
 		"map": "Map",
-		"public": "Public",
+		"discover": "Discover",
 		"profile": "Profile"
 	}
 }

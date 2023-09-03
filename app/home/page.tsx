@@ -89,11 +89,11 @@ export default function Home() {
 							event="home-empty-new-post"
 						/>
 						<Button
-							text={t("action.browse-public-posts")}
-							href="/public"
+							text={t("action.discover")}
+							href="/discover"
 							Icon={Globe2}
 							isLoading={false}
-							event="home-empty-browse-public-posts"
+							event="home-empty-discover"
 						/>
 					</div>
 				</div>

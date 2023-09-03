@@ -80,11 +80,11 @@ export default function Post({ params }: StatusParams) {
 										event="post-unavailable-go-home"
 									/>
 									<Button
-										text={t("action.browse-public-posts")}
-										href="/public"
+										text={t("action.discover")}
+										href="/discover"
 										Icon={Globe2}
 										isLoading={false}
-										event="post-unavailable-browse-public-posts"
+										event="post-unavailable-discover"
 									/>
 								</div>
 							</div>
