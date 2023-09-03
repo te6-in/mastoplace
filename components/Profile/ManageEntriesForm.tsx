@@ -10,7 +10,7 @@ interface ManageEntriesFormProps {
 
 export function ManageEntriesForm({ handle, server }: ManageEntriesFormProps) {
 	const { data: countData, isLoading: isCountLoading } =
-		useSWR<CountResponse>("api/profile/count");
+		useSWR<CountResponse>("/api/profile/count");
 
 	return (
 		<div className="flex gap-6 flex-col">

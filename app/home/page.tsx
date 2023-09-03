@@ -19,7 +19,8 @@ import useSWRInfinite from "swr/infinite";
 
 export default function Home() {
 	const getKey = (pageIndex: number, previousPageData: StatusesResponse) => {
-		if (pageIndex === 0 || !previousPageData.ok) return "/api/post";
+		if (pageIndex === 0 || !previousPageData || !previousPageData.ok)
+			return "/api/post";
 		if (!previousPageData.nextMaxId) return null;
 
 		return `/api/post?max_id=${previousPageData.nextMaxId}`;
@@ -42,13 +43,13 @@ export default function Home() {
 
 		const lastData = data[data.length - 1];
 
-		if (lastData.ok && lastData.nextMaxId === null) {
+		if (lastData && lastData.ok && lastData.nextMaxId === null) {
 			setHasMore(false);
 		}
 	}, [data]);
 
 	const length = data?.reduce((acc, page) => {
-		if (!page.ok) return 0;
+		if (!page || !page.ok) return 0;
 		return acc + page.statuses.length;
 	}, 0);
 

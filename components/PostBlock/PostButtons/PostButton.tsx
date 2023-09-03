@@ -1,7 +1,7 @@
 import { StatusDeleteResponse } from "@/app/api/post/[id]/route";
 import { Button } from "@/components/Input/Button";
 import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
-import { PostBlock } from "@/components/PostBlock";
+import { PostBlock, PostBlockPost } from "@/components/PostBlock";
 import { useMutation } from "@/libs/client/useMutation";
 import { j } from "@/libs/client/utils";
 import { AnimatePresence } from "framer-motion";
@@ -20,10 +20,15 @@ import { useSWRConfig } from "swr";
 
 interface PostButtonProps {
 	type: "open" | "boost" | "like" | "bookmark" | "delete";
-	id?: string | null;
+	deleteInfo?: {
+		id: string;
+		clientServer: string;
+		clientHandle: string;
+		postBlock: PostBlockPost;
+	};
 }
 
-export function PostButton({ type, id }: PostButtonProps) {
+export function PostButton({ type, deleteInfo }: PostButtonProps) {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const { t } = useTranslation();
 
@@ -56,13 +61,19 @@ export function PostButton({ type, id }: PostButtonProps) {
 	return (
 		<>
 			<AnimatePresence>
-				{id && showDeleteModal && (
+				{showDeleteModal && deleteInfo && (
 					<FullPageOverlay
 						type="close"
 						closeOrBackEvent="post-delete-nevermind"
 						buttonLabel={t("post.delete.close-form")}
 						component={
-							<DeleteModal id={id} setShowDeleteModal={setShowDeleteModal} />
+							<DeleteModal
+								setShowDeleteModal={setShowDeleteModal}
+								id={deleteInfo.id}
+								postBlock={deleteInfo.postBlock}
+								clientServer={deleteInfo.clientServer}
+								clientHandle={deleteInfo.clientHandle}
+							/>
 						}
 						onCloseClick={() => setShowDeleteModal(false)}
 					/>
@@ -98,11 +109,20 @@ export function PostButton({ type, id }: PostButtonProps) {
 }
 
 interface DeleteModalProps {
-	id: string | null;
+	id: string;
+	postBlock: PostBlockPost;
+	clientServer: string;
+	clientHandle: string;
 	setShowDeleteModal: Dispatch<SetStateAction<boolean>>;
 }
 
-function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
+function DeleteModal({
+	postBlock,
+	id,
+	clientServer,
+	clientHandle,
+	setShowDeleteModal,
+}: DeleteModalProps) {
 	const { t } = useTranslation();
 	const [deleteAll, { data: deleteAllData, isLoading: deleteAllLoading }] =
 		useMutation<StatusDeleteResponse, {}>(`/api/post/${id}?type=all`, "DELETE");
@@ -138,13 +158,26 @@ function DeleteModal({ id, setShowDeleteModal }: DeleteModalProps) {
 				revalidate: true,
 			});
 
+			mutate("/api/post", null, {
+				revalidate: true,
+			});
+
+			mutate("/api/post/my", null, {
+				revalidate: true,
+			});
+
 			setShowDeleteModal(false);
 		}
 	}, [deleteAllData, deleteDatabaseData, id, mutate, setShowDeleteModal]);
 
 	return (
 		<div className="flex flex-col gap-8">
-			<PostBlock id={id} preventInteraction />
+			<PostBlock
+				preventInteraction
+				post={postBlock}
+				clientServer={clientServer}
+				clientHandle={clientHandle}
+			/>
 			<div className="relative flex items-center justify-center w-full">
 				<hr className="w-full border-slate-300 dark:border-zinc-700" />
 				<span className="absolute break-keep text-center font-medium text-slate-700 bg-slate-50 px-2 dark:bg-zinc-950 dark:text-zinc-300">

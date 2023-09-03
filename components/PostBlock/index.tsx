@@ -169,6 +169,9 @@ export function PostBlock({
 							original={post.mastodonStatus.uri}
 							id={post.databaseId}
 							fromMe={post.mastodonStatus.acct === clientHandle}
+							clientHandle={clientHandle}
+							clientServer={clientServer}
+							postBlock={post}
 						/>
 					)}
 			</div>

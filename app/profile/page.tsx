@@ -7,12 +7,11 @@ import { AuthForm } from "@/components/Auth/AuthForm";
 import { Button } from "@/components/Input/Button";
 import { Layout } from "@/components/Layout";
 import { FullPageOverlay } from "@/components/Layout/FullPageOverlay";
-import { PostBlock } from "@/components/PostBlock";
+import { PostBlock, PostBlockLoading } from "@/components/PostBlock";
 import { EndIndicator } from "@/components/PostBlock/EndIndicator";
 import { DeleteAccountForm } from "@/components/Profile/DeleteAccountForm";
 import { ManageEntriesForm } from "@/components/Profile/ManageEntriesForm";
 import { useMutation } from "@/libs/client/useMutation";
-import { useToken } from "@/libs/client/useToken";
 import { ellipsis } from "@/libs/client/utils";
 import { AnimatePresence } from "framer-motion";
 import { LogOut, Pencil, PencilLine, UserX2, Wrench } from "lucide-react";
@@ -33,7 +32,8 @@ export default function Profile() {
 		useSWR<MyInfoResponse>("/api/profile/me", { revalidateOnFocus: false });
 
 	const getKey = (pageIndex: number, previousPageData: MyStatusesResponse) => {
-		if (pageIndex === 0 || !previousPageData.ok) return "/api/post/my";
+		if (pageIndex === 0 || !previousPageData || !previousPageData.ok)
+			return "/api/post/my";
 		if (!previousPageData.nextMaxId) return null;
 
 		return `/api/post/my?max_id=${previousPageData.nextMaxId}`;
@@ -44,11 +44,13 @@ export default function Profile() {
 		null
 	);
 
-	const { hasValidToken, isLoading: isTokenLoading } = useToken();
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [showInfoModal, setShowInfoModal] = useState(false);
 	const router = useRouter();
 	const { t } = useTranslation();
+
+	const { data: meData, isLoading: isMeLoading } =
+		useSWR<MyInfoResponse>("/api/profile/me");
 
 	const onLogOutClick = () => {
 		if (isLogOutLoading) return;
@@ -69,13 +71,13 @@ export default function Profile() {
 
 		const lastData = data[data.length - 1];
 
-		if (lastData.ok && lastData.nextMaxId === null) {
+		if (lastData && lastData.ok && lastData.nextMaxId === null) {
 			setHasMore(false);
 		}
 	}, [data]);
 
 	const length = data?.reduce((acc, page) => {
-		if (!page.ok || !page.myStatuses) return 0;
+		if (!page || !page.ok || !page.myStatuses) return 0;
 		return acc + page.myStatuses.length;
 	}, 0);
 
@@ -88,7 +90,7 @@ export default function Profile() {
 	return (
 		<Layout title={t("tabbar.profile")} showBackground showTabBar>
 			<AnimatePresence>
-				{!isTokenLoading && !hasValidToken && (
+				{!isMeLoading && meData && !meData.ok && (
 					<FullPageOverlay
 						type="back"
 						closeOrBackEvent="profile-not-logged-in-back"
@@ -106,7 +108,7 @@ export default function Profile() {
 					/>
 				)}
 				{showInfoModal &&
-					!isTokenLoading &&
+					!isMeLoading &&
 					!isProfileLoading &&
 					profileData &&
 					profileData.ok && (
@@ -123,7 +125,7 @@ export default function Profile() {
 						/>
 					)}
 				{showDeleteModal &&
-					!isTokenLoading &&
+					!isMeLoading &&
 					!isProfileLoading &&
 					profileData &&
 					profileData.ok && (
@@ -142,7 +144,7 @@ export default function Profile() {
 						/>
 					)}
 			</AnimatePresence>
-			{!isTokenLoading && (
+			{!isMeLoading && (
 				<div className="flex flex-col">
 					<div className="flex flex-col gap-2 px-4">
 						<address className="flex gap-2 items-center flex-col not-italic my-3">
@@ -227,18 +229,24 @@ export default function Profile() {
 							hasMore={hasMore}
 							loader={
 								<div className="p-4 border-t border-slate-200 dark:border-zinc-800">
-									<PostBlock id={null} />
+									<PostBlockLoading />
 								</div>
 							}
 						>
 							<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
-								{data &&
+								{meData &&
+									meData.ok &&
 									data.map((page) => {
 										if (!page.ok || !page.myStatuses) return null;
 
 										return page.myStatuses.map((status) => (
-											<li key={status.id} className="p-4 empty:hidden">
-												<PostBlock id={status.id} link />
+											<li key={status.databaseId} className="p-4 empty:hidden">
+												<PostBlock
+													link
+													post={status}
+													clientServer={meData.server}
+													clientHandle={meData.handle}
+												/>
 											</li>
 										));
 									})}

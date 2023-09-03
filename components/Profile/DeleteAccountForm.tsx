@@ -51,7 +51,7 @@ export function DeleteAccountForm({
 		data: countData,
 		isLoading: isCountLoading,
 		mutate,
-	} = useSWR<CountResponse>("api/profile/count");
+	} = useSWR<CountResponse>("/api/profile/count");
 
 	const onFirstClick = () => {
 		if (isCountLoading || isDeletePostsLoading || stepsDone !== 0) return;

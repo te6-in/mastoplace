@@ -1,11 +1,11 @@
+import { PostBlockPost } from "@/components/PostBlock";
 import { client } from "@/libs/server/client";
 import { DefaultResponse } from "@/libs/server/response";
 import { mastodonClient } from "@/libs/server/session";
-import { Status } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export type MyStatusesResponse = DefaultResponse<{
-	myStatuses: Pick<Status, "id" | "mastodonId">[];
+	myStatuses: PostBlockPost[];
 	nextMaxId: string | null;
 }>;
 
@@ -38,31 +38,84 @@ export async function GET(request: NextRequest) {
 			cursor: maxId ? { id: maxId } : undefined,
 			skip: maxId ? 1 : undefined,
 			take: 20,
-			select: { id: true, mastodonId: true },
+			select: {
+				id: true,
+				mastodonId: true,
+				exact: true,
+				latitudeFrom: true,
+				latitudeTo: true,
+				longitudeFrom: true,
+				longitudeTo: true,
+			},
 			orderBy: { createdAt: "desc" },
 		});
 
-		const viewable = await Promise.all(
+		const mastodonStatuses = await Promise.all(
 			myStatuses.map(async (status) => {
-				if (!status.mastodonId) return false;
+				if (!status.mastodonId) return;
 
 				try {
-					await masto.v1.statuses.fetch(status.mastodonId);
-					return true;
+					const mastodonStatus = await masto.v1.statuses.fetch(
+						status.mastodonId
+					);
+
+					let location: PostBlockPost["location"];
+
+					const {
+						exact,
+						latitudeFrom,
+						latitudeTo,
+						longitudeFrom,
+						longitudeTo,
+					} = status;
+
+					if (
+						exact === null ||
+						latitudeFrom === null ||
+						latitudeTo === null ||
+						longitudeFrom === null ||
+						longitudeTo === null
+					) {
+						location = null;
+					} else {
+						location = {
+							exact,
+							latitudeFrom,
+							latitudeTo,
+							longitudeFrom,
+							longitudeTo,
+						};
+					}
+
+					return {
+						databaseId: status.id,
+						mastodonStatus: {
+							uri: mastodonStatus.url,
+							avatar: mastodonStatus.account.avatar,
+							displayName: mastodonStatus.account.displayName,
+							acct: mastodonStatus.account.acct,
+							content: mastodonStatus.content,
+							createdAt: mastodonStatus.createdAt,
+							visibility: mastodonStatus.visibility,
+						},
+						location,
+					};
 				} catch {
-					return false;
+					return;
 				}
 			})
 		);
 
-		const viewableStatuses = myStatuses.filter((_, i) => viewable[i]);
+		const mastodonStatusesOptimized = mastodonStatuses.filter(
+			(status): status is PostBlockPost => status !== undefined
+		);
 
 		const nextMaxId =
 			myStatuses.length === 0 ? null : myStatuses[myStatuses.length - 1].id;
 
 		return NextResponse.json<MyStatusesResponse>({
 			ok: true,
-			myStatuses: viewableStatuses,
+			myStatuses: mastodonStatusesOptimized,
 			nextMaxId,
 		});
 	} catch {

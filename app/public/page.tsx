@@ -1,34 +1,37 @@
 "use client";
 
 import { StatusesResponse } from "@/app/api/post/route";
+import { MyInfoResponse } from "@/app/api/profile/me/route";
 import { Button } from "@/components/Input/Button";
 import { Layout } from "@/components/Layout";
 import { FloatingButton } from "@/components/Layout/FloatingButton";
-import { PostBlock } from "@/components/PostBlock";
+import { PostBlock, PostBlockLoading } from "@/components/PostBlock";
 import { EndIndicator } from "@/components/PostBlock/EndIndicator";
 import { PostLoadingList } from "@/components/PostBlock/PostLoadingList";
-import { useToken } from "@/libs/client/useToken";
 import { Pencil } from "lucide-react";
 import useTranslation from "next-translate/useTranslation";
 import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 
 export default function Public() {
 	const { t } = useTranslation();
 	const getKey = (pageIndex: number, previousPageData: StatusesResponse) => {
-		if (pageIndex === 0 || !previousPageData.ok) return "/api/post?public=true";
+		if (pageIndex === 0 || !previousPageData || !previousPageData.ok)
+			return "/api/post?public=true";
 		if (!previousPageData.nextMaxId) return null;
 
 		return `/api/post?public=true&max_id=${previousPageData.nextMaxId}`;
 	};
 
-	const { isLoading: isTokenLoading } = useToken();
-
 	const { data, size, setSize, isLoading } = useSWRInfinite<StatusesResponse>(
 		getKey,
 		null
 	);
+
+	const { data: meData, isLoading: isMeLoading } =
+		useSWR<MyInfoResponse>("/api/profile/me");
 
 	const [hasMore, setHasMore] = useState(true);
 
@@ -37,14 +40,14 @@ export default function Public() {
 
 		const lastData = data[data.length - 1];
 
-		if (lastData.ok && lastData.nextMaxId === null) {
+		if (lastData && lastData.ok && lastData.nextMaxId === null) {
 			setHasMore(false);
 		}
 	}, [data]);
 
 	const length = data?.reduce((acc, page) => {
-		if (!page.ok || !page.localViewableStatuses) return 0;
-		return acc + page.localViewableStatuses.length;
+		if (!page || !page.ok) return 0;
+		return acc + page.statuses.length;
 	}, 0);
 
 	useEffect(() => {
@@ -56,11 +59,11 @@ export default function Public() {
 	return (
 		<Layout
 			title={t("tabbar.public")}
-			showBackground
+			showBackground={isMeLoading || isLoading || !meData ? true : meData.ok}
 			showTabBar
 			hasFloatingButton
 		>
-			{(isTokenLoading || isLoading) && <PostLoadingList />}
+			{(isMeLoading || isLoading) && <PostLoadingList />}
 			{!isLoading && data && length === 0 && (
 				<div className="text-center px-4 flex gap-8 flex-col text-slate-800 dark:text-zinc-200 text-lg mt-12 font-medium break-keep">
 					<p>{t("public.no-post")}</p>
@@ -81,18 +84,25 @@ export default function Public() {
 					hasMore={hasMore}
 					loader={
 						<div className="p-4 border-t border-slate-200 dark:border-zinc-800">
-							<PostBlock id={null} />
+							<PostBlockLoading />
 						</div>
 					}
 				>
 					<ol className="divide-y divide-slate-200 dark:divide-zinc-800">
 						{data &&
 							data.map((page) => {
-								if (!page.ok || !page.localViewableStatuses) return null;
+								if (!page.ok) return null;
 
-								return page.localViewableStatuses.map((status) => (
-									<li key={status.id} className="p-4 empty:hidden">
-										<PostBlock id={status.id} link />
+								return page.statuses.map((status) => (
+									<li key={status.databaseId} className="p-4 empty:hidden">
+										<PostBlock
+											link
+											post={status}
+											clientServer={
+												meData && meData.ok ? meData.server : "mastodon.social"
+											}
+											clientHandle={meData && meData.ok ? meData.handle : ""}
+										/>
 									</li>
 								));
 							})}
@@ -100,7 +110,7 @@ export default function Public() {
 				</InfiniteScroll>
 			)}
 			{data && length !== 0 && !hasMore && <EndIndicator hasFloatingButton />}
-			{data && length !== 0 && (
+			{(isLoading || (data && length !== 0)) && (
 				<FloatingButton
 					Icon={Pencil}
 					text={t("action.new-post.default")}
