@@ -200,27 +200,27 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	const supportedLanguages = ["ko"];
+	// const supportedLanguages = ["ko"];
 
-	const server = await masto.v1.instances.fetch();
+	// const server = await masto.v1.instances.fetch();
 
-	const serverSupportsLanguages = supportedLanguages.some((lang) =>
-		server.languages.includes(lang)
-	);
+	// const serverSupportsLanguages = supportedLanguages.some((lang) =>
+	// 	server.languages.includes(lang)
+	// );
 
-	const isFirefish = server.version.includes("Firefish");
+	// const isFirefish = server.version.includes("Firefish");
 
-	if (!serverSupportsLanguages && !isFirefish) {
-		return NextResponse.json<NewStatusResponse>(
-			{
-				ok: false,
-				error: "BETA_LIMITED_SERVER_ERROR",
-				supportedLanguages,
-				clientServer,
-			},
-			{ status: 403 }
-		);
-	}
+	// if (!serverSupportsLanguages && !isFirefish) {
+	// 	return NextResponse.json<NewStatusResponse>(
+	// 		{
+	// 			ok: false,
+	// 			error: "BETA_LIMITED_SERVER_ERROR",
+	// 			supportedLanguages,
+	// 			clientServer,
+	// 		},
+	// 		{ status: 403 }
+	// 	);
+	// }
 
 	try {
 		const { latitudeFrom, latitudeTo, longitudeFrom, longitudeTo } =

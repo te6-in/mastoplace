@@ -4,7 +4,7 @@ import { NewStatusResponse } from "@/app/api/post/route";
 import { LogOutResponse } from "@/app/api/profile/logout/route";
 import { MyInfoResponse } from "@/app/api/profile/me/route";
 import { AuthForm } from "@/components/Auth/AuthForm";
-import { Button } from "@/components/Input/Button";
+// import { Button } from "@/components/Input/Button";
 import { Checkbox } from "@/components/Input/Checkbox";
 import { TextArea } from "@/components/Input/TextArea";
 import { VisibilitySelector } from "@/components/Input/VisibilitySelector";
@@ -17,7 +17,7 @@ import { useMutation } from "@/libs/client/useMutation";
 import { useToken } from "@/libs/client/useToken";
 import { AnimatePresence } from "framer-motion";
 import { getCenter } from "geolib";
-import { Check, LogOut, Map } from "lucide-react";
+import { Check, Map } from "lucide-react";
 import { mastodon } from "masto";
 import useTranslation from "next-translate/useTranslation";
 import { useRouter } from "next/navigation";
@@ -51,7 +51,7 @@ export default function New() {
 		useSWR<MyInfoResponse>("/api/profile/me");
 
 	const [isLocationLoading, setIsLocationLoading] = useState(true);
-	const [showBetaError, setShowBetaError] = useState(false);
+	// const [showBetaError, setShowBetaError] = useState(false);
 
 	const router = useRouter();
 	const { t, lang } = useTranslation();
@@ -157,11 +157,11 @@ export default function New() {
 		});
 	};
 
-	const onLogOutClick = () => {
-		if (isLogOutLoading) return;
+	// const onLogOutClick = () => {
+	// 	if (isLogOutLoading) return;
 
-		logOut({});
-	};
+	// 	logOut({});
+	// };
 
 	useEffect(() => {
 		if (data && data.ok) {
@@ -171,11 +171,11 @@ export default function New() {
 			return;
 		}
 
-		if (data && !data.ok && data.error === "BETA_LIMITED_SERVER_ERROR") {
-			setShowBetaError(true);
+		// if (data && !data.ok && data.error === "BETA_LIMITED_SERVER_ERROR") {
+		// 	setShowBetaError(true);
 
-			return;
-		}
+		// 	return;
+		// }
 	}, [data, router]);
 
 	useEffect(() => {
@@ -249,7 +249,7 @@ export default function New() {
 						}
 					/>
 				)}
-				{data && !data.ok && showBetaError && (
+				{/* {data && !data.ok && showBetaError && (
 					<FullPageOverlay
 						type="close"
 						closeOrBackEvent="new-post-beta-close"
@@ -293,7 +293,7 @@ export default function New() {
 						}
 						onCloseClick={() => setShowBetaError(false)}
 					/>
-				)}
+				)} */}
 			</AnimatePresence>
 			<form onSubmit={handleSubmit(onValid)}>
 				<div className="flex flex-col gap-4 px-4">
