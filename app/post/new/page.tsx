@@ -1,7 +1,6 @@
 "use client";
 
 import { NewStatusResponse } from "@/app/api/post/route";
-import { LogOutResponse } from "@/app/api/profile/logout/route";
 import { MyInfoResponse } from "@/app/api/profile/me/route";
 import { AuthForm } from "@/components/Auth/AuthForm";
 // import { Button } from "@/components/Input/Button";
@@ -77,8 +76,8 @@ export default function New() {
 		NewStatusRequest
 	>("/api/post");
 
-	const [logOut, { data: logOutData, isLoading: isLogOutLoading }] =
-		useMutation<LogOutResponse, {}>("/api/profile/logout");
+	// const [logOut, { data: logOutData, isLoading: isLogOutLoading }] =
+	// 	useMutation<LogOutResponse, {}>("/api/profile/logout");
 
 	const randomValue = () => {
 		const values = [-0.03, -0.02, -0.01, 0, 0.01, 0.02, 0.03];
@@ -216,11 +215,11 @@ export default function New() {
 		}
 	}, [meData, isMeLoading, setValue]);
 
-	useEffect(() => {
-		if (logOutData && logOutData.ok) {
-			router.push("/home");
-		}
-	}, [logOutData, router]);
+	// useEffect(() => {
+	// 	if (logOutData && logOutData.ok) {
+	// 		router.push("/home");
+	// 	}
+	// }, [logOutData, router]);
 
 	if (isTokenLoading) return null;
 
