@@ -1,5 +1,3 @@
-"use client";
-
 import { Header, HeaderProps } from "@/components/Layout/Header";
 import { TabBar } from "@/components/Layout/TabBar";
 import { j } from "@/libs/client/utils";
