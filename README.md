@@ -5,10 +5,6 @@
 - **Your Passport to Local Connections 🗺️**
 - See what people on Mastodon are saying about your city, town, or neighborhood.
 
-## Try it out
-
-This website is live at [mastoplace.social](https://mastoplace.social/).
-
 ## Getting Started
 
 ```shell
